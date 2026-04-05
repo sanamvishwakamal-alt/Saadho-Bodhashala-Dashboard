@@ -6629,7 +6629,8 @@ function checkFirstLaunch(){
   editableContent = JSON.parse(localStorage.getItem('pns_editable_content')||'{}');
   const activeProgramDataKey = ACTIVE_PROGRAM_ID ? ('pns_prog_data_' + ACTIVE_PROGRAM_ID) : null;
   const hasActiveProgramSnapshot = activeProgramDataKey ? !!localStorage.getItem(activeProgramDataKey) : false;
-  const shouldUseLegacyFallback = !ACTIVE_PROGRAM_ID || !hasActiveProgramSnapshot;
+  const allowLegacyMigration = ALL_PROGRAMS.length <= 1;
+  const shouldUseLegacyFallback = allowLegacyMigration && (!ACTIVE_PROGRAM_ID || !hasActiveProgramSnapshot);
   currentRole='facilitator';applyRole();
   const hasData=localStorage.getItem('pns_project_loaded');
   if(!hasData){document.getElementById('setup-screen').style.display='block';return;}
@@ -6676,7 +6677,7 @@ function checkFirstLaunch(){
   }
 
   // Create initial snapshot after one-time legacy migration.
-  if(ACTIVE_PROGRAM_ID && !hasActiveProgramSnapshot) {
+  if(ACTIVE_PROGRAM_ID && !hasActiveProgramSnapshot && allowLegacyMigration) {
     saveCurrentProgramData();
   }
   
@@ -7360,6 +7361,7 @@ function createNewProgram(){
   
   const newId = 'prog_'+Date.now();
   const newProg = {id:newId, name, status:'active', created_at:new Date().toISOString(),
+    sessions:sessions.map(s => ({ date:s, label:s, created_at:new Date().toISOString() })),
     meta:{member_count:0, session_count:sessions.length}};
   ALL_PROGRAMS.unshift(newProg);
   ACTIVE_PROGRAM_ID = newId;
@@ -7367,13 +7369,18 @@ function createNewProgram(){
   localStorage.setItem('pns_active_program_id', newId);
   localStorage.setItem('pns_project_name', name);
   
-  // ✅ CRITICAL: Set DATES first before calling loadProgramData
-  DATES.length = 0;
-  sessions.forEach(s => DATES.push(s));
-  
   // ✅ Call loadProgramData to ensure complete clear of all other data
   // This will clear everything since new program has no saved data
   loadProgramData(newId);
+
+  // Apply the new program sessions after clearing.
+  DATES.length = 0;
+  sessions.forEach(s => DATES.push(s));
+  GROUPS.length = 0;
+  FACILITATORS.length = 0;
+  localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
+  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+  localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
   
   // ✅ CRITICAL FIX: Reload ALL memory variables from cleared storage
   recordings = JSON.parse(localStorage.getItem('pns_recordings') || '[]');
@@ -7433,6 +7440,48 @@ function switchToProgram(id){
   guruQuestions = JSON.parse(localStorage.getItem('pns_guru_q') || '[]');
   transferLog = JSON.parse(localStorage.getItem('pns_transfers') || '[]');
   notesLog = JSON.parse(localStorage.getItem('pns_notes') || '[]');
+
+  // Strictly isolate active program state when multiple programs exist.
+  if((ALL_PROGRAMS || []).length > 1) {
+    members = (members || [])
+      .filter(m => m.program_id === id)
+      .map((m, i) => ({ ...m, idx:i }));
+
+    const memberGroups = new Set(
+      members
+        .map(m => (m.group || '').trim())
+        .filter(g => g && g !== 'Unassigned' && g !== 'Facilitators')
+    );
+    GROUPS = (GROUPS || []).filter(g => memberGroups.has(g.group));
+
+    FACILITATORS.length = 0;
+    members
+      .filter(m => (m.role || 'Sadhak') === 'Facilitator')
+      .forEach(m => FACILITATORS.push({
+        name: m.name || '',
+        email: m.email || '',
+        mobile: m.mobile || '',
+        region: m.region || '',
+        language: m.language || '',
+        country: m.country || ''
+      }));
+
+    const progSessions = (selectedProg?.sessions || [])
+      .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
+      .filter(Boolean);
+    if(progSessions.length > 0) {
+      DATES.length = 0;
+      progSessions.forEach(s => DATES.push(s));
+    } else if(members.length === 0) {
+      DATES.length = 0;
+    }
+
+    localStorage.setItem('pns_live_members', JSON.stringify(members));
+    localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+    localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
+    localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
+    saveCurrentProgramData();
+  }
   
   // ✅ CRITICAL FIX: Refresh the active tab to show program-specific data
   const activeSection = document.querySelector('.section.active');
