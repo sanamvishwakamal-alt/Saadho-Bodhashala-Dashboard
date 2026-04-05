@@ -7445,8 +7445,9 @@ function renderProgramsList(){
             <button class="btn btn-outline btn-sm" onclick="toggleMenu('${menuId}')" title="More options">⋮ More</button>
             <div id="${menuId}" class="prog-menu" style="display:none;position:absolute;right:0;top:100%;background:white;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;min-width:180px;margin-top:4px">
               <button onclick="editProgram('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">⚙ Edit Program</button>
-              <button onclick="exportProgramCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📥 Export CSV</button>
-              <button onclick="importProgramCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📤 Import CSV</button>
+              <button onclick="exportProgramCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📥 Export Members CSV</button>
+              <button onclick="importProgramCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📤 Import Members CSV</button>
+              <button onclick="importProgramRecordingsCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">🎬 Import Recordings CSV</button>
               <button onclick="backupProgramJSON('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">💾 Backup JSON</button>
               <button onclick="restoreProgramJSON('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">♻️ Restore JSON</button>
               <button onclick="resetProgram('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#d32f2f;border-bottom:1px solid #f0f0f0;transition:background 0.2s">🗑 Reset Data</button>
@@ -7882,6 +7883,20 @@ function exportProgramCSV(progId) {
   showToast('✓ Program CSV exported');
 }
 
+function importProgramRecordingsCSV(progId) {
+  const prog = ALL_PROGRAMS.find(p => p.id === progId);
+  if (!prog) { alert('Program not found'); return; }
+  if (progId !== ACTIVE_PROGRAM_ID) {
+    alert('Please activate this program first, then import its recordings.');
+    return;
+  }
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv';
+  input.onchange = e => importRecordingsData(e.target.files[0]);
+  input.click();
+}
+
 function importProgramCSV(progId) {
   const prog = ALL_PROGRAMS.find(p => p.id === progId);
   if (!prog) { alert('Program not found'); return; }
@@ -8013,6 +8028,19 @@ function restoreProgramJSON(progId) {
         if (backup.dates && Array.isArray(backup.dates)) {
           DATES = backup.dates;
         }
+
+        // Restore recordings (tag all with program_id)
+        if (backup.recordings && Array.isArray(backup.recordings)) {
+          const existing = JSON.parse(localStorage.getItem('pns_recordings') || '[]');
+          const incoming = backup.recordings.map(r => ({ ...r, program_id: progId }));
+          incoming.forEach(nr => {
+            const idx = existing.findIndex(r => r.id === nr.id || ((r.title||'').toLowerCase() === (nr.title||'').toLowerCase()));
+            if (idx >= 0) existing[idx] = nr;
+            else existing.push(nr);
+          });
+          recordings = existing;
+          localStorage.setItem('pns_recordings', JSON.stringify(existing));
+        }
         
         localStorage.setItem('pns_live_members', JSON.stringify(members));
         localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
@@ -8021,8 +8049,10 @@ function restoreProgramJSON(progId) {
         renderOverview();
         renderMembersDisplay();
         initGroups();
+        if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
         
-        showToast(`✓ Program restored with ${backup.members?.length || 0} members`);
+        const recCount = backup.recordings?.length || 0;
+        showToast(`✓ Program restored with ${backup.members?.length || 0} members${recCount ? ' · ' + recCount + ' recordings' : ''}`);
       } catch (err) {
         alert('Error restoring backup: ' + err.message);
       }
