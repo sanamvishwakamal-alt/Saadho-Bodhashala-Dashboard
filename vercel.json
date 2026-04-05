@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/Saadho_Bodhashala_Dashboard.html"
+    }
+  ]
+}
