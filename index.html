@@ -6874,13 +6874,18 @@ function importRecordingsData(file){
       if(!title) return;
 
       const id = rI>=0 ? parseInt(cols[rI]) : 0;
+      const lang = lI>=0 ? (cols[lI]||'').trim() : '';
       let ri = id ? recs.findIndex(r => r.id===id && isSameProgram(r)) : -1;
-      if(ri<0) ri = recs.findIndex(r => (r.title||'').trim().toLowerCase()===title.toLowerCase() && isSameProgram(r));
+      if(ri<0) ri = recs.findIndex(r =>
+        (r.title||'').trim().toLowerCase()===title.toLowerCase() &&
+        (r.lang||'').trim().toLowerCase()===(lang.toLowerCase()) &&
+        isSameProgram(r)
+      );
 
       const d={
         cat:catI>=0?cols[catI]:'',
         title,
-        lang:lI>=0?cols[lI]:'',
+        lang,
         session:sI>=0?cols[sI]:'',
         duration:dI>=0?cols[dI]:'',
         yt:yI>=0?cols[yI]:'',
