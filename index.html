@@ -6752,7 +6752,17 @@ function checkFirstLaunch(){
   updateProgPill();
   setTimeout(renderOverview, 0);
 }
-function resetProject(){if(currentRole!=='admin'){alert('Admin access required.');return;}if(!confirm('Reset ALL data? This cannot be undone.'))return;['pns_project_loaded','pns_project_name','pns_live_members','pns_live_groups','pns_live_dates','pns_live_facilitators','pns_transfers','pns_notes','pns_guru_q','pns_notifs','pns_checklist','pns_recordings','pns_all_programs','pns_active_program_id','pns_editable_content'].forEach(k=>localStorage.removeItem(k));location.reload();}
+function resetProject(){
+  if(currentRole!=='admin'){alert('Admin access required.');return;}
+  if(!confirm('Reset ALL data? This cannot be undone.')) return;
+
+  // Clear every app-owned key, including hidden per-program snapshots.
+  Object.keys(localStorage).forEach(k => {
+    if(k.startsWith('pns_')) localStorage.removeItem(k);
+  });
+
+  location.reload();
+}
 
 // ── BACKUP & RESTORE ──────────────────────────────────────────────────────
 function buildBackupPayload(){
@@ -7956,25 +7966,47 @@ function resetProgram(progId) {
     if (confirmed !== null) showToast('⚠️ Deletion cancelled - name did not match');
     return;
   }
-  
-  // Delete all members for this program
-  members = members.filter(m => m.program_id && m.program_id !== progId);
-  
-  // Clear groups and sessions
-  GROUPS = [];
-  DATES = [];
-  
-  // Update localStorage
-  localStorage.setItem('pns_live_members', JSON.stringify(members));
-  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
-  localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
-  
-  // Update UI
-  renderOverview();
-  renderMembersDisplay();
-  initGroups();
-  
-  showToast('✓ Program data reset - all members deleted');
+
+  // Remove complete snapshot for this program (members, groups, dates, recordings, Q&A, transfers, notes).
+  localStorage.removeItem('pns_prog_data_' + progId);
+
+  // Reset metadata for this program.
+  prog.sessions = [];
+  prog.meta = { ...(prog.meta || {}), member_count: 0, session_count: 0 };
+  prog.updated_at = new Date().toISOString();
+  localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+
+  // If this is active program, clear in-memory and visible local state immediately.
+  if (ACTIVE_PROGRAM_ID === progId) {
+    members = [];
+    GROUPS = [];
+    DATES = [];
+    FACILITATORS.length = 0;
+    recordings = [];
+    guruQuestions = [];
+    transferLog = [];
+    notesLog = [];
+
+    localStorage.setItem('pns_live_members', JSON.stringify(members));
+    localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+    localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
+    localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
+    localStorage.setItem('pns_recordings', JSON.stringify(recordings));
+    localStorage.setItem('pns_guru_q', JSON.stringify(guruQuestions));
+    localStorage.setItem('pns_transfers', JSON.stringify(transferLog));
+    localStorage.setItem('pns_notes', JSON.stringify(notesLog));
+
+    renderOverview();
+    renderMembersDisplay();
+    initGroups();
+    if(document.getElementById('s-attendance')?.classList.contains('active')) initAttendance();
+    if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
+    if(document.getElementById('s-gurudev')?.classList.contains('active')) initGurudev();
+    if(document.getElementById('s-admin')?.classList.contains('active')) initAdmin();
+  }
+
+  renderProgramsList();
+  showToast('✓ Program data fully reset');
 }
 
 // ── DROPDOWN MENU TOGGLE ────────────────────────────────────────
