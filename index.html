@@ -7512,11 +7512,21 @@ function saveCurrentProgramData(){
   const scopedMembers = (members || [])
     .filter(m => m.program_id === ACTIVE_PROGRAM_ID || (allowLegacyMembers && !m.program_id))
     .map((m, i) => ({ ...m, program_id: m.program_id || ACTIVE_PROGRAM_ID, idx: i }));
+  const scopedGroups = (GROUPS || [])
+    .filter(g => (g && g.program_id === ACTIVE_PROGRAM_ID) || (allowLegacyMembers && g && !g.program_id))
+    .map(g => ({ ...g, program_id: g.program_id || ACTIVE_PROGRAM_ID }));
+  const scopedFacilitators = (FACILITATORS || [])
+    .map(f => ({ ...f, program_id: f.program_id || ACTIVE_PROGRAM_ID }))
+    .filter(f => f.program_id === ACTIVE_PROGRAM_ID || (allowLegacyMembers && !f.program_id));
+  const activeProg = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
+  const progSessions = (activeProg?.sessions || [])
+    .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
+    .filter(Boolean);
   const data = {
-    dates: DATES,
-    groups: GROUPS,
+    dates: progSessions.length ? progSessions : DATES,
+    groups: scopedGroups,
     members: scopedMembers,
-    facilitators: FACILITATORS,
+    facilitators: scopedFacilitators,
     recordings: JSON.parse(localStorage.getItem('pns_recordings')||'[]'),
     guru_q: JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
     transfers: JSON.parse(localStorage.getItem('pns_transfers')||'[]'),
@@ -7528,6 +7538,8 @@ function saveCurrentProgramData(){
 function loadProgramData(progId){
   const key = 'pns_prog_data_' + progId;
   const savedData = localStorage.getItem(key);
+  const selectedProg = (ALL_PROGRAMS || []).find(p => p.id === progId);
+  const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
   
   // ✅ CRITICAL: Clear ALL data first (for new/empty programs)
   DATES.length = 0;
@@ -7548,19 +7560,28 @@ function loadProgramData(progId){
     try {
       const data = JSON.parse(savedData);
       
-      // Load dates
-      if(data.dates && Array.isArray(data.dates)) {
+      // Load dates (prefer program session definition in multi-program mode)
+      const progSessions = (selectedProg?.sessions || [])
+        .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
+        .filter(Boolean);
+      if(progSessions.length > 0) {
+        progSessions.forEach(d => DATES.push(d));
+      } else if(data.dates && Array.isArray(data.dates)) {
         data.dates.forEach(d => DATES.push(d));
       }
       
       // Load groups
       if(data.groups && Array.isArray(data.groups)) {
-        data.groups.forEach(g => GROUPS.push(g));
+        data.groups
+          .filter(g => {
+            const gp = g && typeof g === 'object' ? g.program_id : null;
+            return gp === progId || (allowLegacyMembers && !gp);
+          })
+          .forEach(g => GROUPS.push({ ...g, program_id: g.program_id || progId }));
       }
       
       // Load members
       if(data.members && Array.isArray(data.members)) {
-        const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
         members = data.members
           .filter(m => m.program_id === progId || (allowLegacyMembers && !m.program_id))
           .map((m, i) => ({ ...m, program_id: m.program_id || progId, idx: i }));
@@ -7568,7 +7589,12 @@ function loadProgramData(progId){
       
       // Load facilitators
       if(data.facilitators && Array.isArray(data.facilitators)) {
-        data.facilitators.forEach(f => FACILITATORS.push(f));
+        data.facilitators
+          .filter(f => {
+            const fp = f && typeof f === 'object' ? f.program_id : null;
+            return fp === progId || (allowLegacyMembers && !fp);
+          })
+          .forEach(f => FACILITATORS.push({ ...f, program_id: f.program_id || progId }));
       }
       
       // Load recordings
@@ -7601,6 +7627,35 @@ function loadProgramData(progId){
   } else {
     // ✅ NEW PROGRAM: No saved data, so keep everything cleared
     // All in-memory variables cleared above, all localStorage cleared
+  }
+
+  // Enforce strict scoped state in multi-program setups.
+  if((ALL_PROGRAMS || []).length > 1) {
+    members = (members || [])
+      .filter(m => m.program_id === progId)
+      .map((m, i) => ({ ...m, idx:i }));
+
+    const memberGroupNames = new Set(
+      members
+        .map(m => (m.group || '').trim())
+        .filter(g => g && g !== 'Unassigned' && g !== 'Facilitators')
+    );
+    const filteredGroups = (GROUPS || []).filter(g => memberGroupNames.has(g.group));
+    GROUPS.length = 0;
+    filteredGroups.forEach(g => GROUPS.push(g));
+
+    FACILITATORS.length = 0;
+    members
+      .filter(m => (m.role || 'Sadhak') === 'Facilitator')
+      .forEach(m => FACILITATORS.push({
+        name: m.name || '',
+        email: m.email || '',
+        mobile: m.mobile || '',
+        region: m.region || '',
+        language: m.language || '',
+        country: m.country || '',
+        program_id: progId
+      }));
   }
 
   // Keep legacy keys aligned with currently loaded active program state.
