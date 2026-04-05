@@ -5329,11 +5329,33 @@ function initGroups() {
   if (attSel) { attSel.innerHTML = ''; GROUPS.forEach((g, i) => attSel.innerHTML += `<option value="${i}">${g.group}</option>`); }
 }
 
+function normalizeGroupKey(name){
+  return String(name || '').trim().toLowerCase();
+}
+
+function shortGroupName(name){
+  const raw = String(name || '').trim();
+  if(!raw) return '';
+  return raw.includes(' - ') ? raw.split(' - ').slice(-1)[0].trim() : raw;
+}
+
+function memberBelongsToGroup(member, groupObj){
+  const memberGroup = String(member?.group || member?.fac_group || '').trim();
+  const groupName = String(groupObj?.group || '').trim();
+  if(!memberGroup || !groupName) return false;
+
+  const mg = normalizeGroupKey(memberGroup);
+  const gg = normalizeGroupKey(groupName);
+  if(mg === gg) return true;
+
+  return normalizeGroupKey(shortGroupName(memberGroup)) === normalizeGroupKey(shortGroupName(groupName));
+}
+
 function renderGroupDetail() {
   const idx = document.getElementById('group-picker').value;
   if (idx === '') { document.getElementById('group-detail-panel').innerHTML = '<div class="empty-state">Select a group above</div>'; return; }
   const g = GROUPS[idx];
-  const gmems = members.filter(m => m.group === g.group);
+  const gmems = members.filter(m => memberBelongsToGroup(m, g));
   const n = gmems.length;
   const waAdded = gmems.filter(m => m.wa === 'Yes').length;
   const initiated = gmems.filter(m => m.init === 'Yes').length;
@@ -5539,7 +5561,7 @@ function showAttGroup(idx, btn) {
   document.querySelectorAll('#att-group-tabs .tab-pill').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   const g = GROUPS[idx];
-  const gmems = members.filter(m => m.group === g.group);
+  const gmems = members.filter(m => memberBelongsToGroup(m, g));
 
   const sessionSummary = DATES.map((d, si) => {
     const present = gmems.filter(m => m.att[si] === 1).length;
