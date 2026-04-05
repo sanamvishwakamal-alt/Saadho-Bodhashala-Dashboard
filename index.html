@@ -6627,29 +6627,32 @@ function checkFirstLaunch(){
   ALL_PROGRAMS = JSON.parse(localStorage.getItem('pns_all_programs')||'[]');
   ACTIVE_PROGRAM_ID = localStorage.getItem('pns_active_program_id')||null;
   editableContent = JSON.parse(localStorage.getItem('pns_editable_content')||'{}');
+  const activeProgramDataKey = ACTIVE_PROGRAM_ID ? ('pns_prog_data_' + ACTIVE_PROGRAM_ID) : null;
+  const hasActiveProgramSnapshot = activeProgramDataKey ? !!localStorage.getItem(activeProgramDataKey) : false;
+  const shouldUseLegacyFallback = !ACTIVE_PROGRAM_ID || !hasActiveProgramSnapshot;
   currentRole='facilitator';applyRole();
   const hasData=localStorage.getItem('pns_project_loaded');
   if(!hasData){document.getElementById('setup-screen').style.display='block';return;}
   
-  // Try to load program-specific data first
-  if(ACTIVE_PROGRAM_ID) {
+  // Try to load program-specific data first when snapshot exists
+  if(ACTIVE_PROGRAM_ID && hasActiveProgramSnapshot) {
     loadProgramData(ACTIVE_PROGRAM_ID);
   }
   
-  // Fallback to legacy data loading if program data not found
-  if(DATES.length === 0) {
+  // Fallback to legacy data loading only for migration (no program snapshot yet)
+  if(shouldUseLegacyFallback && DATES.length === 0) {
     const sD=localStorage.getItem('pns_live_dates');
     if(sD){const d=JSON.parse(sD);DATES.length=0;d.forEach(x=>DATES.push(x));RAW.dates.length=0;d.forEach(x=>RAW.dates.push(x));}
   }
-  if(GROUPS.length === 0) {
+  if(shouldUseLegacyFallback && GROUPS.length === 0) {
     const sG=localStorage.getItem('pns_live_groups');
     if(sG){const g=JSON.parse(sG);GROUPS.length=0;g.forEach(x=>GROUPS.push(x));RAW.groups=g;}
   }
-  if(members.length === 0) {
+  if(shouldUseLegacyFallback && members.length === 0) {
     const sM=localStorage.getItem('pns_live_members');
     if(sM) members=JSON.parse(sM);
   }
-  if(FACILITATORS.length === 0) {
+  if(shouldUseLegacyFallback && FACILITATORS.length === 0) {
     const sF=localStorage.getItem('pns_live_facilitators');
     if(sF){
       const f=JSON.parse(sF);
@@ -6670,6 +6673,11 @@ function checkFirstLaunch(){
         });
       }
     }
+  }
+
+  // Create initial snapshot after one-time legacy migration.
+  if(ACTIVE_PROGRAM_ID && !hasActiveProgramSnapshot) {
+    saveCurrentProgramData();
   }
   
   document.getElementById('setup-screen').style.display='none';
