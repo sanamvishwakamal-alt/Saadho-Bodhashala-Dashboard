@@ -6852,8 +6852,63 @@ function importGroupsData(file){if(!file)return;_parseCSV(file,(hdrs,rows)=>{con
     showToast('✓ '+updated+' groups updated');});}
 function importSessionDatesData(file){if(!file)return;_parseCSV(file,(hdrs,rows)=>{const sI=hdrs.findIndex(h=>h.includes('session')),dI=hdrs.findIndex(h=>h.includes('date')||h.includes('label'));if(sI<0||dI<0){alert('Columns needed: Session_Number, Date_Label');return;}let updated=0;rows.forEach(cols=>{const ss=(cols[sI]||'').trim(),lb=(cols[dI]||'').trim();const m=ss.match(/\d+/);if(!m||!lb)return;const idx=parseInt(m[0])-1;if(idx>=0&&idx<DATES.length){DATES[idx]=lb;updated++;}});localStorage.setItem('pns_live_dates',JSON.stringify(DATES));renderOverview();if(document.getElementById('s-attendance')?.classList.contains('active'))initAttendance();alert('✓ Session Dates Updated!\n\n'+DATES.map((d,i)=>'Session '+(i+1)+': '+d).join('\n'));localStorage.setItem('pns_ts_import_dates',new Date().toISOString());renderBackupTimestamps();
     showToast('✓ '+updated+' session dates updated');});}
-function importRecordingsData(file){if(!file)return;_parseCSV(file,(hdrs,rows)=>{const col=(...ns)=>{for(const n of ns){const i=hdrs.findIndex(h=>h===n||h.includes(n));if(i>=0)return i;}return -1;};const rI=col('id'),tI=col('title'),catI=col('category','cat'),lI=col('language','lang'),sI=col('session'),dI=col('duration'),yI=col('youtube_link','youtube','yt'),drI=col('drive_link','drive'),dcI=col('description','desc');if(tI<0){alert('No Title column found.');return;}let recs=JSON.parse(localStorage.getItem('pns_recordings')||'[]'),updated=0,added=0;rows.forEach(cols=>{const title=(cols[tI]||'').trim();if(!title)return;const id=rI>=0?parseInt(cols[rI]):0;let ri=id?recs.findIndex(r=>r.id===id):-1;if(ri<0)ri=recs.findIndex(r=>r.title===title);const d={cat:catI>=0?cols[catI]:'',title,lang:lI>=0?cols[lI]:'',session:sI>=0?cols[sI]:'',duration:dI>=0?cols[dI]:'',yt:yI>=0?cols[yI]:'',drive:drI>=0?cols[drI]:'',desc:dcI>=0?cols[dcI]:''};if(ri>=0){Object.keys(d).forEach(k=>{if(d[k])recs[ri][k]=d[k];});updated++;}else{recs.push({id:id||Date.now(),...d,shownLog:[]});added++;}});localStorage.setItem('pns_recordings',JSON.stringify(recs));if(document.getElementById('s-recordings')?.classList.contains('active'))initRecordings();alert('✓ Recordings Import Complete!\n\n• '+updated+' updated\n• '+added+' added');localStorage.setItem('pns_ts_import_recordings',new Date().toISOString());renderBackupTimestamps();
-    showToast('✓ Recordings: '+updated+' updated · '+added+' added');});}
+function importRecordingsData(file){
+  if(!file) return;
+  _parseCSV(file,(hdrs,rows)=>{
+    const col=(...ns)=>{for(const n of ns){const i=hdrs.findIndex(h=>h===n||h.includes(n));if(i>=0)return i;}return -1;};
+    const rI=col('id'),tI=col('title'),catI=col('category','cat'),lI=col('language','lang'),sI=col('session'),dI=col('duration'),yI=col('youtube_link','youtube','yt'),drI=col('drive_link','drive'),dcI=col('description','desc');
+    if(tI<0){alert('No Title column found.');return;}
+
+    let recs=JSON.parse(localStorage.getItem('pns_recordings')||'[]');
+    let updated=0,added=0;
+    const currentProgramId = ACTIVE_PROGRAM_ID || null;
+    const allowLegacy = (ALL_PROGRAMS || []).length <= 1;
+    const isSameProgram = (r) => {
+      if(!currentProgramId) return true;
+      if(allowLegacy) return !r.program_id || r.program_id === currentProgramId;
+      return r.program_id === currentProgramId;
+    };
+
+    rows.forEach(cols=>{
+      const title=(cols[tI]||'').trim();
+      if(!title) return;
+
+      const id = rI>=0 ? parseInt(cols[rI]) : 0;
+      let ri = id ? recs.findIndex(r => r.id===id && isSameProgram(r)) : -1;
+      if(ri<0) ri = recs.findIndex(r => (r.title||'').trim().toLowerCase()===title.toLowerCase() && isSameProgram(r));
+
+      const d={
+        cat:catI>=0?cols[catI]:'',
+        title,
+        lang:lI>=0?cols[lI]:'',
+        session:sI>=0?cols[sI]:'',
+        duration:dI>=0?cols[dI]:'',
+        yt:yI>=0?cols[yI]:'',
+        drive:drI>=0?cols[drI]:'',
+        desc:dcI>=0?cols[dcI]:'',
+        program_id: currentProgramId
+      };
+
+      if(ri>=0){
+        Object.keys(d).forEach(k=>{ if(d[k]!=='' && d[k]!==null && d[k]!==undefined) recs[ri][k]=d[k]; });
+        recs[ri].program_id = recs[ri].program_id || currentProgramId;
+        if(!Array.isArray(recs[ri].shownLog)) recs[ri].shownLog = [];
+        updated++;
+      }else{
+        recs.push({id:id||Date.now(),...d,shownLog:[]});
+        added++;
+      }
+    });
+
+    recordings = recs;
+    localStorage.setItem('pns_recordings',JSON.stringify(recs));
+    if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
+    alert('✓ Recordings Import Complete!\n\n• '+updated+' updated\n• '+added+' added');
+    localStorage.setItem('pns_ts_import_recordings',new Date().toISOString());
+    renderBackupTimestamps();
+    showToast('✓ Recordings: '+updated+' updated · '+added+' added');
+  });
+}
 
 function getAutoBackupConfig(){return JSON.parse(localStorage.getItem('pns_auto_backup_config')||'null')||{enabled:false,frequency:'daily',time:'20:00',dayOfWeek:0,lastBackup:null};}
 function saveAutoBackupConfig(cfg){localStorage.setItem('pns_auto_backup_config',JSON.stringify(cfg));}
