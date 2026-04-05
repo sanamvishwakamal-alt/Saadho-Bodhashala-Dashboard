@@ -4200,6 +4200,12 @@ function pBar(label, val, total, cls) {
   </div>`;
 }
 
+function getScopedProgramItems(list) {
+  const arr = Array.isArray(list) ? list : [];
+  if ((ALL_PROGRAMS || []).length <= 1) return arr;
+  return arr.filter(item => item && item.program_id === ACTIVE_PROGRAM_ID);
+}
+
 
 // ── ADMIN PANEL ───────────────────────────────────────────────────────────
 function initAdmin() {
@@ -4223,9 +4229,10 @@ function showAdminTab(tab, btn) {
 function renderAdminTransfers() {
   const panel = document.getElementById('admin-transfers');
   if (!panel) return;
-  const pending = transferLog.filter(t => t.status === 'Pending' || t.status === 'Submitted');
-  const done = transferLog.filter(t => t.status !== 'Pending' && t.status !== 'Submitted');
-  if (!transferLog.length) { panel.innerHTML = '<div class="empty-state">No transfer requests yet.</div>'; return; }
+  const scopedTransfers = getScopedProgramItems(transferLog);
+  const pending = scopedTransfers.filter(t => t.status === 'Pending' || t.status === 'Submitted');
+  const done = scopedTransfers.filter(t => t.status !== 'Pending' && t.status !== 'Submitted');
+  if (!scopedTransfers.length) { panel.innerHTML = '<div class="empty-state">No transfer requests yet.</div>'; return; }
   const renderCard = (e) => {
     const isActionable = e.status === 'Pending' || e.status === 'Submitted';
     const isDone = !isActionable;
@@ -4273,7 +4280,7 @@ function renderAdminTransfers() {
   html += done.map(renderCard).join('');
   panel.innerHTML = html;
   // Pre-select requested target group in each dropdown
-  transferLog.forEach(t => {
+  scopedTransfers.forEach(t => {
     if ((t.status === 'Pending' || t.status === 'Submitted') && t.to && t.to !== 'Pending Admin Decision') {
       const sel = document.getElementById('transfer-group-' + t.id);
       if (sel) sel.value = t.to;
@@ -4346,9 +4353,11 @@ function adminRejectTransfer(id) {
 function renderAdminTasks() {
   const panel = document.getElementById('admin-tasks');
   if (!panel) return;
+  const scopedTransfers = getScopedProgramItems(transferLog);
+  const scopedQuestions = getScopedProgramItems(guruQuestions);
   const allTasks = [
-    ...transferLog.map(t => ({ type: 'Transfer', label: `${t.sadhak} — ${t.from.split(' - ').slice(0,2).join(' ')} → ${t.to.split(' - ').slice(0,2).join(' ')}`, status: t.status, date: t.date, by: t.requestor })),
-    ...guruQuestions.map(q => ({ type: 'Gurudev Q', label: q.question.substring(0, 60) + (q.question.length > 60 ? '…' : ''), status: q.status, date: q.date, by: q.facilitator })),
+    ...scopedTransfers.map(t => ({ type: 'Transfer', label: `${t.sadhak} — ${t.from.split(' - ').slice(0,2).join(' ')} → ${t.to.split(' - ').slice(0,2).join(' ')}`, status: t.status, date: t.date, by: t.requestor })),
+    ...scopedQuestions.map(q => ({ type: 'Gurudev Q', label: q.question.substring(0, 60) + (q.question.length > 60 ? '…' : ''), status: q.status, date: q.date, by: q.facilitator })),
   ].sort((a, b) => (a.status === 'Pending' ? -1 : 1));
   if (!allTasks.length) { panel.innerHTML = '<div class="empty-state">No tasks logged yet.</div>'; return; }
   panel.innerHTML = `<table><thead><tr><th>Type</th><th>Details</th><th>Raised By</th><th>Date</th><th>Status</th></tr></thead><tbody>` +
@@ -4359,9 +4368,10 @@ function renderAdminTasks() {
 function renderAdminGuruQ() {
   const panel = document.getElementById('admin-guru-q');
   if (!panel) return;
-  const pending = guruQuestions.filter(q => q.status === 'Pending');
-  if (!guruQuestions.length) { panel.innerHTML = '<div class="empty-state">No questions submitted yet.</div>'; return; }
-  panel.innerHTML = guruQuestions.map(q => `
+  const scopedQuestions = getScopedProgramItems(guruQuestions);
+  const pending = scopedQuestions.filter(q => q.status === 'Pending');
+  if (!scopedQuestions.length) { panel.innerHTML = '<div class="empty-state">No questions submitted yet.</div>'; return; }
+  panel.innerHTML = scopedQuestions.map(q => `
     <div class="question-card">
       <div class="qc-header" onclick="this.nextElementSibling.classList.toggle('open')">
         <div class="qc-avatar" style="background:${q.status === 'Answered' ? 'var(--bilva-lt)' : 'var(--trishul-lt)'};color:${q.status === 'Answered' ? 'var(--bilva)' : 'var(--saffron-dk)'}">${q.facilitator ? q.facilitator.charAt(0).toUpperCase() : 'F'}</div>
@@ -4384,8 +4394,9 @@ function renderAdminGuruQ() {
 function renderAdminNotes() {
   const panel = document.getElementById('admin-notes');
   if (!panel) return;
-  if (!notesLog.length) { panel.innerHTML = '<div class="empty-state">No special notes saved.</div>'; return; }
-  panel.innerHTML = notesLog.map(n => `
+  const scopedNotes = getScopedProgramItems(notesLog);
+  if (!scopedNotes.length) { panel.innerHTML = '<div class="empty-state">No special notes saved.</div>'; return; }
+  panel.innerHTML = scopedNotes.map(n => `
     <div class="task-card pending">
       <div class="tc-header"><div><div class="tc-title">${n.who}</div><div class="tc-meta">${n.date}</div></div></div>
       <div class="tc-body">${n.note}</div>
@@ -4413,7 +4424,7 @@ function filterGQTab(tab, btn) {
 function renderGuruQuestions() {
   const list = document.getElementById('guru-questions-list');
   if (!list) return;
-  let filtered = guruQuestions;
+  let filtered = getScopedProgramItems(guruQuestions);
   if (gqTabFilter === 'pending') filtered = filtered.filter(q => q.status === 'Pending');
   if (gqTabFilter === 'answered') filtered = filtered.filter(q => q.status === 'Answered');
   // Facilitators see only their own; admins see all
@@ -4451,6 +4462,7 @@ function submitGuruQuestion() {
     question, facilitator,
     sadhak: document.getElementById('gq-sadhak').value.trim(),
     group: document.getElementById('gq-group').value,
+    program_id: ACTIVE_PROGRAM_ID || null,
     lang: document.getElementById('gq-lang').value,
     category: document.getElementById('gq-category').value,
     priority: document.getElementById('gq-priority').value,
@@ -4931,6 +4943,7 @@ function submitChange() {
     id: Date.now(), date: new Date().toLocaleDateString(),
     sadhak: selectedForChange.name, email: selectedForChange.email,
     from: selectedForChange.group,
+    program_id: ACTIVE_PROGRAM_ID || null,
     to: 'Pending Admin Decision',
     reason, requestor,
     status: 'Submitted'
@@ -4973,7 +4986,7 @@ function addNote() {
   const note = document.getElementById('special-note').value.trim();
   const who = document.getElementById('special-note-who').value.trim();
   if (!note) { alert('Please enter a note.'); return; }
-  notesLog.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), note, who: who || 'General' });
+  notesLog.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), note, who: who || 'General', program_id: ACTIVE_PROGRAM_ID || null });
   localStorage.setItem('pns_notes', JSON.stringify(notesLog));
   document.getElementById('special-note').value = '';
   document.getElementById('special-note-who').value = '';
@@ -5848,7 +5861,8 @@ function filterRecCat(cat, btn) {
 
 function renderRecordings() {
   const langF = document.getElementById('rec-lang-filter').value;
-  let list = recordings.filter(r => {
+  const scopedRecordings = getScopedProgramItems(recordings);
+  let list = scopedRecordings.filter(r => {
     if (recCatFilter !== 'all' && r.cat !== recCatFilter) return false;
     if (langF && r.lang !== langF && r.lang !== 'Both') return false;
     return true;
@@ -5959,6 +5973,7 @@ function saveRecording() {
   const editId = document.getElementById('rec-edit-id').value;
   const data = {
     cat: document.getElementById('rec-cat').value,
+    program_id: ACTIVE_PROGRAM_ID || null,
     title,
     lang: document.getElementById('rec-lang').value,
     session: document.getElementById('rec-session').value,
@@ -7594,15 +7609,24 @@ function saveCurrentProgramData(){
   const progSessions = (activeProg?.sessions || [])
     .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
     .filter(Boolean);
+  const scopeByProgram = (arr) => (arr || [])
+    .filter(x => (x && x.program_id === ACTIVE_PROGRAM_ID) || (allowLegacyMembers && x && !x.program_id))
+    .map(x => ({ ...x, program_id: x.program_id || ACTIVE_PROGRAM_ID }));
+
+  const scopedRecordings = scopeByProgram(JSON.parse(localStorage.getItem('pns_recordings')||'[]'));
+  const scopedGuruQ = scopeByProgram(JSON.parse(localStorage.getItem('pns_guru_q')||'[]'));
+  const scopedTransfers = scopeByProgram(JSON.parse(localStorage.getItem('pns_transfers')||'[]'));
+  const scopedNotes = scopeByProgram(JSON.parse(localStorage.getItem('pns_notes')||'[]'));
+
   const data = {
     dates: progSessions.length ? progSessions : DATES,
     groups: scopedGroups,
     members: scopedMembers,
     facilitators: scopedFacilitators,
-    recordings: JSON.parse(localStorage.getItem('pns_recordings')||'[]'),
-    guru_q: JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
-    transfers: JSON.parse(localStorage.getItem('pns_transfers')||'[]'),
-    notes: JSON.parse(localStorage.getItem('pns_notes')||'[]'),
+    recordings: scopedRecordings,
+    guru_q: scopedGuruQ,
+    transfers: scopedTransfers,
+    notes: scopedNotes,
   };
   localStorage.setItem(key, JSON.stringify(data));
 }
@@ -7612,6 +7636,13 @@ function loadProgramData(progId){
   const savedData = localStorage.getItem(key);
   const selectedProg = (ALL_PROGRAMS || []).find(p => p.id === progId);
   const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
+  const pickProgramItems = (arr) => {
+    const items = Array.isArray(arr) ? arr : [];
+    const tagged = items.filter(x => x && x.program_id === progId);
+    const legacy = items.filter(x => x && !x.program_id);
+    const chosen = tagged.length ? tagged : (allowLegacyMembers ? legacy : []);
+    return chosen.map(x => ({ ...x, program_id: progId }));
+  };
   
   // ✅ CRITICAL: Clear ALL data first (for new/empty programs)
   DATES.length = 0;
@@ -7672,26 +7703,26 @@ function loadProgramData(progId){
       
       // Load recordings
       if(data.recordings && Array.isArray(data.recordings)) {
-        recordings = JSON.parse(JSON.stringify(data.recordings));
-        localStorage.setItem('pns_recordings', JSON.stringify(data.recordings));
+        recordings = pickProgramItems(data.recordings);
+        localStorage.setItem('pns_recordings', JSON.stringify(recordings));
       }
       
       // Load guru questions
       if(data.guru_q && Array.isArray(data.guru_q)) {
-        guruQuestions = JSON.parse(JSON.stringify(data.guru_q));
-        localStorage.setItem('pns_guru_q', JSON.stringify(data.guru_q));
+        guruQuestions = pickProgramItems(data.guru_q);
+        localStorage.setItem('pns_guru_q', JSON.stringify(guruQuestions));
       }
       
       // Load transfers
       if(data.transfers && Array.isArray(data.transfers)) {
-        transferLog = JSON.parse(JSON.stringify(data.transfers));
-        localStorage.setItem('pns_transfers', JSON.stringify(data.transfers));
+        transferLog = pickProgramItems(data.transfers);
+        localStorage.setItem('pns_transfers', JSON.stringify(transferLog));
       }
       
       // Load notes
       if(data.notes && Array.isArray(data.notes)) {
-        notesLog = JSON.parse(JSON.stringify(data.notes));
-        localStorage.setItem('pns_notes', JSON.stringify(data.notes));
+        notesLog = pickProgramItems(data.notes);
+        localStorage.setItem('pns_notes', JSON.stringify(notesLog));
       }
 
       // Persist migration if legacy untagged data was adopted into this program.
