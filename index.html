@@ -4216,6 +4216,7 @@ function initAdmin() {
   updateBadges();
   setTimeout(() => { renderAutoBackupSettings(); if(typeof filterFAQ==='function') filterFAQ(); if(typeof renderGuidelines==='function') renderGuidelines(); }, 100);
   renderBackupTimestamps();
+  refreshCloudSyncStatus();
 }
 function showAdminTab(tab, btn) {
   ['transfers','tasks','guru-q','notes','settings'].forEach(t => {
@@ -7109,13 +7110,21 @@ async function initCloudSync(){
     const res = await fetch('/api/config', { cache:'no-store' });
     if(!res.ok) return false;
     const cfg = await res.json();
-    if(!cfg.supabaseUrl || !cfg.supabaseAnonKey) return false;
+    const supabaseUrl = (cfg.supabaseUrl || '').trim();
+    const supabaseAnonKey = (cfg.supabaseAnonKey || '').trim();
+    if(!supabaseUrl || !supabaseAnonKey) return false;
     if(!window.supabase || typeof window.supabase.createClient !== 'function') return false;
-    cloudSyncClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    cloudSyncClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
     return true;
   }catch(_e){
     return false;
   }
+}
+
+async function refreshCloudSyncStatus(){
+  const ready = await initCloudSync();
+  if(ready) updateCloudSyncStatus('Cloud sync: Configured and ready', true);
+  else updateCloudSyncStatus('Cloud sync: Missing Supabase config in Vercel env', false);
 }
 
 function getCloudProgramId(){
