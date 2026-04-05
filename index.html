@@ -7459,10 +7459,14 @@ function switchToProgram(id){
 function saveCurrentProgramData(){
   if(!ACTIVE_PROGRAM_ID) return;
   const key = 'pns_prog_data_' + ACTIVE_PROGRAM_ID;
+  const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
+  const scopedMembers = (members || [])
+    .filter(m => m.program_id === ACTIVE_PROGRAM_ID || (allowLegacyMembers && !m.program_id))
+    .map((m, i) => ({ ...m, program_id: m.program_id || ACTIVE_PROGRAM_ID, idx: i }));
   const data = {
     dates: DATES,
     groups: GROUPS,
-    members: members,
+    members: scopedMembers,
     facilitators: FACILITATORS,
     recordings: JSON.parse(localStorage.getItem('pns_recordings')||'[]'),
     guru_q: JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
@@ -7507,7 +7511,10 @@ function loadProgramData(progId){
       
       // Load members
       if(data.members && Array.isArray(data.members)) {
-        members = JSON.parse(JSON.stringify(data.members));
+        const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
+        members = data.members
+          .filter(m => m.program_id === progId || (allowLegacyMembers && !m.program_id))
+          .map((m, i) => ({ ...m, program_id: m.program_id || progId, idx: i }));
       }
       
       // Load facilitators
@@ -7546,6 +7553,12 @@ function loadProgramData(progId){
     // ✅ NEW PROGRAM: No saved data, so keep everything cleared
     // All in-memory variables cleared above, all localStorage cleared
   }
+
+  // Keep legacy keys aligned with currently loaded active program state.
+  localStorage.setItem('pns_live_members', JSON.stringify(members));
+  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+  localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
+  localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
 }
 
 // Auto-save wrapper - call this after ANY data modification
