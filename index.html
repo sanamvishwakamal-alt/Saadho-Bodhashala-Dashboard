@@ -6756,10 +6756,15 @@ function resetProject(){
   if(currentRole!=='admin'){alert('Admin access required.');return;}
   if(!confirm('Reset ALL data? This cannot be undone.')) return;
 
+  clearTimeout(saveTimeout);
+  suspendAutoSave = true;
+
   // Clear every app-owned key, including hidden per-program snapshots.
   Object.keys(localStorage).forEach(k => {
     if(k.startsWith('pns_')) localStorage.removeItem(k);
   });
+
+  suspendAutoSave = false;
 
   location.reload();
 }
@@ -7746,11 +7751,12 @@ function autoSaveData(){
 // Override key save functions to auto-save program data
 const originalSetItem = localStorage.setItem;
 let saveTimeout;
+let suspendAutoSave = false;
 localStorage.setItem = function(key, value) {
   originalSetItem.call(this, key, value);
   
   // Auto-save program data when these keys are modified
-  if(['pns_live_members', 'pns_live_groups', 'pns_live_dates', 'pns_live_facilitators', 
+  if(!suspendAutoSave && ['pns_live_members', 'pns_live_groups', 'pns_live_dates', 'pns_live_facilitators', 
       'pns_recordings', 'pns_guru_q', 'pns_transfers', 'pns_notes'].includes(key) && ACTIVE_PROGRAM_ID) {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
@@ -7967,6 +7973,9 @@ function resetProgram(progId) {
     return;
   }
 
+  clearTimeout(saveTimeout);
+  suspendAutoSave = true;
+
   // Remove complete snapshot for this program (members, groups, dates, recordings, Q&A, transfers, notes).
   localStorage.removeItem('pns_prog_data_' + progId);
 
@@ -8003,6 +8012,12 @@ function resetProgram(progId) {
     if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
     if(document.getElementById('s-gurudev')?.classList.contains('active')) initGurudev();
     if(document.getElementById('s-admin')?.classList.contains('active')) initAdmin();
+  }
+
+  suspendAutoSave = false;
+
+  if (ACTIVE_PROGRAM_ID === progId) {
+    saveCurrentProgramData();
   }
 
   renderProgramsList();
