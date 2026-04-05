@@ -7559,6 +7559,7 @@ function loadProgramData(progId){
   if(savedData) {
     try {
       const data = JSON.parse(savedData);
+      let migratedLegacyToProgram = false;
       
       // Load dates (prefer program session definition in multi-program mode)
       const progSessions = (selectedProg?.sessions || [])
@@ -7572,29 +7573,29 @@ function loadProgramData(progId){
       
       // Load groups
       if(data.groups && Array.isArray(data.groups)) {
-        data.groups
-          .filter(g => {
-            const gp = g && typeof g === 'object' ? g.program_id : null;
-            return gp === progId || (allowLegacyMembers && !gp);
-          })
-          .forEach(g => GROUPS.push({ ...g, program_id: g.program_id || progId }));
+        const taggedGroups = data.groups.filter(g => (g && typeof g === 'object' ? g.program_id : null) === progId);
+        const legacyGroups = data.groups.filter(g => !(g && typeof g === 'object' ? g.program_id : null));
+        const groupsToUse = taggedGroups.length ? taggedGroups : ((allowLegacyMembers || taggedGroups.length===0) ? legacyGroups : []);
+        if(taggedGroups.length===0 && legacyGroups.length>0) migratedLegacyToProgram = true;
+        groupsToUse.forEach(g => GROUPS.push({ ...g, program_id: progId }));
       }
       
       // Load members
       if(data.members && Array.isArray(data.members)) {
-        members = data.members
-          .filter(m => m.program_id === progId || (allowLegacyMembers && !m.program_id))
-          .map((m, i) => ({ ...m, program_id: m.program_id || progId, idx: i }));
+        const taggedMembers = data.members.filter(m => m.program_id === progId);
+        const legacyMembers = data.members.filter(m => !m.program_id);
+        const membersToUse = taggedMembers.length ? taggedMembers : ((allowLegacyMembers || taggedMembers.length===0) ? legacyMembers : []);
+        if(taggedMembers.length===0 && legacyMembers.length>0) migratedLegacyToProgram = true;
+        members = membersToUse.map((m, i) => ({ ...m, program_id: progId, idx: i }));
       }
       
       // Load facilitators
       if(data.facilitators && Array.isArray(data.facilitators)) {
-        data.facilitators
-          .filter(f => {
-            const fp = f && typeof f === 'object' ? f.program_id : null;
-            return fp === progId || (allowLegacyMembers && !fp);
-          })
-          .forEach(f => FACILITATORS.push({ ...f, program_id: f.program_id || progId }));
+        const taggedFacs = data.facilitators.filter(f => (f && typeof f === 'object' ? f.program_id : null) === progId);
+        const legacyFacs = data.facilitators.filter(f => !(f && typeof f === 'object' ? f.program_id : null));
+        const facsToUse = taggedFacs.length ? taggedFacs : ((allowLegacyMembers || taggedFacs.length===0) ? legacyFacs : []);
+        if(taggedFacs.length===0 && legacyFacs.length>0) migratedLegacyToProgram = true;
+        facsToUse.forEach(f => FACILITATORS.push({ ...f, program_id: progId }));
       }
       
       // Load recordings
@@ -7619,6 +7620,17 @@ function loadProgramData(progId){
       if(data.notes && Array.isArray(data.notes)) {
         notesLog = JSON.parse(JSON.stringify(data.notes));
         localStorage.setItem('pns_notes', JSON.stringify(data.notes));
+      }
+
+      // Persist migration if legacy untagged data was adopted into this program.
+      if(migratedLegacyToProgram) {
+        localStorage.setItem(key, JSON.stringify({
+          ...data,
+          dates: DATES,
+          groups: GROUPS,
+          members: members,
+          facilitators: FACILITATORS
+        }));
       }
       
     } catch(e) {
