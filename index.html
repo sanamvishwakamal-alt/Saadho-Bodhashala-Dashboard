@@ -5322,6 +5322,7 @@ function renderFacilitatorOverview() {
 
 // ── GROUPS (patched for culmination) ──────────────────────────────────────
 function initGroups() {
+  ensureProgramGroupsFromMembers();
   const picker = document.getElementById('group-picker');
   picker.innerHTML = '<option value="">— Select a Group —</option>';
   GROUPS.forEach((g, i) => { picker.innerHTML += `<option value="${i}">${g.group}</option>`; });
@@ -5349,6 +5350,43 @@ function memberBelongsToGroup(member, groupObj){
   if(mg === gg) return true;
 
   return normalizeGroupKey(shortGroupName(memberGroup)) === normalizeGroupKey(shortGroupName(groupName));
+}
+
+function ensureProgramGroupsFromMembers(){
+  if((GROUPS || []).length > 0) return;
+  if(!(members || []).length) return;
+
+  const byName = {};
+  (members || []).forEach(m => {
+    const role = (m.role || 'Sadhak');
+    if(role === 'Facilitator') return;
+    const gname = String(m.group || '').trim();
+    if(!gname || gname === 'Unassigned' || gname === 'Facilitators') return;
+
+    if(!byName[gname]) {
+      byName[gname] = {
+        group: gname,
+        facilitator: m.fac_group || m.facilitators || '',
+        region: m.region || '',
+        language: m.language || '',
+        total: 0,
+        wa_added: 0,
+        initiation: 0,
+        culmination: 0,
+        sessions: new Array(DATES.length).fill(0),
+        meet_link: '',
+        program_id: ACTIVE_PROGRAM_ID || m.program_id || null
+      };
+    }
+
+    byName[gname].total += 1;
+  });
+
+  const rebuilt = Object.values(byName);
+  if(rebuilt.length) {
+    GROUPS.length = 0;
+    rebuilt.forEach(g => GROUPS.push(g));
+  }
 }
 
 function renderGroupDetail() {
@@ -5546,10 +5584,16 @@ function exportCSV() {
 
 // ── ATTENDANCE ────────────────────────────────────────────────────────
 function initAttendance() {
+  ensureProgramGroupsFromMembers();
   // Rebuild session selector from live DATES every time tab opens
   const sel = document.getElementById('att-session-sel');
   if (sel) sel.innerHTML = DATES.map((d, i) => `<option value="${i}">${d}</option>`).join('');
   const tabs = document.getElementById('att-group-tabs');
+  if (!GROUPS.length) {
+    tabs.innerHTML = '';
+    document.getElementById('attendance-view').innerHTML = '<div class="empty-state">No groups available for this program</div>';
+    return;
+  }
   tabs.innerHTML = GROUPS.map((g, i) => {
     const shortName = g.facilitator + ' ' + (g.language === 'Hindi' ? 'H' : 'E') + (i+1);
     return `<button class="tab-pill ${i===0?'active':''}" onclick="showAttGroup(${i}, this)">${g.group.split(' - ').slice(-1)[0]||'G'+(i+1)}</button>`;
@@ -7469,12 +7513,7 @@ function switchToProgram(id){
       .filter(m => m.program_id === id)
       .map((m, i) => ({ ...m, idx:i }));
 
-    const memberGroups = new Set(
-      members
-        .map(m => (m.group || '').trim())
-        .filter(g => g && g !== 'Unassigned' && g !== 'Facilitators')
-    );
-    GROUPS = (GROUPS || []).filter(g => memberGroups.has(g.group));
+    ensureProgramGroupsFromMembers();
 
     FACILITATORS.length = 0;
     members
@@ -7534,12 +7573,8 @@ function saveCurrentProgramData(){
   const scopedMembers = (members || [])
     .filter(m => m.program_id === ACTIVE_PROGRAM_ID || (allowLegacyMembers && !m.program_id))
     .map((m, i) => ({ ...m, program_id: m.program_id || ACTIVE_PROGRAM_ID, idx: i }));
-  const scopedGroups = (GROUPS || [])
-    .filter(g => (g && g.program_id === ACTIVE_PROGRAM_ID) || (allowLegacyMembers && g && !g.program_id))
-    .map(g => ({ ...g, program_id: g.program_id || ACTIVE_PROGRAM_ID }));
-  const scopedFacilitators = (FACILITATORS || [])
-    .map(f => ({ ...f, program_id: f.program_id || ACTIVE_PROGRAM_ID }))
-    .filter(f => f.program_id === ACTIVE_PROGRAM_ID || (allowLegacyMembers && !f.program_id));
+  const scopedGroups = (GROUPS || []).map(g => ({ ...g, program_id: ACTIVE_PROGRAM_ID }));
+  const scopedFacilitators = (FACILITATORS || []).map(f => ({ ...f, program_id: ACTIVE_PROGRAM_ID }));
   const activeProg = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
   const progSessions = (activeProg?.sessions || [])
     .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
@@ -7669,14 +7704,7 @@ function loadProgramData(progId){
       .filter(m => m.program_id === progId)
       .map((m, i) => ({ ...m, idx:i }));
 
-    const memberGroupNames = new Set(
-      members
-        .map(m => (m.group || '').trim())
-        .filter(g => g && g !== 'Unassigned' && g !== 'Facilitators')
-    );
-    const filteredGroups = (GROUPS || []).filter(g => memberGroupNames.has(g.group));
-    GROUPS.length = 0;
-    filteredGroups.forEach(g => GROUPS.push(g));
+    ensureProgramGroupsFromMembers();
 
     FACILITATORS.length = 0;
     members
