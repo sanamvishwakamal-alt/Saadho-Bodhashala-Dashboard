@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/Saadho_Bodhashala_Dashboard.html"
+      "source": "/Saadho_Bodhashala_Dashboard.html",
+      "destination": "/index.html"
     }
   ]
 }
