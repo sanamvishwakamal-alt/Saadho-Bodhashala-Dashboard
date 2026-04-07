@@ -7639,22 +7639,28 @@ const PROGRAM_TYPE_TEMPLATES = {
   'Naad Programs': {
     workflow_phases: WORKFLOW_PHASES,
     checklist: CHECKLIST_ITEMS,
-    faqs: FAQS,
-    guidelines: GUIDELINES
+    faqs: [],
+    guidelines: []
   },
   'Shivir Programs': {
     workflow_phases: SHIVIR_WORKFLOW_PHASES,
     checklist: SHIVIR_CHECKLIST_ITEMS,
-    faqs: FAQS,
-    guidelines: GUIDELINES
+    faqs: [],
+    guidelines: []
   },
   'General': {
     workflow_phases: WORKFLOW_PHASES,
     checklist: CHECKLIST_ITEMS,
-    faqs: FAQS,
-    guidelines: GUIDELINES
+    faqs: [],
+    guidelines: []
   }
 };
+
+function isMahashivaratri2026Program(programId) {
+  const prog = (ALL_PROGRAMS || []).find(p => p.id === programId);
+  const name = (prog?.name || '').trim().toLowerCase();
+  return name === 'panchakshari naad sadhana | mahashivaratri 2026';
+}
 
 function getProgramTemplate(programId) {
   const prog = (ALL_PROGRAMS || []).find(p => p.id === programId);
@@ -7668,13 +7674,16 @@ function getActiveFAQs() {
     const stored = localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID);
     if (stored) return JSON.parse(stored);
   } catch(e) {}
-  try {
-    const legacy = localStorage.getItem('pns_custom_faqs');
-    if (legacy) {
-      localStorage.setItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID, legacy);
-      return JSON.parse(legacy);
-    }
-  } catch(e) {}
+  if (isMahashivaratri2026Program(ACTIVE_PROGRAM_ID)) {
+    try {
+      const legacy = localStorage.getItem('pns_custom_faqs');
+      if (legacy) {
+        localStorage.setItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID, legacy);
+        return JSON.parse(legacy);
+      }
+    } catch(e) {}
+    return FAQS;
+  }
   return getProgramTemplate(ACTIVE_PROGRAM_ID).faqs;
 }
 
@@ -7684,13 +7693,16 @@ function getActiveGuidelines() {
     const stored = localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID);
     if (stored) return JSON.parse(stored);
   } catch(e) {}
-  try {
-    const legacy = localStorage.getItem('pns_custom_guidelines');
-    if (legacy) {
-      localStorage.setItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID, legacy);
-      return JSON.parse(legacy);
-    }
-  } catch(e) {}
+  if (isMahashivaratri2026Program(ACTIVE_PROGRAM_ID)) {
+    try {
+      const legacy = localStorage.getItem('pns_custom_guidelines');
+      if (legacy) {
+        localStorage.setItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID, legacy);
+        return JSON.parse(legacy);
+      }
+    } catch(e) {}
+    return GUIDELINES;
+  }
   return getProgramTemplate(ACTIVE_PROGRAM_ID).guidelines;
 }
 
@@ -9455,10 +9467,10 @@ function loadProgramData(progId){
       const legacyFaqs = localStorage.getItem('pns_custom_faqs');
       const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
       if(data.custom_faqs) localStorage.setItem('pns_prog_faqs_' + progId, JSON.stringify(data.custom_faqs));
-      else if (legacyFaqs) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
+      else if (legacyFaqs && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
       else localStorage.removeItem('pns_prog_faqs_' + progId);
       if(data.custom_guidelines) localStorage.setItem('pns_prog_guidelines_' + progId, JSON.stringify(data.custom_guidelines));
-      else if (legacyGuidelines) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
+      else if (legacyGuidelines && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
       else localStorage.removeItem('pns_prog_guidelines_' + progId);
 
       // Persist migration if legacy untagged data was adopted into this program.
@@ -9480,9 +9492,9 @@ function loadProgramData(progId){
     // All in-memory variables cleared above, all localStorage cleared
     const legacyFaqs = localStorage.getItem('pns_custom_faqs');
     const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
-    if (legacyFaqs) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
+    if (legacyFaqs && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
     else localStorage.removeItem('pns_prog_faqs_' + progId);
-    if (legacyGuidelines) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
+    if (legacyGuidelines && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
     else localStorage.removeItem('pns_prog_guidelines_' + progId);
   }
 
