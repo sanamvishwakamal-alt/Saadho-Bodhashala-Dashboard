@@ -214,8 +214,47 @@ body.dark-mode .program-banner-text {
   cursor: pointer;
 }
 
-.role-admin { background: rgba(232,135,58,0.25); color: var(--saffron); border: 1px solid rgba(232,135,58,0.4); }
-.role-facilitator { background: rgba(74,43,138,0.4); color: #c0a8f8; border: 1px solid rgba(122,85,192,0.5); }
+.role-admin { background: #d27b32; color: #fff7ec; border: 1px solid #f0c28e; }
+.role-facilitator { background: #45277f; color: #f6f0ff; border: 1px solid #d8c7ff; }
+.role-sadhak { background: #2e8b57; color: #f5fff8; border: 1px solid #8cd3a9; }
+.role-guest { background: #f3e6b7; color: #3d2a0b; border: 1px solid #fff2c8; }
+.role-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 136px;
+  padding-right: 28px;
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+#role-display option {
+  color: #24173d;
+  background: #fffdf8;
+}
+
+#role-display option[value="admin"] {
+  color: #7a420d;
+  background: #fff0df;
+}
+
+#role-display option[value="facilitator"] {
+  color: #45277f;
+  background: #f3edff;
+}
+
+#role-display option[value="sadhak"] {
+  color: #1e6a40;
+  background: #ecfbf1;
+}
+
+#role-display option[value="guest"] {
+  color: #5d430f;
+  background: #fff9e7;
+}
 
 .notif-bell {
   position: relative;
@@ -993,7 +1032,18 @@ body.edit-mode [data-editable]:focus {
   .topbar-right {
     gap: 8px;
     width: 100%;
-    justify-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  #topbar-cloud-auth {
+    padding: 0 6px !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  #topbar-cloud-email {
+    display: none;
   }
   
   .program-banner {
@@ -1190,6 +1240,11 @@ body.edit-mode [data-editable]:focus {
   
   .topbar-right {
     gap: 6px;
+  }
+
+  #topbar-cloud-signin-btn {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
   }
   
 @media (max-width: 480px) {
@@ -2513,7 +2568,7 @@ body.dark-mode .filter-dropdown {
         <button id="tab-blank-btn" onclick="switchLoadTab('blank',this)" style="padding:6px 16px;border-radius:20px;border:1px solid rgba(122,85,192,0.25);background:#fff;color:#5A4A7A;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Start Blank</button>
       </div>
       <div id="load-tab-upload">
-        <p style="font-size:12px;color:#5A4A7A;margin-bottom:12px;line-height:1.6">Upload your registration CSV. Required columns: <code style="background:rgba(74,43,138,0.08);padding:2px 6px;border-radius:4px;font-size:11px">Name, Role, Region, Language, Country, Facilitators, Group Name</code></p>
+        <p style="font-size:12px;color:#5A4A7A;margin-bottom:12px;line-height:1.6">Upload your registration CSV. Required columns: <code style="background:rgba(74,43,138,0.08);padding:2px 6px;border-radius:4px;font-size:11px">Name, Role, City, Region, Language, Country, Facilitators, Group Name</code></p>
         <div id="drop-zone" onclick="document.getElementById('csv-file-input').click()"
           ondragover="event.preventDefault();this.style.borderColor='#7B55C0'"
           ondragleave="this.style.borderColor='rgba(122,85,192,0.3)'"
@@ -2554,12 +2609,17 @@ body.dark-mode .filter-dropdown {
     </div>
     <div class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</div>
     <button class="btn-edit-toggle" id="edit-toggle-btn" onclick="toggleEditMode()" title="Edit dashboard content">&#10002; <span id="edit-toggle-lbl">Edit</span></button>
-    <span id="role-switcher" onclick="toggleRole()" title="Click to sign in / switch role">
-      <span class="role-badge role-facilitator" id="role-display">Facilitator</span>
-    </span>
-    <div class="notif-bell" onclick="showSection('admin')" title="Notifications">
-      &#128276;<span class="notif-dot" id="notif-dot"></span>
+    <div id="topbar-user-pill" style="display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(184,147,74,0.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff;font-weight:600;max-width:200px;overflow:hidden">
+      <span style="width:7px;height:7px;border-radius:50%;background:#4caf50;flex-shrink:0;display:inline-block"></span>
+      <span id="topbar-user-email" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
     </div>
+    <button id="topbar-cloud-signin-btn" class="btn-edit-toggle" onclick="showLoginModal()" style="display:inline-flex;font-size:11px;align-items:center;gap:4px">&#128274; Sign In</button>
+    <select id="role-display" class="role-badge role-select role-facilitator" onchange="setRole(this.value)" title="Select role">
+      <option value="admin">Admin</option>
+      <option value="facilitator" selected>Facilitator</option>
+      <option value="sadhak">Sadhak</option>
+      <option value="guest">Guest</option>
+    </select>
   </div>
 </div>
 
@@ -2660,6 +2720,7 @@ body.dark-mode .filter-dropdown {
   <div style="display:flex;gap:12px;margin-bottom:20px;border-bottom:2px solid var(--border-light);flex-wrap:wrap">
     <button class="btn" id="btn-member-form" onclick="switchFormMode('member')" style="background:var(--shiva-soft);color:#fff;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600">+ Add Member</button>
     <button class="btn" id="btn-fac-form" onclick="switchFormMode('facilitator')" style="background:#ddd;color:#333;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600">+ Add Facilitator</button>
+    <button class="btn" id="btn-group-form" onclick="switchFormMode('groups')" style="background:#ddd;color:#333;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600">+ Add Group</button>
     <div style="flex:1"></div>
     <button class="btn btn-outline btn-sm" onclick="downloadDataTemplate()">📥 Template</button>
     <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-import-input').click()">📤 Import CSV</button>
@@ -2687,31 +2748,83 @@ body.dark-mode .filter-dropdown {
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role</label>
-          <input type="text" id="m-role" placeholder="Sadhak, Facilitator, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-role" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="Admin">Admin</option>
+            <option value="Facilitator">Facilitator</option>
+            <option value="Sadhak" selected>Sadhak</option>
+            <option value="Guest">Guest</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">City</label>
+          <select id="m-city" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select City</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region</label>
-          <input type="text" id="m-region" placeholder="North India, South India, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="INDIA">India</option>
+            <option value="NON INDIA">Non India</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language</label>
-          <input type="text" id="m-language" placeholder="Hindi, English, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Any" selected>Any</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country</label>
-          <input type="text" id="m-country" placeholder="India, USA, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-country" onchange="syncMemberCountryCode(); syncMemberRegionWithCountry()" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Country</option>
+            <option value="India">India</option>
+            <option value="USA">USA</option>
+            <option value="Canada">Canada</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Australia">Australia</option>
+            <option value="UAE">UAE</option>
+            <option value="Germany">Germany</option>
+            <option value="Sweden">Sweden</option>
+            <option value="Switzerland">Switzerland</option>
+            <option value="Spain">Spain</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Cambodia">Cambodia</option>
+            <option value="Japan">Japan</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country Code</label>
-          <input type="text" id="m-country-code" placeholder="+91, +1, +44, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-country-code" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Code</option>
+            <option value="+91">India (+91)</option>
+            <option value="+1">USA / Canada (+1)</option>
+            <option value="+44">United Kingdom (+44)</option>
+            <option value="+61">Australia (+61)</option>
+            <option value="+971">UAE (+971)</option>
+            <option value="+49">Germany (+49)</option>
+            <option value="+46">Sweden (+46)</option>
+            <option value="+41">Switzerland (+41)</option>
+            <option value="+34">Spain (+34)</option>
+            <option value="+54">Argentina (+54)</option>
+            <option value="+855">Cambodia (+855)</option>
+            <option value="+81">Japan (+81)</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Facilitator(s)</label>
-          <input type="text" id="m-facilitators" placeholder="Rajesh Kumar, Priya Sharma" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-facilitators" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Facilitator</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Name</label>
-          <input type="text" id="m-group" placeholder="Group A, Bangalore, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-group" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Group</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered Through</label>
@@ -2719,15 +2832,30 @@ body.dark-mode .filter-dropdown {
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">WhatsApp Group Status</label>
-          <input type="text" id="m-wa-status" placeholder="Yes, No, Pending, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-wa-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Status</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Pending">Pending</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Initiation Status</label>
-          <input type="text" id="m-init-status" placeholder="Yes, No, Pending" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-init-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Status</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Pending">Pending</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Culmination Status</label>
-          <input type="text" id="m-culm-status" placeholder="Yes, No, Pending" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-culm-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Status</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Pending">Pending</option>
+          </select>
         </div>
         <div style="grid-column:1/-1">
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Notes</label>
@@ -2767,16 +2895,37 @@ body.dark-mode .filter-dropdown {
           <input type="text" id="f-mobile" placeholder="9876543210" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">City</label>
+          <select id="f-city" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select City</option>
+          </select>
+        </div>
+        <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region</label>
-          <input type="text" id="f-region" placeholder="North India, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="f-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="INDIA">India</option>
+            <option value="NON INDIA">Non India</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country</label>
-          <input type="text" id="f-country" placeholder="India, USA" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <input type="text" id="f-country" placeholder="India, USA" oninput="syncFacilitatorRegionWithCountry()" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language</label>
-          <input type="text" id="f-language" placeholder="Hindi, English" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="f-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="Hindi">Hindi</option>
+            <option value="English">English</option>
+            <option value="Any">Any</option>
+            <option value="Both">Both</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Assignments</label>
+          <select id="f-groups" multiple size="5" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="" disabled>No groups available</option>
+          </select>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:4px">Hold Ctrl (Windows) to select multiple groups</div>
         </div>
       </div>
 
@@ -2787,8 +2936,51 @@ body.dark-mode .filter-dropdown {
     </div>
   </div>
 
+  <!-- GROUP FORM -->
+  <div id="form-groups" style="display:none">
+    <div style="background:#fff;border:2px solid var(--border-light);border-radius:12px;padding:20px;margin-bottom:16px">
+      <h3 style="color:var(--shiva-mid);margin-top:0;font-size:16px">Group Information</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Name *</label>
+          <input type="text" id="g-name" placeholder="Enter group name" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region</label>
+          <select id="g-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="INDIA">INDIA</option>
+            <option value="NON INDIA">NON INDIA</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language</label>
+          <select id="g-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="Hindi">Hindi</option>
+            <option value="English">English</option>
+            <option value="Any">Any</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Meet Link (Optional)</label>
+          <input type="text" id="g-meet-link" placeholder="https://meet.google.com/..." style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Assign Facilitators</label>
+          <select id="g-facilitators" multiple size="6" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="" disabled>No facilitators available</option>
+          </select>
+          <div style="font-size:11px;color:var(--text-soft);margin-top:4px">Hold Ctrl (Windows) to select multiple facilitators</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-saffron" onclick="saveDataEntryGroupForm()">✓ Save Group</button>
+        <button class="btn btn-outline" onclick="clearDataEntryGroupForm()">Clear</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MEMBERS MANAGEMENT -->
-  <div style="background:#f8f6ff;border-radius:12px;padding:20px;margin-top:24px">
+  <div id="members-list-wrap" style="background:#f8f6ff;border-radius:12px;padding:20px;margin-top:24px">
     <h3 style="color:var(--shiva-mid);margin-top:0;font-size:16px;margin-bottom:16px">Members List</h3>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <input type="text" id="member-search" placeholder="Search by name, email, or mobile..." style="flex:1;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;" oninput="filterMembersDisplay()">
@@ -2796,6 +2988,30 @@ body.dark-mode .filter-dropdown {
     </div>
     <div id="members-list" style="max-height:400px;overflow-y:auto;border:1px solid var(--border-light);border-radius:6px;background:#fff;font-size:12px;">
       <div style="padding:20px;color:var(--text-soft);text-align:center">No members added yet</div>
+    </div>
+  </div>
+
+  <!-- FACILITATORS MANAGEMENT -->
+  <div id="facilitators-list-wrap" style="background:#f8f6ff;border-radius:12px;padding:20px;margin-top:24px;display:none">
+    <h3 style="color:var(--shiva-mid);margin-top:0;font-size:16px;margin-bottom:16px">Facilitators List</h3>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" id="facilitator-search" placeholder="Search by name, email, or mobile..." style="flex:1;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;" oninput="filterFacilitatorsDisplay()">
+      <button class="btn btn-outline btn-sm" onclick="sortFacilitatorsDisplay()">Sort</button>
+    </div>
+    <div id="facilitators-list" style="max-height:400px;overflow-y:auto;border:1px solid var(--border-light);border-radius:6px;background:#fff;font-size:12px;">
+      <div style="padding:20px;color:var(--text-soft);text-align:center">No facilitators added yet</div>
+    </div>
+  </div>
+
+  <!-- GROUPS MANAGEMENT -->
+  <div id="groups-list-wrap" style="background:#f8f6ff;border-radius:12px;padding:20px;margin-top:24px;display:none">
+    <h3 style="color:var(--shiva-mid);margin-top:0;font-size:16px;margin-bottom:16px">Groups List</h3>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" id="groups-search" placeholder="Search by group, region, language, or facilitator..." style="flex:1;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;" oninput="filterDataEntryGroupsDisplay()">
+      <button class="btn btn-outline btn-sm" onclick="sortDataEntryGroupsDisplay()">Sort</button>
+    </div>
+    <div id="groups-list" style="max-height:400px;overflow-y:auto;border:1px solid var(--border-light);border-radius:6px;background:#fff;font-size:12px;">
+      <div style="padding:20px;color:var(--text-soft);text-align:center">No groups added yet</div>
     </div>
   </div>
 </div>
@@ -2823,7 +3039,7 @@ body.dark-mode .filter-dropdown {
     <select id="filter-language" onchange="filterMembers()"><option value="">All Languages</option><option>Hindi</option><option>English</option></select>
     <select id="filter-group" onchange="filterMembers()"><option value="">All Groups</option></select>
     <select id="filter-wa" onchange="filterMembers()"><option value="">WhatsApp Status</option><option value="Yes">Added</option><option value="other">Not Added</option></select>
-    <select id="filter-role" onchange="filterMembers()"><option value="">All Roles</option><option value="Sadhak">Sadhak</option><option value="Facilitator">Facilitator</option></select>
+    <select id="filter-role" onchange="filterMembers()"><option value="">All Roles</option><option value="Admin">Admin</option><option value="Facilitator">Facilitator</option><option value="Sadhak">Sadhak</option><option value="Guest">Guest</option></select>
     <select id="filter-country" onchange="filterMembers()"><option value="">All Countries</option><option>India</option><option>USA</option><option>Canada</option><option>United Kingdom</option><option>Australia</option><option>UAE</option><option>Germany</option><option>Sweden</option><option>Switzerland</option><option>Spain</option><option>Argentina</option><option>Cambodia</option><option>Japan</option></select>
     <button class="btn btn-outline btn-sm" onclick="exportCSV()">↓ Export CSV</button>
     <label class="btn btn-outline btn-sm admin-only" style="cursor:pointer;margin:0;display:none">↑ Import CSV<input type="file" accept=".csv" style="display:none" onchange="importMembersCSV(this.files[0]);this.value=''"></label>
@@ -2894,12 +3110,14 @@ body.dark-mode .filter-dropdown {
     </div>
   </div>
   <div class="tab-pills" id="admin-tabs">
+    <button class="tab-pill" onclick="showAdminTab('users',this)">Users &amp; Access</button>
     <button class="tab-pill active" onclick="showAdminTab('transfers',this)">Transfer Requests <span id="transfer-count-badge" class="nav-badge" style="display:inline-block;background:var(--rudra)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('tasks',this)">All Tasks</button>
     <button class="tab-pill" onclick="showAdminTab('guru-q',this)">Gurudev Questions <span id="guru-count-badge" class="nav-badge" style="display:inline-block;background:var(--shiva-soft)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('notes',this)">Special Notes</button>
     <button class="tab-pill" onclick="showAdminTab('settings',this)">⚙ Settings & Backup</button>
   </div>
+  <div id="admin-users" style="display:none"></div>
   <div id="admin-transfers"></div>
   <div id="admin-tasks" style="display:none"></div>
   <div id="admin-guru-q" style="display:none"></div>
@@ -2914,39 +3132,19 @@ body.dark-mode .filter-dropdown {
           Download a complete backup of all data — members, attendance, groups, transfer logs, Gurudev questions, notes and recordings. Restore from a backup file to recover data after a reset or file loss.
         </p>
         <div style="display:flex;flex-direction:column;gap:10px">
-          <button class="btn btn-saffron" onclick="backupAllData()" style="text-align:left">
-            💾 Download Full Backup (.json)
-          </button>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-outline" onclick="cloudBackupNow()" style="text-align:left;flex:1;min-width:180px">☁ Save Snapshot to Supabase</button>
             <button class="btn btn-outline" onclick="cloudRestoreLatest()" style="text-align:left;flex:1;min-width:180px">☁ Restore Latest Snapshot</button>
           </div>
           <div id="cloud-sync-status" style="font-size:11px;color:var(--text-mute);margin:-2px 0 6px 2px">Cloud sync: Not configured</div>
           <div id="ts-last-backup" style="font-size:11px;color:var(--text-mute);margin:-4px 0 4px 2px">Last backup: Never</div>
-          <div style="border-top:1px solid var(--border);margin:12px 0 8px"></div>
-          <p style="font-size:11px;font-weight:700;color:var(--saffron);margin:0 0 8px">⭐ COMPLETE BACKUP/RESTORE (CSV)</p>
-          <button class="btn btn-saffron" onclick="exportCompleteDataCSV()" style="text-align:left;width:100%">
-            📊 Export All Data (CSV) - Complete Backup
-          </button>
-          <div id="ts-export-complete-csv" style="font-size:10px;color:var(--text-mute);margin:4px 0 10px 4px">Never exported</div>
-          <label class="btn btn-saffron" style="text-align:left;cursor:pointer;width:100%;box-sizing:border-box">
-            📁 Import Complete Data (CSV) - Restore Backup
-            <input type="file" accept=".csv" style="display:none" onchange="importCompleteDataCSV(this.files[0]);this.value=''">
-          </label>
-          <div id="ts-import-complete-csv" style="font-size:10px;color:var(--text-mute);margin:4px 0 4px 4px">Never imported</div>
-
-        </div>
-        <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px">
-          <div style="font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Restore from Backup</div>
-          <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px dashed rgba(122,85,192,0.3);border-radius:8px;cursor:pointer;background:rgba(74,43,138,0.02)">
-            <span style="font-size:22px">📂</span>
-            <div>
-              <div style="font-size:12px;font-weight:700;color:var(--shiva-mid)">Click to select backup file</div>
-              <div style="font-size:11px;color:var(--text-mute)">Select a .json file downloaded earlier</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <button id="cloud-signin-btn" class="btn btn-outline btn-sm" onclick="showLoginModal()" style="font-size:11px">&#128274; Sign In to Cloud</button>
+            <div id="cloud-signout-wrap" style="display:none;align-items:center;gap:8px">
+              <span id="cloud-signed-email" style="font-size:11px;color:var(--shiva-mid)"></span>
+              <button class="btn btn-outline btn-sm" onclick="logoutFromCloud()" style="font-size:11px">Sign Out</button>
             </div>
-            <input type="file" accept=".json" style="display:none" onchange="restoreBackupFile(this.files[0])">
-          </label>
-          <div id="ts-last-restore" style="font-size:11px;color:var(--text-mute);margin:8px 0 0 2px">Last restore: Never</div>
+          </div>
         </div>
       </div>
 
@@ -2955,7 +3153,7 @@ body.dark-mode .filter-dropdown {
       <div class="card" style="margin-bottom:0">
         <div class="card-header"><span class="ch-icon">&#128272;</span> Role &amp; Access</div>
         <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">
-          Click the <b>Facilitator / Admin</b> badge in the top-right corner to switch roles. Admin mode unlocks transfer approvals, member management, backup tools, and the Programs tab.
+          Use the role dropdown in the top-right corner to switch between <b>Admin, Facilitator, Sadhak,</b> and <b>Guest</b>. Admin mode unlocks transfer approvals, member management, backup tools, and the Programs tab.
         </p>
         <div style="background:rgba(74,43,138,0.05);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px">
           <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:10px">Access Levels</div>
@@ -3106,9 +3304,11 @@ body.dark-mode .filter-dropdown {
     <div class="card-header"><span class="ch-icon">📅</span> Session Management</div>
     
     <div style="margin-bottom:16px;padding:12px;background:rgba(74,43,138,0.05);border-radius:8px">
-      <div style="font-weight:600;color:var(--shiva-mid);margin-bottom:8px">Program Name:</div>
+      <div style="font-weight:600;color:var(--shiva-mid);margin-bottom:8px">Program Details:</div>
       <input type="text" id="prog-name-edit" placeholder="Program name" style="width:100%;padding:10px;border:1px solid var(--border-med);border-radius:6px;font-size:13px;box-sizing:border-box;margin-bottom:8px">
-      <button class="btn btn-saffron btn-sm" onclick="updateProgramName()">Update Name</button>
+      <input type="text" id="prog-category-edit" placeholder="Category (e.g. Naad Programs)" list="prog-category-list-edit" style="width:100%;padding:10px;border:1px solid var(--border-med);border-radius:6px;font-size:13px;box-sizing:border-box;margin-bottom:8px">
+      <datalist id="prog-category-list-edit"></datalist>
+      <button class="btn btn-saffron btn-sm" onclick="updateProgramName()">Update Details</button>
     </div>
 
     <div style="margin-bottom:16px">
@@ -3133,6 +3333,9 @@ body.dark-mode .filter-dropdown {
     <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">Create a new program. The current active program will be archived. You can switch back any time.</p>
     <div class="form-row"><label>Program Name *</label>
       <input type="text" id="new-prog-name" placeholder="e.g. PNS Navaratri 2026"></div>
+    <div class="form-row"><label>Category</label>
+      <input type="text" id="new-prog-category" placeholder="e.g. Naad Programs, Shivir Programs" list="prog-category-list">
+      <datalist id="prog-category-list"></datalist></div>
     <div class="form-row"><label>Session Dates <span style="font-weight:400;font-style:italic;color:var(--text-mute)">(one per line)</span></label>
       <textarea id="new-prog-sessions" placeholder="5 Oct&#10;12 Oct&#10;19 Oct&#10;26 Oct&#10;2 Nov" style="height:90px"></textarea></div>
     <div class="modal-footer">
@@ -3502,7 +3705,7 @@ body.dark-mode .filter-dropdown {
     <div class="form-row"><label>Full Name *</label><input type="text" id="nm-name"></div>
     <div class="form-row"><label>Email</label><input type="email" id="nm-email"></div>
     <div class="form-row"><label>WhatsApp</label><input type="text" id="nm-mobile"></div>
-    <div class="form-row"><label>Role *</label><select id="nm-role"><option value="Sadhak">Sadhak</option><option value="Facilitator">Facilitator</option></select></div>
+    <div class="form-row"><label>Role *</label><select id="nm-role"><option value="Admin">Admin</option><option value="Facilitator">Facilitator</option><option value="Sadhak" selected>Sadhak</option><option value="Guest">Guest</option></select></div>
     <div class="form-row"><label>Region *</label><select id="nm-region"><option>INDIA</option><option>NON INDIA</option></select></div>
     <div class="form-row"><label>Country</label><select id="nm-country"><option>India</option><option>USA</option><option>Canada</option><option>United Kingdom</option><option>Australia</option><option>UAE</option><option>Germany</option><option>Sweden</option><option>Switzerland</option><option>Spain</option><option>Argentina</option><option>Cambodia</option><option>Japan</option><option>Other</option></select></div>
     <div class="form-row"><label>Language *</label><select id="nm-language"><option>Hindi</option><option>English</option></select></div>
@@ -3555,7 +3758,7 @@ body.dark-mode .filter-dropdown {
     <div class="form-row"><label>Full Name</label><input type="text" id="em-name"></div>
     <div class="form-row"><label>Email</label><input type="email" id="em-email"></div>
     <div class="form-row"><label>WhatsApp</label><input type="text" id="em-mobile"></div>
-    <div class="form-row"><label>Role</label><select id="em-role"><option value="Sadhak">Sadhak</option><option value="Facilitator">Facilitator</option></select></div>
+    <div class="form-row"><label>Role</label><select id="em-role"><option value="Admin">Admin</option><option value="Facilitator">Facilitator</option><option value="Sadhak" selected>Sadhak</option><option value="Guest">Guest</option></select></div>
     <div class="form-row"><label>Country</label><select id="em-country"><option>India</option><option>USA</option><option>Canada</option><option>United Kingdom</option><option>Australia</option><option>UAE</option><option>Germany</option><option>Sweden</option><option>Switzerland</option><option>Spain</option><option>Argentina</option><option>Cambodia</option><option>Japan</option><option>Other</option></select></div>
     <div class="form-row"><label>WhatsApp Group Added?</label>
       <select id="em-wa"><option>Yes</option><option>No</option><option>Could Not Add</option></select></div>
@@ -3594,18 +3797,26 @@ body.dark-mode .filter-dropdown {
 
 const FACILITATORS = [];
 const CLOUD_SYNC_TABLE = 'dashboard_snapshots';
-let cloudSyncClient = null;
+const CLOUD_SESSION_STORAGE_KEY = 'pns_cloud_session';
+let _cloudSession = null; // {email, access_token, refresh_token}
+let _cloudInitPromise = null;
 
 
 // ── ROLE SYSTEM (PIN-protected) ──────────────────────────────────────────
 const ADMIN_PIN_DEFAULT = '108108';
-let currentRole = 'facilitator';
+const ROLE_LABELS = { admin: 'Admin', facilitator: 'Facilitator', sadhak: 'Sadhak', guest: 'Guest' };
+let currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
+let assignedProgramIds = null; // null means unrestricted (admin or signed-out local mode)
 
 function applyRole() {
   const isAdmin = currentRole === 'admin';
+  localStorage.setItem('pns_current_role', currentRole);
   document.body.classList.toggle('admin-mode', isAdmin);
   const rd = document.getElementById('role-display');
-  if (rd) { rd.textContent = isAdmin ? 'Admin' : 'Facilitator'; rd.className = isAdmin ? 'role-badge role-admin' : 'role-badge role-facilitator'; }
+  if (rd) {
+    rd.value = ROLE_LABELS[currentRole] ? currentRole : 'facilitator';
+    rd.className = 'role-badge role-select role-' + (ROLE_LABELS[currentRole] ? currentRole : 'facilitator');
+  }
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
   const progBtn = document.getElementById('programs-nav-btn');
   if (progBtn) progBtn.style.display = isAdmin ? 'flex' : 'none';
@@ -3614,9 +3825,12 @@ function applyRole() {
   updateBadges();
   if (typeof updateProgPill === 'function') updateProgPill();
 }
-function toggleRole() {
-  currentRole = currentRole === 'admin' ? 'facilitator' : 'admin';
+function setRole(role) {
+  currentRole = ROLE_LABELS[role] ? role : 'facilitator';
   applyRole();
+}
+function toggleRole() {
+  setRole(currentRole === 'admin' ? 'facilitator' : 'admin');
 }
 
 // ── DARK MODE TOGGLE ──────────────────────────────────────────────────────
@@ -3670,30 +3884,395 @@ function saveNotifs()     { localStorage.setItem('pns_notifs',     JSON.stringif
 
 // ── DATA ENTRY FUNCTIONS ───────────────────────────────────────────────────
 function initDataEntry() {
+  migrateGroupFacilitatorSchema();
+  populateMemberRegistrationDropdowns();
+  populateFacilitatorCityDropdown();
+  populateFacilitatorGroupDropdown();
+  populateGroupFacilitatorDropdown();
   renderMembersDisplay();
+  renderFacilitatorsDisplay();
+  renderDataEntryGroupsDisplay();
+}
+
+const MEMBER_COUNTRY_CODE_MAP = {
+  'India': '+91',
+  'USA': '+1',
+  'Canada': '+1',
+  'United Kingdom': '+44',
+  'Australia': '+61',
+  'UAE': '+971',
+  'Germany': '+49',
+  'Sweden': '+46',
+  'Switzerland': '+41',
+  'Spain': '+34',
+  'Argentina': '+54',
+  'Cambodia': '+855',
+  'Japan': '+81'
+};
+
+const MEMBER_REGION_OPTIONS = ['INDIA', 'NON INDIA'];
+const MEMBER_CITY_OPTIONS = [
+  'Mumbai', 'Delhi', 'Bengaluru', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Jaipur',
+  'Lucknow', 'Indore', 'Nagpur', 'Patna', 'Bhopal', 'Coimbatore', 'Kochi', 'Gurugram', 'Noida',
+  'Navi Mumbai', 'Thane', 'Dubai', 'London', 'New York', 'Toronto', 'Sydney', 'Singapore', 'Other'
+];
+
+function getNormalizedMemberRegion(country = '', region = '') {
+  const normalizedRegion = String(region || '').trim().toUpperCase();
+  if (MEMBER_REGION_OPTIONS.includes(normalizedRegion)) return normalizedRegion;
+  return String(country || '').trim().toLowerCase() === 'india' ? 'INDIA' : (country ? 'NON INDIA' : 'INDIA');
+}
+
+function getLegacyMemberCity(member) {
+  const city = String(member?.city || '').trim();
+  if (city) return city;
+  const legacyRegion = String(member?.region || '').trim();
+  const normalizedRegion = legacyRegion.toUpperCase();
+  return legacyRegion && !MEMBER_REGION_OPTIONS.includes(normalizedRegion) ? legacyRegion : '';
+}
+
+function getLegacyFacilitatorCity(facilitator) {
+  const city = String(facilitator?.city || '').trim();
+  if (city) return city;
+  const legacyRegion = String(facilitator?.region || '').trim();
+  const normalizedRegion = legacyRegion.toUpperCase();
+  return legacyRegion && !MEMBER_REGION_OPTIONS.includes(normalizedRegion) ? legacyRegion : '';
+}
+
+function populateFacilitatorCityDropdown(selectedCity = '') {
+  const citySelect = document.getElementById('f-city');
+  if (!citySelect) return;
+  const names = [...MEMBER_CITY_OPTIONS];
+  (FACILITATORS || []).forEach(facilitator => {
+    const city = getLegacyFacilitatorCity(facilitator);
+    if (city && !names.includes(city)) names.push(city);
+  });
+  if (selectedCity && !names.includes(selectedCity)) names.unshift(selectedCity);
+  citySelect.innerHTML = ['<option value="">Select City</option>']
+    .concat(names.map(name => `<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`))
+    .join('');
+  citySelect.value = selectedCity || '';
+}
+
+function getRegistrationFacilitatorNames() {
+  const names = new Set();
+  (FACILITATORS || []).forEach(f => {
+    const name = (f?.name || '').trim();
+    if (name) names.add(name);
+  });
+  (members || []).forEach(member => {
+    if ((member.role || '').trim().toLowerCase() === 'facilitator') {
+      const name = (member.name || '').trim();
+      if (name) names.add(name);
+    }
+  });
+  return Array.from(names).sort((left, right) => left.localeCompare(right));
+}
+
+function normalizeFacilitatorGroupNames(facilitator) {
+  const arr = Array.isArray(facilitator?.group_names)
+    ? facilitator.group_names
+    : String(facilitator?.group_name || '').split(',');
+  return Array.from(new Set(arr.map(group => String(group || '').trim()).filter(Boolean)));
+}
+
+function getGroupFacilitatorNames(group) {
+  const rawNames = [];
+  if (Array.isArray(group?.facilitator_names)) rawNames.push(...group.facilitator_names);
+  if (group?.facilitator) rawNames.push(...String(group.facilitator).split(','));
+  return Array.from(new Set(rawNames.map(name => String(name || '').trim()).filter(Boolean)));
+}
+
+function migrateGroupFacilitatorSchema() {
+  let changed = false;
+  (GROUPS || []).forEach(group => {
+    const names = getGroupFacilitatorNames(group);
+    if (!Array.isArray(group.facilitator_names) || group.facilitator_names.join('|') !== names.join('|')) {
+      group.facilitator_names = names;
+      changed = true;
+    }
+    const primary = names[0] || '';
+    if ((group.facilitator || '') !== primary) {
+      group.facilitator = primary;
+      changed = true;
+    }
+  });
+  if (changed) localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+}
+
+function getSelectedMultiValues(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select) return [];
+  return Array.from(select.selectedOptions || [])
+    .map(option => option.value)
+    .filter(Boolean)
+    .map(value => String(value).trim())
+    .filter(Boolean);
+}
+
+function populateFacilitatorGroupDropdown(selectedGroups = []) {
+  const select = document.getElementById('f-groups');
+  if (!select) return;
+  const names = Array.from(new Set((GROUPS || []).map(group => String(group?.group || '').trim()).filter(Boolean)))
+    .sort((left, right) => left.localeCompare(right));
+  const selected = new Set((selectedGroups || []).map(name => String(name || '').trim()).filter(Boolean));
+  names.forEach(name => selected.add(name));
+  if (selected.size === 0) {
+    select.innerHTML = '<option value="" disabled>No groups available</option>';
+    return;
+  }
+  const all = Array.from(selected).sort((left, right) => left.localeCompare(right));
+  select.innerHTML = all.map(name => `<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`).join('');
+  Array.from(select.options).forEach(option => {
+    option.selected = (selectedGroups || []).includes(option.value);
+  });
+}
+
+function populateGroupFacilitatorDropdown(selectedFacilitators = []) {
+  const select = document.getElementById('g-facilitators');
+  if (!select) return;
+  const names = getRegistrationFacilitatorNames();
+  const selected = new Set((selectedFacilitators || []).map(name => String(name || '').trim()).filter(Boolean));
+  names.forEach(name => selected.add(name));
+  if (selected.size === 0) {
+    select.innerHTML = '<option value="" disabled>No facilitators available</option>';
+    return;
+  }
+  const all = Array.from(selected).sort((left, right) => left.localeCompare(right));
+  select.innerHTML = all.map(name => `<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`).join('');
+  Array.from(select.options).forEach(option => {
+    option.selected = (selectedFacilitators || []).includes(option.value);
+  });
+}
+
+function syncFacilitatorAssignmentsToGroups(facilitatorName, selectedGroups) {
+  const normalizedName = String(facilitatorName || '').trim();
+  if (!normalizedName) return;
+  const selected = new Set((selectedGroups || []).map(group => String(group || '').trim().toLowerCase()).filter(Boolean));
+  (GROUPS || []).forEach(group => {
+    const groupName = String(group?.group || '').trim();
+    if (!groupName) return;
+    const names = getGroupFacilitatorNames(group).filter(name => name.toLowerCase() !== normalizedName.toLowerCase());
+    if (selected.has(groupName.toLowerCase())) names.push(normalizedName);
+    const deduped = Array.from(new Set(names.map(name => name.trim()).filter(Boolean)));
+    group.facilitator_names = deduped;
+    group.facilitator = deduped[0] || '';
+  });
+  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+}
+
+function syncFacilitatorProfilesToGroup(groupName, facilitatorNames) {
+  const target = String(groupName || '').trim();
+  if (!target) return;
+  const selected = new Set((facilitatorNames || []).map(name => String(name || '').trim().toLowerCase()).filter(Boolean));
+  (FACILITATORS || []).forEach(facilitator => {
+    const facName = String(facilitator?.name || '').trim();
+    if (!facName) return;
+    const groups = normalizeFacilitatorGroupNames(facilitator).filter(group => group.toLowerCase() !== target.toLowerCase());
+    if (selected.has(facName.toLowerCase())) groups.push(target);
+    const deduped = Array.from(new Set(groups.map(group => group.trim()).filter(Boolean)));
+    facilitator.group_names = deduped;
+    facilitator.group_name = deduped.join(', ');
+  });
+  localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
+}
+
+function getRegistrationGroupNames() {
+  const names = new Set();
+  (GROUPS || []).forEach(group => {
+    const name = (group?.group || '').trim();
+    if (name) names.add(name);
+  });
+  (members || []).forEach(member => {
+    const name = (member?.group || '').trim();
+    if (name) names.add(name);
+  });
+  (FACILITATORS || []).forEach(fac => {
+    normalizeFacilitatorGroupNames(fac).forEach(name => names.add(name));
+  });
+  return Array.from(names).sort((left, right) => left.localeCompare(right));
+}
+
+function populateMemberRegistrationDropdowns(selectedFacilitator = '', selectedGroup = '', selectedCity = '') {
+  const citySelect = document.getElementById('m-city');
+  if (citySelect) {
+    const names = [...MEMBER_CITY_OPTIONS];
+    if (selectedCity && !names.includes(selectedCity)) names.unshift(selectedCity);
+    citySelect.innerHTML = ['<option value="">Select City</option>']
+      .concat(names.map(name => `<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`))
+      .join('');
+    citySelect.value = selectedCity || '';
+  }
+
+  const facSelect = document.getElementById('m-facilitators');
+  if (facSelect) {
+    const names = getRegistrationFacilitatorNames();
+    if (selectedFacilitator && !names.includes(selectedFacilitator)) names.unshift(selectedFacilitator);
+    facSelect.innerHTML = ['<option value="">Select Facilitator</option>']
+      .concat(names.map(name => `<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`))
+      .join('');
+    facSelect.value = selectedFacilitator || '';
+  }
+
+  const groupSelect = document.getElementById('m-group');
+  if (groupSelect) {
+    const names = getRegistrationGroupNames();
+    if (selectedGroup && !names.includes(selectedGroup)) names.unshift(selectedGroup);
+    groupSelect.innerHTML = ['<option value="">Select Group</option>']
+      .concat(names.map(name => `<option value="${name.replace(/"/g, '&quot;')}">${name}</option>`))
+      .join('');
+    groupSelect.value = selectedGroup || '';
+  }
+}
+
+function syncMemberCountryCode(force = false) {
+  const countryEl = document.getElementById('m-country');
+  const codeEl = document.getElementById('m-country-code');
+  if (!countryEl || !codeEl) return;
+  const mappedCode = MEMBER_COUNTRY_CODE_MAP[countryEl.value] || '';
+  if (force || !codeEl.value || Object.values(MEMBER_COUNTRY_CODE_MAP).includes(codeEl.value)) {
+    codeEl.value = mappedCode;
+  }
+}
+
+function syncMemberRegionWithCountry(force = false) {
+  const countryEl = document.getElementById('m-country');
+  const regionEl = document.getElementById('m-region');
+  if (!countryEl || !regionEl) return;
+  const nextRegion = getNormalizedMemberRegion(countryEl.value, regionEl.value);
+  if (force || !regionEl.value || MEMBER_REGION_OPTIONS.includes(regionEl.value)) {
+    regionEl.value = nextRegion;
+  }
+}
+
+function syncFacilitatorRegionWithCountry(force = false) {
+  const countryEl = document.getElementById('f-country');
+  const regionEl = document.getElementById('f-region');
+  if (!countryEl || !regionEl) return;
+  const nextRegion = getNormalizedMemberRegion(countryEl.value, regionEl.value);
+  if (force || !regionEl.value || MEMBER_REGION_OPTIONS.includes(regionEl.value)) {
+    regionEl.value = nextRegion;
+  }
 }
 
 function switchFormMode(mode) {
   const memberForm = document.getElementById('form-member');
   const facForm = document.getElementById('form-facilitator');
+  const groupsForm = document.getElementById('form-groups');
+  const memberListWrap = document.getElementById('members-list-wrap');
+  const facilitatorsListWrap = document.getElementById('facilitators-list-wrap');
+  const groupsListWrap = document.getElementById('groups-list-wrap');
   const btnMember = document.getElementById('btn-member-form');
   const btnFac = document.getElementById('btn-fac-form');
-  
-  if (mode === 'member') {
-    memberForm.style.display = 'block';
-    facForm.style.display = 'none';
-    btnMember.style.background = 'var(--shiva-soft)';
-    btnMember.style.color = '#fff';
-    btnFac.style.background = '#ddd';
-    btnFac.style.color = '#333';
-  } else {
-    memberForm.style.display = 'none';
-    facForm.style.display = 'block';
-    btnMember.style.background = '#ddd';
-    btnMember.style.color = '#333';
-    btnFac.style.background = 'var(--shiva-soft)';
-    btnFac.style.color = '#fff';
+  const btnGroup = document.getElementById('btn-group-form');
+
+  const setBtnState = (button, isActive) => {
+    if (!button) return;
+    button.style.background = isActive ? 'var(--shiva-soft)' : '#ddd';
+    button.style.color = isActive ? '#fff' : '#333';
+  };
+
+  const activeMode = mode === 'groups' ? 'groups' : (mode === 'facilitator' ? 'facilitator' : 'member');
+  if (memberForm) memberForm.style.display = activeMode === 'member' ? 'block' : 'none';
+  if (facForm) facForm.style.display = activeMode === 'facilitator' ? 'block' : 'none';
+  if (groupsForm) groupsForm.style.display = activeMode === 'groups' ? 'block' : 'none';
+
+  if (memberListWrap) memberListWrap.style.display = activeMode === 'member' ? 'block' : 'none';
+  if (facilitatorsListWrap) facilitatorsListWrap.style.display = activeMode === 'facilitator' ? 'block' : 'none';
+  if (groupsListWrap) groupsListWrap.style.display = activeMode === 'groups' ? 'block' : 'none';
+
+  setBtnState(btnMember, activeMode === 'member');
+  setBtnState(btnFac, activeMode === 'facilitator');
+  setBtnState(btnGroup, activeMode === 'groups');
+
+  if (activeMode === 'groups') {
+    populateGroupFacilitatorDropdown();
+    renderDataEntryGroupsDisplay();
   }
+}
+
+function getFacilitatorListData() {
+  const map = new Map();
+
+  (FACILITATORS || []).forEach(f => {
+    const key = (f.name || '').trim().toLowerCase();
+    if (!key) return;
+    const groups = normalizeFacilitatorGroupNames(f);
+    map.set(key, {
+      name: (f.name || '').trim(),
+      email: (f.email || '').trim(),
+      mobile: (f.mobile || '').trim(),
+      city: getLegacyFacilitatorCity(f),
+      region: (f.region || '').trim(),
+      country: (f.country || '').trim(),
+      language: (f.language || '').trim(),
+      group_name: groups.join(', ')
+    });
+  });
+
+  (members || []).filter(m => (m.role || '').trim().toLowerCase() === 'facilitator').forEach(m => {
+    const key = (m.name || '').trim().toLowerCase();
+    if (!key) return;
+    const existing = map.get(key) || {
+      name: (m.name || '').trim(),
+      email: '', mobile: '', city: '', region: '', country: '', language: '', group_name: ''
+    };
+    const mergedGroups = Array.from(new Set(
+      (existing.group_name || '').split(',').concat((m.group || '').split(','))
+        .map(group => String(group || '').trim())
+        .filter(Boolean)
+    ));
+    map.set(key, {
+      name: existing.name || (m.name || '').trim(),
+      email: existing.email || (m.email || '').trim(),
+      mobile: existing.mobile || (m.mobile || '').trim(),
+      city: existing.city || getLegacyMemberCity(m),
+      region: existing.region || (m.region || '').trim(),
+      country: existing.country || (m.country || '').trim(),
+      language: existing.language || (m.language || '').trim(),
+      group_name: mergedGroups.join(', ')
+    });
+  });
+
+  return Array.from(map.values());
+}
+
+function renderFacilitatorsDisplay(rows) {
+  const list = document.getElementById('facilitators-list');
+  if (!list) return;
+  const data = Array.isArray(rows) ? rows : getFacilitatorListData();
+  if (data.length === 0) {
+    list.innerHTML = '<div style="padding:20px;color:var(--text-soft);text-align:center">No facilitators added yet</div>';
+    return;
+  }
+
+  list.innerHTML = data.map((f, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--border-light);background:${i%2===0?'#fff':'#f9f7ff'}">
+      <div style="flex:1">
+        <div style="font-weight:600;color:var(--text-main)">${f.name || ''}</div>
+        <div style="font-size:11px;color:var(--text-soft)">${[f.email || '', f.mobile || '', f.city || '', f.region || ''].filter(Boolean).join(' • ')}</div>
+      </div>
+      <div style="max-width:48%;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px">
+        ${((f.group_name || '').split(',').map(group => group.trim()).filter(Boolean).map(group => `<span style="font-size:10px;line-height:1;padding:5px 8px;border-radius:999px;background:#efe7ff;color:#4f3b7a;border:1px solid #d8c6ff;white-space:nowrap">${group}</span>`).join('')) || '<span style="font-size:10px;line-height:1;padding:5px 8px;border-radius:999px;background:#f6f6f6;color:#777;border:1px solid #e3e3e3;white-space:nowrap">No Group</span>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterFacilitatorsDisplay() {
+  const term = (document.getElementById('facilitator-search')?.value || '').toLowerCase();
+  const data = getFacilitatorListData().filter(f =>
+    (f.name || '').toLowerCase().includes(term) ||
+    (f.email || '').toLowerCase().includes(term) ||
+    (f.mobile || '').toLowerCase().includes(term)
+  );
+  renderFacilitatorsDisplay(data);
+}
+
+function sortFacilitatorsDisplay() {
+  const data = getFacilitatorListData().sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  renderFacilitatorsDisplay(data);
+  showToast('✓ Facilitators sorted by name');
 }
 
 function checkDuplicates() {
@@ -3737,7 +4316,8 @@ function saveMemberForm() {
     email: email,
     mobile: document.getElementById('m-mobile').value.trim(),
     role: document.getElementById('m-role').value.trim(),
-    region: document.getElementById('m-region').value.trim(),
+    city: document.getElementById('m-city').value.trim(),
+    region: getNormalizedMemberRegion(document.getElementById('m-country').value.trim(), document.getElementById('m-region').value.trim()),
     language: document.getElementById('m-language').value.trim(),
     country: document.getElementById('m-country').value.trim(),
     country_code: document.getElementById('m-country-code').value.trim(),
@@ -3771,37 +4351,165 @@ function saveMemberForm() {
 function saveFacilitatorForm() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('Name is required'); return; }
-  
+  const facilitatorGroups = getSelectedMultiValues('f-groups');
+  const countryValue = document.getElementById('f-country').value.trim();
+
   const newFac = {
     name: name,
     email: document.getElementById('f-email').value.trim(),
     mobile: document.getElementById('f-mobile').value.trim(),
-    region: document.getElementById('f-region').value.trim(),
-    country: document.getElementById('f-country').value.trim(),
+    city: document.getElementById('f-city').value.trim(),
+    region: getNormalizedMemberRegion(countryValue, document.getElementById('f-region').value.trim()),
+    country: countryValue,
     language: document.getElementById('f-language').value.trim(),
+    group_name: facilitatorGroups.join(', '),
+    group_names: facilitatorGroups,
     created_at: new Date().toISOString()
   };
-  
+
   FACILITATORS.push(newFac);
   localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
-  
+  syncFacilitatorAssignmentsToGroups(name, facilitatorGroups);
+  populateMemberRegistrationDropdowns();
+  populateGroupFacilitatorDropdown();
+  populateFacilitatorGroupDropdown(facilitatorGroups);
+  renderFacilitatorsDisplay();
+  renderDataEntryGroupsDisplay();
+  initGroups();
+
   clearFacilitatorForm();
   showToast(`✓ Facilitator "${name}" added`);
 }
 
 function clearMemberForm() {
-  ['m-name','m-email','m-mobile','m-role','m-region','m-language','m-country','m-country-code','m-facilitators','m-group','m-reg-through','m-wa-status','m-init-status','m-culm-status','m-notes','m-reg-by'].forEach(id => {
+  ['m-name','m-email','m-mobile','m-role','m-city','m-region','m-language','m-country','m-country-code','m-facilitators','m-group','m-reg-through','m-wa-status','m-init-status','m-culm-status','m-notes','m-reg-by'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  document.getElementById('m-role').value = 'Sadhak';
+  document.getElementById('m-region').value = 'INDIA';
+  document.getElementById('m-language').value = 'Any';
+  populateMemberRegistrationDropdowns();
   document.getElementById('member-status').innerHTML = '';
 }
 
 function clearFacilitatorForm() {
-  ['f-name','f-email','f-mobile','f-region','f-country','f-language'].forEach(id => {
+  ['f-name','f-email','f-mobile','f-city','f-region','f-country','f-language'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  populateFacilitatorCityDropdown();
+  const regionEl = document.getElementById('f-region');
+  if (regionEl) regionEl.value = 'INDIA';
+  const groupsEl = document.getElementById('f-groups');
+  if (groupsEl) Array.from(groupsEl.options).forEach(option => { option.selected = false; });
+}
+
+function getDataEntryGroupRows() {
+  return (GROUPS || [])
+    .map((group, index) => ({
+      index,
+      name: String(group?.group || '').trim(),
+      region: String(group?.region || '').trim(),
+      language: String(group?.language || '').trim(),
+      meet_link: String(group?.meet_link || '').trim(),
+      facilitators: getGroupFacilitatorNames(group)
+    }))
+    .filter(group => group.name);
+}
+
+function renderDataEntryGroupsDisplay(rows) {
+  const list = document.getElementById('groups-list');
+  if (!list) return;
+  const data = Array.isArray(rows) ? rows : getDataEntryGroupRows();
+  if (data.length === 0) {
+    list.innerHTML = '<div style="padding:20px;color:var(--text-soft);text-align:center">No groups added yet</div>';
+    return;
+  }
+
+  list.innerHTML = data.map((group, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--border-light);background:${i%2===0?'#fff':'#f9f7ff'}">
+      <div style="flex:1">
+        <div style="font-weight:600;color:var(--text-main)">${group.name}</div>
+        <div style="font-size:11px;color:var(--text-soft)">${group.region || 'N/A'} • ${group.language || 'N/A'}</div>
+        ${group.meet_link ? `<div style="font-size:10px;color:#4169a8;margin-top:2px;word-break:break-all">${group.meet_link}</div>` : ''}
+      </div>
+      <div style="max-width:52%;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px">
+        ${(group.facilitators.map(name => `<span style="font-size:10px;line-height:1;padding:5px 8px;border-radius:999px;background:#efe7ff;color:#4f3b7a;border:1px solid #d8c6ff;white-space:nowrap">${name}</span>`).join('')) || '<span style="font-size:10px;line-height:1;padding:5px 8px;border-radius:999px;background:#f6f6f6;color:#777;border:1px solid #e3e3e3;white-space:nowrap">No Facilitator</span>'}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterDataEntryGroupsDisplay() {
+  const term = (document.getElementById('groups-search')?.value || '').toLowerCase();
+  const data = getDataEntryGroupRows().filter(group => {
+    return (
+      group.name.toLowerCase().includes(term) ||
+      group.region.toLowerCase().includes(term) ||
+      group.language.toLowerCase().includes(term) ||
+      group.facilitators.join(', ').toLowerCase().includes(term)
+    );
+  });
+  renderDataEntryGroupsDisplay(data);
+}
+
+function sortDataEntryGroupsDisplay() {
+  const data = getDataEntryGroupRows().sort((left, right) => left.name.localeCompare(right.name));
+  renderDataEntryGroupsDisplay(data);
+  showToast('✓ Groups sorted by name');
+}
+
+function clearDataEntryGroupForm() {
+  const nameEl = document.getElementById('g-name');
+  const regionEl = document.getElementById('g-region');
+  const languageEl = document.getElementById('g-language');
+  const linkEl = document.getElementById('g-meet-link');
+  if (nameEl) nameEl.value = '';
+  if (regionEl) regionEl.value = 'INDIA';
+  if (languageEl) languageEl.value = 'Hindi';
+  if (linkEl) linkEl.value = '';
+  const facEl = document.getElementById('g-facilitators');
+  if (facEl) Array.from(facEl.options).forEach(option => { option.selected = false; });
+}
+
+function saveDataEntryGroupForm() {
+  const groupName = document.getElementById('g-name')?.value.trim() || '';
+  if (!groupName) { alert('Group name is required'); return; }
+
+  const exists = (GROUPS || []).some(group => String(group?.group || '').trim().toLowerCase() === groupName.toLowerCase());
+  if (exists) { alert('That group already exists'); return; }
+
+  const facilitatorNames = getSelectedMultiValues('g-facilitators');
+  const region = document.getElementById('g-region')?.value || 'INDIA';
+  const language = document.getElementById('g-language')?.value || 'Hindi';
+  const meetLink = document.getElementById('g-meet-link')?.value.trim() || '';
+
+  GROUPS.push({
+    group: groupName,
+    facilitator: facilitatorNames[0] || '',
+    facilitator_names: facilitatorNames,
+    region,
+    language,
+    total: 0,
+    wa_added: 0,
+    initiation: 0,
+    culmination: 0,
+    sessions: new Array(DATES.length).fill(0),
+    meet_link: meetLink
+  });
+
+  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+  syncFacilitatorProfilesToGroup(groupName, facilitatorNames);
+  initGroups();
+  populateMemberRegistrationDropdowns();
+  populateFacilitatorGroupDropdown([groupName]);
+  populateGroupFacilitatorDropdown(facilitatorNames);
+  renderDataEntryGroupsDisplay();
+  renderFacilitatorsDisplay();
+
+  clearDataEntryGroupForm();
+  showToast(`✓ Group "${groupName}" added`);
 }
 
 function renderMembersDisplay() {
@@ -3863,11 +4571,13 @@ function sortMembersDisplay() {
 
 function editMember(idx) {
   const m = members[idx];
+  populateMemberRegistrationDropdowns(m.facilitators || '', m.group || '', getLegacyMemberCity(m));
   document.getElementById('m-name').value = m.name;
   document.getElementById('m-email').value = m.email || '';
   document.getElementById('m-mobile').value = m.mobile || '';
   document.getElementById('m-role').value = m.role || '';
-  document.getElementById('m-region').value = m.region || '';
+  document.getElementById('m-city').value = getLegacyMemberCity(m);
+  document.getElementById('m-region').value = getNormalizedMemberRegion(m.country || '', m.region || '');
   document.getElementById('m-language').value = m.language || '';
   document.getElementById('m-country').value = m.country || '';
   document.getElementById('m-country-code').value = m.country_code || '';
@@ -3889,7 +4599,8 @@ function editMember(idx) {
     members[idx].email = document.getElementById('m-email').value.trim();
     members[idx].mobile = document.getElementById('m-mobile').value.trim();
     members[idx].role = document.getElementById('m-role').value.trim();
-    members[idx].region = document.getElementById('m-region').value.trim();
+    members[idx].city = document.getElementById('m-city').value.trim();
+    members[idx].region = getNormalizedMemberRegion(document.getElementById('m-country').value.trim(), document.getElementById('m-region').value.trim());
     members[idx].language = document.getElementById('m-language').value.trim();
     members[idx].country = document.getElementById('m-country').value.trim();
     members[idx].country_code = document.getElementById('m-country-code').value.trim();
@@ -3905,6 +4616,7 @@ function editMember(idx) {
     
     localStorage.setItem('pns_live_members', JSON.stringify(members));
     renderMembersDisplay();
+    renderFacilitatorsDisplay();
     clearMemberForm();
     window.saveMemberForm = origSave;
     showToast('✓ Member updated');
@@ -3924,6 +4636,7 @@ function deleteMember(idx) {
   localStorage.setItem('pns_live_members', JSON.stringify(members));
   
   renderMembersDisplay();
+  renderFacilitatorsDisplay();
   showToast(`✓ Member deleted`);
   renderOverview();
   initGroups();  // ✅ SYNC GROUPS TAB
@@ -3935,9 +4648,9 @@ function deleteMember(idx) {
 }
 
 function downloadDataTemplate() {
-  const template = `Name,Email Address,Mobile / WhatsApp,Role,Region,Language,Country,Facilitator(s),Group Name,Registered Through,WhatsApp Group Status,Initiation Status,Culmination Status,Notes,Registered By
-John Doe,john@example.com,9876543210,Sadhak,North India,Hindi,India,Rajesh Kumar,Bangalore Group,Facebook,Yes,Yes,No,Follow up,Admin1
-Jane Smith,jane@example.com,9876543211,Sadhak,South India,English,India,Priya Sharma,Chennai Group,WhatsApp,Yes,No,No,,Admin1`;
+  const template = `Name,Email Address,Mobile / WhatsApp,Role,City,Region,Language,Country,Facilitator(s),Group Name,Registered Through,WhatsApp Group Status,Initiation Status,Culmination Status,Notes,Registered By
+John Doe,john@example.com,9876543210,Sadhak,Mumbai,INDIA,Hindi,India,Rajesh Kumar,Bangalore Group,Facebook,Yes,Yes,No,Follow up,Admin1
+Jane Smith,jane@example.com,9876543211,Sadhak,London,NON INDIA,English,United Kingdom,Priya Sharma,Chennai Group,WhatsApp,Yes,No,No,,Admin1`;
 
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(template);
@@ -3974,15 +4687,19 @@ function handleCsvImport(event) {
           continue;
         }
         
+        const cityIdx = headers.findIndex(h => h.includes('city'));
+        const regionIdx = headers.findIndex(h => h === 'region' || h.includes('region'));
+        const countryValue = values[headers.findIndex(h => h.includes('country'))] || '';
         const newMember = {
           idx: members.length,
           name: name,
           email: values[headers.findIndex(h => h.includes('email'))] || '',
           mobile: values[headers.findIndex(h => h.includes('mobile'))] || '',
           role: values[headers.findIndex(h => h.includes('role'))] || '',
-          region: values[headers.findIndex(h => h.includes('region'))] || '',
+          city: cityIdx >= 0 ? (values[cityIdx] || '') : '',
+          region: getNormalizedMemberRegion(countryValue, regionIdx >= 0 ? (values[regionIdx] || '') : ''),
           language: values[headers.findIndex(h => h.includes('language'))] || '',
-          country: values[headers.findIndex(h => h.includes('country'))] || '',
+          country: countryValue,
           facilitators: values[headers.findIndex(h => h.includes('facilitator'))] || '',
           group: values[headers.findIndex(h => h.includes('group'))] || '',
           registered_through: values[headers.findIndex(h => h.includes('registered'))] || '',
@@ -4015,9 +4732,9 @@ function handleCsvImport(event) {
 
 function exportAllMembers() {
   const q = v => '"' + String(v || '').replace(/"/g, '""') + '"';
-  const hdr = ['Name','Email','Mobile','Role','Region','Language','Country','CountryCode','Facilitators','Group','RegisteredThrough','WhatsAppStatus','InitStatus','CulminationStatus','Notes','RegisteredBy',...DATES.map((d,i)=>'Session_'+(i+1))].map(q).join(',');
+  const hdr = ['Name','Email','Mobile','Role','City','Region','Language','Country','CountryCode','Facilitators','Group','RegisteredThrough','WhatsAppStatus','InitStatus','CulminationStatus','Notes','RegisteredBy',...DATES.map((d,i)=>'Session_'+(i+1))].map(q).join(',');
   const rows = members.map(m => {
-    return [m.name,m.email,m.mobile,m.role,m.region,m.language,m.country,m.country_code,m.facilitators,m.group,m.registered_through,m.whatsapp_status,m.init_status,m.culmination_status,m.notes,m.registered_by,...(m.att||[]).map(a=>a===1?'Present':a===0?'Absent':'')].map(q).join(',');
+    return [m.name,m.email,m.mobile,m.role,m.city || getLegacyMemberCity(m),getNormalizedMemberRegion(m.country || '', m.region || ''),m.language,m.country,m.country_code,m.facilitators,m.group,m.registered_through,m.whatsapp_status,m.init_status,m.culmination_status,m.notes,m.registered_by,...(m.att||[]).map(a=>a===1?'Present':a===0?'Absent':'')].map(q).join(',');
   });
   
   const csv = [hdr,...rows].join('\n');
@@ -4030,10 +4747,9 @@ function exportAllMembers() {
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────
 function showSection(id) {
-  // Admin section is freely accessible - no PIN
-  if (id === 'programs' && currentRole !== 'admin') {
-    currentRole = 'admin';
-    applyRole();
+  if ((id === 'programs' || id === 'admin') && currentRole !== 'admin') {
+    alert('Admin access required.');
+    return;
   }
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -4083,6 +4799,23 @@ function updateBadges() {
   if (nd) { nd.classList.toggle('visible', adminTotal > 0 && currentRole === 'admin'); }
   if (tcb) { tcb.textContent = pendingTransfers; tcb.style.display = pendingTransfers > 0 ? 'inline-block' : 'none'; }
   if (gcb) { gcb.textContent = pendingGQ; gcb.style.display = pendingGQ > 0 ? 'inline-block' : 'none'; }
+}
+
+// ── CLOUD USERS WITHOUT GROUP (FOR ALERTS) ────────────────────────────────────────────────────────────
+function getCloudUsersWithoutGroupForAlerts() {
+  try {
+    if (!adminUsersState || !Array.isArray(adminUsersState.users)) return [];
+    const scoped = ((ALL_PROGRAMS || []).length <= 1 || !ACTIVE_PROGRAM_ID)
+      ? adminUsersState.users
+      : adminUsersState.users.filter(user => {
+          const assignments = Array.isArray(user.assignments) ? user.assignments : [];
+          return !assignments.length || assignments.some(item => item.program_id === ACTIVE_PROGRAM_ID);
+        });
+    return scoped.filter(user => !String(user?.profile?.group_name || '').trim());
+  } catch (e) {
+    console.error('Error filtering unassigned cloud users:', e);
+    return [];
+  }
 }
 
 // ── OVERVIEW ──────────────────────────────────────────────────────────────
@@ -4181,11 +4914,61 @@ function renderOverview() {
   const notWa = members.filter(m => m.wa !== 'Yes').length;
   const noInit = members.filter(m => m.init !== 'Yes').length;
   const pendingT = transferLog.filter(t => t.status === 'Pending').length;
+  const unassignedCloudUsers = getCloudUsersWithoutGroupForAlerts();
+
+  // Build group-wise pending items map
+  const pendingByGroupMap = new Map();
+  members
+    .filter(m => (m.role || 'Sadhak') !== 'Facilitator')
+    .forEach(m => {
+      const waPending = m.wa !== 'Yes';
+      const initPending = m.init !== 'Yes';
+      if (!waPending && !initPending) return;
+      
+      const groupName = String(m.group || 'Unassigned').trim() || 'Unassigned';
+      if (!pendingByGroupMap.has(groupName)) {
+        pendingByGroupMap.set(groupName, { wa: 0, init: 0, users: [] });
+      }
+      
+      const groupData = pendingByGroupMap.get(groupName);
+      if (waPending) groupData.wa += 1;
+      if (initPending) groupData.init += 1;
+      groupData.users.push(m.name || m.email || 'Unnamed');
+    });
+
+  const pendingByGroup = Array.from(pendingByGroupMap.entries())
+    .map(([group, info]) => ({ group, ...info, total: info.wa + info.init }))
+    .sort((a, b) => b.total - a.total);
+
+  // Build alerts HTML
   let alertsHTML = '';
+
+  // Existing alerts
   if (pendingT > 0) alertsHTML += `<div class="alert-box"><b>⇄ ${pendingT} Pending Transfer Request${pendingT > 1 ? 's' : ''}</b>Admin action required. Go to Admin panel to review.</div>`;
   if (lowAtt.length) alertsHTML += `<div class="alert-box"><b>◎ Low Attendance in Last Session</b>${lowAtt.map(g => g.group.split(' - ').slice(0,2).join(' ')).join(', ')}</div>`;
   if (notWa > 0) alertsHTML += `<div class="alert-box"><b>◉ ${notWa} Sadhaks Not in WhatsApp Group</b></div>`;
   if (noInit > 0) alertsHTML += `<div class="alert-box"><b>✦ ${noInit} Initiations Pending</b></div>`;
+
+  // NEW: Unassigned cloud users alert
+  if (unassignedCloudUsers.length) {
+    const names = unassignedCloudUsers
+      .slice(0, 8)
+      .map(u => (u.profile?.full_name || u.email || 'Unnamed User'))
+      .join(', ');
+    const more = unassignedCloudUsers.length > 8 ? ` +${unassignedCloudUsers.length - 8} more` : '';
+    alertsHTML += `<div class="alert-box" style="background-color: #fff3cd; border-left: 4px solid #ffc107;"><b>⚠ ${unassignedCloudUsers.length} User${unassignedCloudUsers.length > 1 ? 's' : ''} Without Group Assignment</b><div style="margin-top: 6px; font-size: 12px;">${names}${more}</div><div style="margin-top: 4px; font-size: 11px; color: #666;">Action: Assign group_name in Users & Access → Edit User</div></div>`;
+  }
+
+  // NEW: Group-wise pending action visibility
+  if (pendingByGroup.length) {
+    const lines = pendingByGroup.slice(0, 6).map(g => {
+      const sample = g.users.slice(0, 3).join(', ');
+      const extra = g.users.length > 3 ? ` +${g.users.length - 3} more` : '';
+      return `<div style="margin: 6px 0; font-size: 12px;"><b>${g.group}</b>: WA pending ${g.wa}, Initiation pending ${g.init} — ${sample}${extra}</div>`;
+    }).join('');
+    alertsHTML += `<div class="alert-box"><b>◎ Group-wise Pending Action Items</b>${lines}</div>`;
+  }
+
   if (!alertsHTML) alertsHTML = '<div style="color:var(--bilva);font-size:13px;font-style:italic">✦ No critical alerts at this time. Namah Shivaya.</div>';
   document.getElementById('alerts-panel').innerHTML = alertsHTML;
   renderFacilitatorOverview();
@@ -4203,6 +4986,7 @@ function pBar(label, val, total, cls) {
 
 // ── ADMIN PANEL ───────────────────────────────────────────────────────────
 function initAdmin() {
+  loadAdminUsersAccess();
   renderAdminTransfers();
   renderAdminTasks();
   renderAdminGuruQ();
@@ -4212,12 +4996,668 @@ function initAdmin() {
   renderBackupTimestamps();
 }
 function showAdminTab(tab, btn) {
-  ['transfers','tasks','guru-q','notes','settings'].forEach(t => {
+  ['users','transfers','tasks','guru-q','notes','settings'].forEach(t => {
     const el = document.getElementById('admin-' + t);
     if (el) el.style.display = t === tab ? 'block' : 'none';
   });
   document.querySelectorAll('#admin-tabs .tab-pill').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  if (tab === 'users') loadAdminUsersAccess();
+}
+
+const adminUsersState = {
+  loading: false,
+  error: '',
+  users: [],
+  programs: [],
+  actor: null,
+  selectedUserId: null,
+  newUserMode: false,
+  bulkMode: false,
+  bulkUpdateExisting: false,
+  bulkCsvText: '',
+  bulkPreview: null,
+  bulkSubmitting: false,
+  bulkForceReset: true,
+  userCategoryFilter: localStorage.getItem('pns_admin_user_category_filter') || 'All',
+  programAccessCategoryFilter: localStorage.getItem('pns_admin_program_access_category_filter') || 'All',
+};
+
+function escapeAdminHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getAdminUserSearchTerm() {
+  return (document.getElementById('admin-user-search')?.value || '').trim().toLowerCase();
+}
+
+function getAdminProgramCategoryMap() {
+  const map = new Map();
+  getAdminProgramOptions().forEach(program => {
+    map.set(program.program_id, program.category || 'General');
+  });
+  return map;
+}
+
+function getAdminUserCategorySet(user, categoryMap) {
+  const categories = new Set();
+  (user?.assignments || []).forEach(item => {
+    categories.add(categoryMap.get(item.program_id) || 'General');
+  });
+  if (!categories.size) categories.add('Unassigned');
+  return categories;
+}
+
+function setAdminUserCategoryFilter(category) {
+  adminUsersState.userCategoryFilter = category || 'All';
+  localStorage.setItem('pns_admin_user_category_filter', adminUsersState.userCategoryFilter);
+  renderAdminUsersAccess();
+}
+
+function setAdminProgramAccessCategoryFilter(category) {
+  adminUsersState.programAccessCategoryFilter = category || 'All';
+  localStorage.setItem('pns_admin_program_access_category_filter', adminUsersState.programAccessCategoryFilter);
+  applyAdminProgramAccessCategoryFilter();
+}
+
+function applyAdminProgramAccessCategoryFilter() {
+  const list = document.getElementById('admin-user-assignment-list');
+  if (!list) return;
+  const selected = adminUsersState.programAccessCategoryFilter || 'All';
+  const rows = Array.from(list.querySelectorAll('.admin-program-assignment'));
+  let visibleCount = 0;
+  rows.forEach(row => {
+    const rowCategory = row.getAttribute('data-category') || 'General';
+    const show = selected === 'All' || rowCategory === selected;
+    row.style.display = show ? 'grid' : 'none';
+    if (show) visibleCount += 1;
+  });
+
+  const summary = document.getElementById('admin-program-access-filter-summary');
+  if (summary) summary.textContent = `Showing ${visibleCount} of ${rows.length} programs`;
+
+  Array.from(document.querySelectorAll('.admin-program-access-filter-btn')).forEach(btn => {
+    const category = btn.getAttribute('data-category') || 'All';
+    const isSelected = category === selected;
+    btn.classList.toggle('btn-saffron', isSelected);
+    btn.classList.toggle('btn-outline', !isSelected);
+    btn.style.background = isSelected ? '' : '#fff';
+  });
+}
+
+function getAdminUserCategoryCounts(users) {
+  const categoryMap = getAdminProgramCategoryMap();
+  const counts = {};
+  (users || []).forEach(user => {
+    const categories = getAdminUserCategorySet(user, categoryMap);
+    categories.forEach(category => {
+      counts[category] = (counts[category] || 0) + 1;
+    });
+  });
+  return counts;
+}
+
+function getFilteredAdminUsers() {
+  const categoryMap = getAdminProgramCategoryMap();
+  const selectedCategory = adminUsersState.userCategoryFilter || 'All';
+  let users = adminUsersState.users;
+  if (selectedCategory !== 'All') {
+    users = users.filter(user => getAdminUserCategorySet(user, categoryMap).has(selectedCategory));
+  }
+  const term = getAdminUserSearchTerm();
+  if (!term) return users;
+  return users.filter(user => [
+    user.email,
+    user.profile?.full_name,
+    user.profile?.phone,
+    user.profile?.city,
+    user.profile?.group_name,
+    user.role,
+  ].join(' ').toLowerCase().includes(term));
+}
+
+function getSelectedAdminManagedUser() {
+  return adminUsersState.users.find(user => user.user_id === adminUsersState.selectedUserId) || null;
+}
+
+function getAdminProgramOptions() {
+  const catalog = new Map();
+  (ALL_PROGRAMS || []).forEach(program => {
+    if (!program || !program.id) return;
+    catalog.set(program.id, {
+      program_id: program.id,
+      project_name: program.name || program.id,
+      category: program.category || 'General',
+    });
+  });
+  return Array.from(catalog.values());
+}
+
+function selectAdminManagedUser(userId) {
+  adminUsersState.selectedUserId = userId;
+  adminUsersState.newUserMode = false;
+  adminUsersState.bulkMode = false;
+  renderAdminUsersAccess();
+}
+
+function startAdminNewUser() {
+  adminUsersState.selectedUserId = null;
+  adminUsersState.newUserMode = true;
+  adminUsersState.bulkMode = false;
+  adminUsersState.bulkPreview = null;
+  renderAdminUsersAccess();
+}
+
+function startAdminBulkImport() {
+  adminUsersState.selectedUserId = null;
+  adminUsersState.newUserMode = false;
+  adminUsersState.bulkMode = true;
+  renderAdminUsersAccess();
+}
+
+function parseAdminBulkCsvLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const ch = line[index];
+    if (ch === '"') {
+      if (inQuotes && line[index + 1] === '"') {
+        current += '"';
+        index += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (ch === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+function normalizeAdminBulkHeader(header) {
+  const normalized = String(header || '').trim().toLowerCase().replace(/[\s-]+/g, '_').replace(/[^a-z0-9_]/g, '');
+  const aliases = {
+    name: 'full_name',
+    role: 'global_role',
+    primary_role: 'global_role',
+    assignment_role: 'program_role',
+    program: 'program_id',
+    scope_type: 'admin_scope_type',
+  };
+  return aliases[normalized] || normalized;
+}
+
+function parseAdminBulkCsvText(text) {
+  const lines = String(text || '').split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  if (lines.length < 2) throw new Error('CSV must include a header row and at least one data row.');
+  const headers = parseAdminBulkCsvLine(lines[0]).map(normalizeAdminBulkHeader);
+  if (!headers.includes('email')) throw new Error('CSV must include an email column.');
+  return lines.slice(1).map(line => {
+    const cols = parseAdminBulkCsvLine(line);
+    return headers.reduce((row, header, index) => {
+      row[header] = String(cols[index] || '').trim();
+      return row;
+    }, {});
+  });
+}
+
+function getAdminBulkCsvText() {
+  return document.getElementById('admin-bulk-csv-text')?.value || adminUsersState.bulkCsvText || '';
+}
+
+function handleAdminBulkCsvInput(value) {
+  adminUsersState.bulkCsvText = String(value || '');
+  adminUsersState.bulkPreview = null;
+}
+
+function handleAdminBulkFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = event => {
+    adminUsersState.bulkCsvText = String(event.target?.result || '');
+    adminUsersState.bulkPreview = null;
+    renderAdminUsersAccess();
+  };
+  reader.readAsText(file);
+}
+
+function downloadAdminBulkTemplate() {
+  const headers = ['email', 'full_name', 'phone', 'city', 'region', 'country', 'language', 'group_name', 'global_role', 'program_id', 'program_role', 'admin_scope_type', 'reason'];
+  const rows = [
+    ['person1@example.com', 'Person One', '9999999999', 'Delhi', 'INDIA', 'India', 'Hindi', 'North Group', 'facilitator', 'prog_001', 'facilitator', '', 'Initial onboarding'],
+    ['person1@example.com', 'Person One', '9999999999', 'Delhi', 'INDIA', 'India', 'Hindi', 'North Group', 'facilitator', 'prog_002', 'guest', '', 'Initial onboarding'],
+    ['person2@example.com', 'Person Two', '', 'Mumbai', 'INDIA', 'India', 'English', 'West Group', 'sadhak', 'prog_003', 'sadhak', '', 'April import'],
+  ];
+  const csv = [headers, ...rows].map(row => row.map(value => '"' + String(value || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+  _csvDL(csv, 'Admin_Users_Bulk_Template');
+}
+
+function formatAdminBulkAssignments(assignments) {
+  if (!Array.isArray(assignments) || !assignments.length) return 'No program assignments';
+  return assignments.map(item => `${item.program_id} (${item.role})`).join(', ');
+}
+
+function renderAdminBulkResults() {
+  const preview = adminUsersState.bulkPreview;
+  if (!preview) return '<div style="font-size:11px;color:var(--text-soft);margin-top:10px">Paste or upload CSV, then click Validate CSV to preview grouped users and scope checks.</div>';
+  const summary = preview.summary || { total: 0, ready: 0, created: 0, failed: 0, assignments: 0 };
+  const rows = Array.isArray(preview.results) ? preview.results : [];
+  return `
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-light)">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <span class="badge badge-approved">Total ${summary.total || 0}</span>
+        <span class="badge badge-na">Ready ${summary.ready || 0}</span>
+        <span class="badge badge-approved">Created ${summary.created || 0}</span>
+        <span class="badge badge-pending">Updated ${summary.updated || 0}</span>
+        <span class="badge ${summary.failed ? 'badge-rejected' : 'badge-approved'}">Failed ${summary.failed || 0}</span>
+        <span class="badge badge-pending">Assignments ${summary.assignments || 0}</span>
+      </div>
+      <div style="max-height:340px;overflow:auto;border:1px solid var(--border-light);border-radius:10px;background:#fff">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr style="background:#f7f4ff;color:var(--text-main)">
+              <th style="padding:8px;border-bottom:1px solid var(--border-light);text-align:left">Rows</th>
+              <th style="padding:8px;border-bottom:1px solid var(--border-light);text-align:left">Email</th>
+              <th style="padding:8px;border-bottom:1px solid var(--border-light);text-align:left">Role</th>
+              <th style="padding:8px;border-bottom:1px solid var(--border-light);text-align:left">Assignments</th>
+              <th style="padding:8px;border-bottom:1px solid var(--border-light);text-align:left">Status</th>
+              <th style="padding:8px;border-bottom:1px solid var(--border-light);text-align:left">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(item => `
+              <tr>
+                <td style="padding:8px;border-bottom:1px solid var(--border-light);vertical-align:top">${escapeAdminHtml(Array.isArray(item.row_numbers) ? item.row_numbers.join(', ') : String(item.row_number || ''))}</td>
+                <td style="padding:8px;border-bottom:1px solid var(--border-light);vertical-align:top">${escapeAdminHtml(item.email || '')}</td>
+                <td style="padding:8px;border-bottom:1px solid var(--border-light);vertical-align:top">${escapeAdminHtml(item.role || '')}</td>
+                <td style="padding:8px;border-bottom:1px solid var(--border-light);vertical-align:top">${escapeAdminHtml(formatAdminBulkAssignments(item.assignments || []))}</td>
+                <td style="padding:8px;border-bottom:1px solid var(--border-light);vertical-align:top;font-weight:700;color:${item.status === 'error' ? 'var(--rudra)' : item.status === 'update' || item.status === 'updated' ? 'var(--saffron-dk)' : 'var(--bilva)'}">${escapeAdminHtml(item.status || '')}</td>
+                <td style="padding:8px;border-bottom:1px solid var(--border-light);vertical-align:top">${item.temporary_password ? `<div style="color:var(--saffron-dk);font-weight:700">Temp password: ${escapeAdminHtml(item.temporary_password)}</div>` : ''}${Array.isArray(item.errors) && item.errors.length ? item.errors.map(error => `<div style="color:var(--rudra)">${escapeAdminHtml(error)}</div>`).join('') : '<span style="color:var(--text-soft)">No issues</span>'}</td>
+              </tr>
+            `).join('') || '<tr><td colspan="6" style="padding:12px;color:var(--text-soft)">No preview rows.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+async function previewAdminBulkImport() {
+  try {
+    const rows = parseAdminBulkCsvText(getAdminBulkCsvText());
+    adminUsersState.bulkSubmitting = true;
+    adminUsersState.bulkForceReset = !!document.getElementById('admin-bulk-force-reset')?.checked;
+    adminUsersState.bulkUpdateExisting = !!document.getElementById('admin-bulk-update-existing')?.checked;
+    renderAdminUsersAccess();
+    const response = await fetch('/api/admin/users-bulk', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + _cloudSession.access_token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        rows,
+        dry_run: true,
+        force_password_reset: adminUsersState.bulkForceReset,
+        update_existing: adminUsersState.bulkUpdateExisting,
+      }),
+    });
+    adminUsersState.bulkPreview = await handleCloudApiResponse(response, 'Could not validate bulk import.');
+    renderAdminUsersAccess();
+  } catch (e) {
+    if (!isCloudAuthError(0, e.message)) alert(e.message || 'Could not validate bulk import.');
+  } finally {
+    adminUsersState.bulkSubmitting = false;
+    renderAdminUsersAccess();
+  }
+}
+
+async function submitAdminBulkImport() {
+  const updateExisting = !!document.getElementById('admin-bulk-update-existing')?.checked;
+  const msg = updateExisting
+    ? 'Create new users and update existing users from this CSV import?'
+    : 'Create users from this CSV import?';
+  if (!confirm(msg)) return;
+  try {
+    const rows = parseAdminBulkCsvText(getAdminBulkCsvText());
+    adminUsersState.bulkSubmitting = true;
+    adminUsersState.bulkForceReset = !!document.getElementById('admin-bulk-force-reset')?.checked;
+    adminUsersState.bulkUpdateExisting = updateExisting;
+    renderAdminUsersAccess();
+    const response = await fetch('/api/admin/users-bulk', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + _cloudSession.access_token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        rows,
+        dry_run: false,
+        force_password_reset: adminUsersState.bulkForceReset,
+        update_existing: adminUsersState.bulkUpdateExisting,
+      }),
+    });
+    adminUsersState.bulkPreview = await handleCloudApiResponse(response, 'Could not import users.');
+    await loadAdminUsersAccess();
+    showToast('Bulk import completed');
+  } catch (e) {
+    if (!isCloudAuthError(0, e.message)) alert(e.message || 'Could not import users.');
+  } finally {
+    adminUsersState.bulkSubmitting = false;
+    renderAdminUsersAccess();
+  }
+}
+
+async function loadAdminUsersAccess() {
+  const panel = document.getElementById('admin-users');
+  if (!panel || adminUsersState.loading) return;
+  if (!_cloudSession) {
+    adminUsersState.error = 'Sign in to Cloud as an admin to manage users.';
+    renderAdminUsersAccess();
+    return;
+  }
+
+  adminUsersState.loading = true;
+  adminUsersState.error = '';
+  renderAdminUsersAccess();
+
+  try {
+    const response = await fetch('/api/admin/users', {
+      headers: { Authorization: 'Bearer ' + _cloudSession.access_token },
+    });
+    const data = await handleCloudApiResponse(response, 'Could not load admin users.');
+    adminUsersState.users = Array.isArray(data.users) ? data.users : [];
+    adminUsersState.programs = Array.isArray(data.programs) ? data.programs : [];
+    adminUsersState.actor = data.actor || null;
+    if (!adminUsersState.newUserMode) {
+      if (!adminUsersState.selectedUserId || !adminUsersState.users.some(user => user.user_id === adminUsersState.selectedUserId)) {
+        adminUsersState.selectedUserId = adminUsersState.users[0]?.user_id || null;
+      }
+    }
+  } catch (e) {
+    if (!isCloudAuthError(0, e.message)) adminUsersState.error = e.message || 'Could not load users.';
+  } finally {
+    adminUsersState.loading = false;
+    renderAdminUsersAccess();
+    renderOverview();  // Refresh alerts when user data changes
+  }
+}
+
+function renderAdminUsersAccess() {
+  const panel = document.getElementById('admin-users');
+  if (!panel) return;
+
+  if (!_cloudSession) {
+    panel.innerHTML = `<div class="card"><div class="card-header"><span class="ch-icon">👤</span> Users & Access</div><p style="font-size:12px;color:var(--text-soft);margin-bottom:12px">Cloud admin sign-in is required to manage user accounts and program access.</p><button class="btn btn-saffron" onclick="showLoginModal()">Sign In to Continue</button></div>`;
+    return;
+  }
+
+  const filteredUsers = getFilteredAdminUsers();
+  const selected = adminUsersState.newUserMode ? null : getSelectedAdminManagedUser();
+  const programs = getAdminProgramOptions();
+  const assignmentMap = new Map((selected?.assignments || []).map(item => [item.program_id, item.role]));
+  const profile = selected?.profile || {};
+  const status = selected?.account_status || { is_locked: false, is_active: true, force_password_reset: false };
+  const role = selected?.role || 'facilitator';
+  const scopeType = selected?.admin_scope?.scope_type || 'program';
+  const isBulkMode = !!adminUsersState.bulkMode;
+  const programCategoryMap = getAdminProgramCategoryMap();
+  const programAccessCounts = programs.reduce((acc, program) => {
+    const category = programCategoryMap.get(program.program_id) || 'General';
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {});
+  const programAccessCategories = Object.keys(programAccessCounts).sort((a, b) => a.localeCompare(b));
+  if (adminUsersState.programAccessCategoryFilter !== 'All' && !programAccessCategories.includes(adminUsersState.programAccessCategoryFilter)) {
+    adminUsersState.programAccessCategoryFilter = 'All';
+    localStorage.setItem('pns_admin_program_access_category_filter', 'All');
+  }
+  const userCategoryCounts = getAdminUserCategoryCounts(adminUsersState.users);
+  const userCategories = Object.keys(userCategoryCounts).sort((a, b) => a.localeCompare(b));
+  if (adminUsersState.userCategoryFilter !== 'All' && !userCategories.includes(adminUsersState.userCategoryFilter)) {
+    adminUsersState.userCategoryFilter = 'All';
+    localStorage.setItem('pns_admin_user_category_filter', 'All');
+  }
+
+  const rightPanelHtml = isBulkMode ? `
+    <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:12px">
+        <div>
+          <div style="font-weight:700;color:var(--text-main)">Bulk Add Users</div>
+          <div style="font-size:11px;color:var(--text-soft)">Import mixed roles and mixed program assignments from CSV. Repeated emails are merged into one user with multiple program rows.</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="downloadAdminBulkTemplate()">Download Template</button>
+      </div>
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:10px;line-height:1.7">CSV columns: email, full_name, phone, city, region, country, language, group_name, global_role, program_id, program_role, admin_scope_type, reason</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <label class="btn btn-outline btn-sm" style="cursor:pointer">Upload CSV<input type="file" accept=".csv,.txt" style="display:none" onchange="handleAdminBulkFile(this.files[0]);this.value=''"></label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-main)"><input type="checkbox" id="admin-bulk-force-reset" ${adminUsersState.bulkForceReset ? 'checked' : ''}> Force password reset on first login</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-main)"><input type="checkbox" id="admin-bulk-update-existing" ${adminUsersState.bulkUpdateExisting ? 'checked' : ''}> Update existing users (replaces role, profile &amp; program access)</label>
+      </div>
+      <div class="form-row"><label>CSV Data</label><textarea id="admin-bulk-csv-text" rows="10" placeholder="Paste CSV here" oninput="handleAdminBulkCsvInput(this.value)">${escapeAdminHtml(adminUsersState.bulkCsvText || '')}</textarea></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-outline" onclick="previewAdminBulkImport()" ${adminUsersState.bulkSubmitting ? 'disabled' : ''}>${adminUsersState.bulkSubmitting ? 'Working...' : 'Validate CSV'}</button>
+        <button class="btn btn-saffron" onclick="submitAdminBulkImport()" ${adminUsersState.bulkSubmitting ? 'disabled' : ''}>Import Users</button>
+      </div>
+      ${renderAdminBulkResults()}
+    </div>` : `
+    <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:12px">
+        <div>
+          <div style="font-weight:700;color:var(--text-main)">${adminUsersState.newUserMode ? 'Create User Account' : 'Edit User Account'}</div>
+          <div style="font-size:11px;color:var(--text-soft)">${adminUsersState.newUserMode ? 'Create a new auth-linked user and assign program access.' : escapeAdminHtml(selected?.email || 'Select a user from the list.')}</div>
+        </div>
+        ${selected ? `<div style="font-size:10px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${status.is_active === false ? 'badge-rejected' : (status.is_locked ? 'badge-pending' : 'badge-approved')}">${status.is_active === false ? 'Inactive' : (status.is_locked ? 'Locked' : 'Active')}</span>${status.force_password_reset ? '<span class="badge badge-na">Force Reset</span>' : ''}</div>` : ''}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-row"><label>Full Name</label><input type="text" id="admin-user-full-name" value="${escapeAdminHtml(profile.full_name || '')}" placeholder="Full name"></div>
+        <div class="form-row"><label>Email</label><input type="email" id="admin-user-email" value="${escapeAdminHtml(selected?.email || '')}" placeholder="email@example.com"></div>
+        <div class="form-row"><label>Phone</label><input type="text" id="admin-user-phone" value="${escapeAdminHtml(profile.phone || '')}" placeholder="Phone / WhatsApp"></div>
+        <div class="form-row"><label>City</label><select id="admin-user-city"><option value="">Select City</option>${MEMBER_CITY_OPTIONS.map(city => `<option value="${escapeAdminHtml(city)}" ${(profile.city || '') === city ? 'selected' : ''}>${escapeAdminHtml(city)}</option>`).join('')}</select></div>
+        <div class="form-row"><label>Region</label><select id="admin-user-region"><option value="INDIA" ${((profile.region || 'INDIA') === 'INDIA') ? 'selected' : ''}>India</option><option value="NON INDIA" ${profile.region === 'NON INDIA' ? 'selected' : ''}>Non India</option></select></div>
+        <div class="form-row"><label>Country</label><input type="text" id="admin-user-country" value="${escapeAdminHtml(profile.country || '')}" placeholder="Country"></div>
+        <div class="form-row"><label>Language</label><select id="admin-user-language"><option value="">Select</option><option value="Hindi" ${profile.language === 'Hindi' ? 'selected' : ''}>Hindi</option><option value="English" ${profile.language === 'English' ? 'selected' : ''}>English</option><option value="Any" ${profile.language === 'Any' ? 'selected' : ''}>Any</option><option value="Both" ${profile.language === 'Both' ? 'selected' : ''}>Both</option></select></div>
+        <div class="form-row"><label>Primary Role</label><select id="admin-user-role"><option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option><option value="facilitator" ${role === 'facilitator' ? 'selected' : ''}>Facilitator</option><option value="sadhak" ${role === 'sadhak' ? 'selected' : ''}>Sadhak</option><option value="guest" ${role === 'guest' ? 'selected' : ''}>Guest</option></select></div>
+        <div class="form-row" style="grid-column:1/-1"><label>Group / Notes</label><input type="text" id="admin-user-group-name" value="${escapeAdminHtml(profile.group_name || '')}" placeholder="Primary group or assignment note"></div>
+      </div>
+
+      ${adminUsersState.newUserMode ? `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px"><div class="form-row"><label>Temporary Password</label><input type="text" id="admin-user-temp-password" placeholder="Leave blank to auto-generate"></div><div class="form-row"><label style="display:flex;align-items:center;gap:8px;margin-top:24px"><input type="checkbox" id="admin-user-force-reset" checked> Force password reset on first login</label></div></div>` : ''}
+
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border-light)">
+        <div style="font-size:12px;font-weight:700;color:var(--text-main);margin-bottom:8px">Program Access</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:10px 12px;background:linear-gradient(180deg,#fcfbff,#f5f2ff);border:1px solid var(--border-light);border-radius:12px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${['All', ...programAccessCategories].map(category => {
+              const selectedCategory = category === (adminUsersState.programAccessCategoryFilter || 'All');
+              const count = category === 'All' ? programs.length : (programAccessCounts[category] || 0);
+              return `<button type="button" data-category="${escapeAdminHtml(category)}" class="btn btn-sm admin-program-access-filter-btn ${selectedCategory ? 'btn-saffron' : 'btn-outline'}" onclick='setAdminProgramAccessCategoryFilter(${JSON.stringify(category)})' style="${selectedCategory ? '' : 'background:#fff;'}">${escapeAdminHtml(category)} (${count})</button>`;
+            }).join('')}
+          </div>
+          <div id="admin-program-access-filter-summary" style="font-size:11px;color:var(--text-soft)">Showing ${programs.length} of ${programs.length} programs</div>
+        </div>
+        <div id="admin-user-assignment-list" style="display:grid;gap:8px">
+          ${programs.length ? programs.map(program => {
+            const isChecked = assignmentMap.has(program.program_id);
+            const assignmentRole = assignmentMap.get(program.program_id) || (role === 'admin' ? 'admin' : 'facilitator');
+            const programCategory = programCategoryMap.get(program.program_id) || 'General';
+            return `<label class="admin-program-assignment" data-program-id="${escapeAdminHtml(program.program_id)}" data-category="${escapeAdminHtml(programCategory)}" style="display:grid;grid-template-columns:auto 1fr 140px;gap:10px;align-items:center;border:1px solid var(--border-light);border-radius:8px;padding:8px 10px;background:#faf8ff"><input type="checkbox" class="admin-program-check" ${isChecked ? 'checked' : ''}><div><div style="font-size:12px;font-weight:600;color:var(--text-main)">${escapeAdminHtml(program.project_name || program.program_id)}</div><div style="font-size:10px;color:var(--text-mute)">${escapeAdminHtml(program.program_id)}</div></div><select class="admin-program-role"><option value="admin" ${assignmentRole === 'admin' ? 'selected' : ''}>Admin</option><option value="facilitator" ${assignmentRole === 'facilitator' ? 'selected' : ''}>Facilitator</option><option value="sadhak" ${assignmentRole === 'sadhak' ? 'selected' : ''}>Sadhak</option><option value="guest" ${assignmentRole === 'guest' ? 'selected' : ''}>Guest</option></select></label>`;
+          }).join('') : '<div style="font-size:11px;color:var(--text-soft)">No programs available yet.</div>'}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+          <div class="form-row"><label>Admin Scope</label><select id="admin-user-scope-type"><option value="program" ${scopeType === 'program' ? 'selected' : ''}>Program Scoped</option><option value="global" ${scopeType === 'global' ? 'selected' : ''}>Global</option></select></div>
+          <div class="form-row"><label>Reason / Comment</label><input type="text" id="admin-user-reason" placeholder="Why is this change being made?"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+        <button class="btn btn-saffron" onclick="saveAdminManagedUser()">${adminUsersState.newUserMode ? 'Create User' : 'Save Changes'}</button>
+        ${selected ? `<button class="btn btn-outline" onclick="runAdminUserAction('send_reset_link')">Send Reset Link</button><button class="btn btn-outline" onclick="runAdminUserAction('set_temporary_password')">Set Temp Password</button><button class="btn btn-outline" onclick="runAdminUserAction('${status.is_locked ? 'unlock' : 'lock'}')">${status.is_locked ? 'Unlock' : 'Lock'}</button><button class="btn btn-outline" onclick="runAdminUserAction('${status.is_active === false ? 'reactivate' : 'deactivate'}')">${status.is_active === false ? 'Reactivate' : 'Deactivate'}</button><button class="btn btn-outline" onclick="runAdminUserAction('${status.force_password_reset ? 'clear_force_password_reset' : 'force_password_reset'}')">${status.force_password_reset ? 'Clear Force Reset' : 'Force Reset Next Login'}</button><button class="btn btn-outline" style="border-color:var(--rudra);color:var(--rudra)" onclick="runAdminUserAction('delete_user')">🗑 Delete User</button>` : ''}
+      </div>
+    </div>`;
+
+  panel.innerHTML = `
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-header" style="justify-content:space-between;align-items:flex-start;gap:12px">
+        <span><span class="ch-icon">👤</span> Users &amp; Access</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline btn-sm" onclick="loadAdminUsersAccess()">↻ Refresh</button>
+          <button class="btn btn-saffron btn-sm" onclick="startAdminNewUser()">+ New User</button>
+          <button class="btn btn-outline btn-sm" onclick="startAdminBulkImport()">Bulk Add</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text-soft);margin-bottom:12px;line-height:1.7">Manage accounts, roles, and program-scoped access directly from the dashboard. Global admins can manage everything; program admins are limited to their assigned programs.</div>
+      ${adminUsersState.actor ? `<div style="font-size:11px;color:var(--shiva-mid);margin-bottom:12px">Signed in as ${escapeAdminHtml(adminUsersState.actor.email || '')} · ${adminUsersState.actor.is_global_admin ? 'Global Admin' : 'Program Admin'}</div>` : ''}
+      ${adminUsersState.error ? `<div class="alert-box" style="margin-bottom:12px;color:var(--rudra)">${escapeAdminHtml(adminUsersState.error)}</div>` : ''}
+      <div class="two-col" style="align-items:flex-start">
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding:10px 12px;background:linear-gradient(180deg,#fcfbff,#f5f2ff);border:1px solid var(--border-light);border-radius:12px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${['All', ...userCategories].map(category => {
+                const selectedCategory = category === (adminUsersState.userCategoryFilter || 'All');
+                const count = category === 'All' ? adminUsersState.users.length : (userCategoryCounts[category] || 0);
+                return `<button class="btn btn-sm ${selectedCategory ? 'btn-saffron' : 'btn-outline'}" onclick='setAdminUserCategoryFilter(${JSON.stringify(category)})' style="${selectedCategory ? '' : 'background:#fff;'}">${escapeAdminHtml(category)} (${count})</button>`;
+              }).join('')}
+            </div>
+            <div style="font-size:11px;color:var(--text-soft)">Showing ${filteredUsers.length} of ${adminUsersState.users.length} users</div>
+          </div>
+          <div class="form-row"><label>Search Users</label><input type="text" id="admin-user-search" placeholder="Search by name, email, phone, role…" value="${escapeAdminHtml(getAdminUserSearchTerm())}" oninput="renderAdminUsersAccess()"></div>
+          <div style="max-height:520px;overflow:auto;border:1px solid var(--border-light);border-radius:10px;background:#fff">
+            ${adminUsersState.loading ? '<div style="padding:18px;font-size:12px;color:var(--text-soft)">Loading users…</div>' : (filteredUsers.length ? filteredUsers.map(user => `
+              <button type="button" onclick="selectAdminManagedUser('${escapeAdminHtml(user.user_id)}')" style="display:block;width:100%;text-align:left;border:none;border-bottom:1px solid var(--border-light);padding:12px 14px;background:${!adminUsersState.newUserMode && adminUsersState.selectedUserId === user.user_id ? 'rgba(74,43,138,0.08)' : '#fff'};cursor:pointer">
+                <div style="font-weight:700;color:var(--text-main)">${escapeAdminHtml(user.profile?.full_name || user.email || 'Unnamed User')}</div>
+                <div style="font-size:11px;color:var(--text-soft);margin-top:2px">${escapeAdminHtml(user.email || '')}</div>
+                <div style="font-size:10px;color:var(--text-mute);margin-top:4px">${escapeAdminHtml(user.role || 'guest')} · ${(user.account_status?.is_active === false) ? 'Inactive' : (user.account_status?.is_locked ? 'Locked' : 'Active')}</div>
+              </button>
+            `).join('') : '<div style="padding:18px;font-size:12px;color:var(--text-soft)">No users found in your scope.</div>')}
+          </div>
+        </div>
+        <div>${rightPanelHtml}</div>
+      </div>
+    </div>`;
+
+  applyAdminProgramAccessCategoryFilter();
+}
+
+function collectAdminAssignmentsFromForm() {
+  return Array.from(document.querySelectorAll('#admin-user-assignment-list .admin-program-assignment')).map(row => {
+    const programId = row.getAttribute('data-program-id') || '';
+    const checked = row.querySelector('.admin-program-check')?.checked;
+    const role = row.querySelector('.admin-program-role')?.value || 'facilitator';
+    return checked ? { program_id: programId, role } : null;
+  }).filter(Boolean);
+}
+
+async function saveAdminManagedUser() {
+  try {
+    const payload = {
+      email: (document.getElementById('admin-user-email')?.value || '').trim(),
+      role: (document.getElementById('admin-user-role')?.value || 'facilitator').trim(),
+      profile: {
+        full_name: (document.getElementById('admin-user-full-name')?.value || '').trim(),
+        phone: (document.getElementById('admin-user-phone')?.value || '').trim(),
+        city: (document.getElementById('admin-user-city')?.value || '').trim(),
+        region: (document.getElementById('admin-user-region')?.value || 'INDIA').trim(),
+        country: (document.getElementById('admin-user-country')?.value || '').trim(),
+        language: (document.getElementById('admin-user-language')?.value || '').trim(),
+        group_name: (document.getElementById('admin-user-group-name')?.value || '').trim(),
+      },
+      assignments: collectAdminAssignmentsFromForm(),
+      admin_scope: {
+        scope_type: (document.getElementById('admin-user-scope-type')?.value || 'program').trim(),
+        program_ids: collectAdminAssignmentsFromForm().map(item => item.program_id),
+      },
+      reason: (document.getElementById('admin-user-reason')?.value || '').trim(),
+    };
+    if (!payload.email) throw new Error('Email is required.');
+
+    let response;
+    if (adminUsersState.newUserMode) {
+      payload.temporary_password = (document.getElementById('admin-user-temp-password')?.value || '').trim();
+      payload.force_password_reset = !!document.getElementById('admin-user-force-reset')?.checked;
+      response = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + _cloudSession.access_token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      payload.user_id = adminUsersState.selectedUserId;
+      response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: {
+          Authorization: 'Bearer ' + _cloudSession.access_token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+    }
+    const data = await handleCloudApiResponse(response, 'Could not save user.');
+    if (adminUsersState.newUserMode && data.temporary_password) {
+      alert('User created successfully. Temporary password: ' + data.temporary_password);
+    }
+    adminUsersState.newUserMode = false;
+    await loadAdminUsersAccess();
+    showToast(adminUsersState.newUserMode ? 'User created' : 'User saved');
+  } catch (e) {
+    if (!isCloudAuthError(0, e.message)) alert(e.message || 'Could not save user.');
+  }
+}
+
+async function runAdminUserAction(action) {
+  const selected = getSelectedAdminManagedUser();
+  if (!selected) return;
+  try {
+    const body = {
+      user_id: selected.user_id,
+      action,
+      email: selected.email,
+    };
+    if (action === 'lock' || action === 'deactivate') {
+      body.reason = prompt('Reason (optional):') || '';
+    }
+    if (action === 'set_temporary_password') {
+      body.temporary_password = prompt('Enter temporary password or leave blank to auto-generate:') || '';
+    }
+    if (action === 'delete_user') {
+      const confirmed = confirm(`⚠️  WARNING: This will permanently delete the user account for ${selected.email}. This action cannot be undone.\n\nType the email to confirm: ${selected.email}`);
+      if (!confirmed) return;
+      const emailConfirm = prompt(`Please type the email address to confirm deletion:\n${selected.email}`);
+      if (emailConfirm !== selected.email) {
+        alert('Email does not match. Deletion cancelled.');
+        return;
+      }
+    }
+    const response = await fetch('/api/admin/user-actions', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + _cloudSession.access_token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await handleCloudApiResponse(response, 'Admin action failed.');
+    if (data.temporary_password) alert('Temporary password: ' + data.temporary_password);
+    if (action === 'delete_user') {
+      alert('User deleted successfully.');
+      adminUsersState.selectedUserId = null;
+    }
+    await loadAdminUsersAccess();
+    showToast('Admin action completed');
+  } catch (e) {
+    if (!isCloudAuthError(0, e.message)) alert(e.message || 'Admin action failed.');
+  }
 }
 
 function renderAdminTransfers() {
@@ -4416,8 +5856,8 @@ function renderGuruQuestions() {
   let filtered = guruQuestions;
   if (gqTabFilter === 'pending') filtered = filtered.filter(q => q.status === 'Pending');
   if (gqTabFilter === 'answered') filtered = filtered.filter(q => q.status === 'Answered');
-  // Facilitators see only their own; admins see all
-  if (currentRole === 'facilitator') {
+  // Non-admin roles see only their own; admins see all
+  if (currentRole !== 'admin') {
     const fname = document.getElementById('gq-facilitator')?.value?.trim();
     if (fname) filtered = filtered.filter(q => q.facilitator === fname);
   }
@@ -6278,6 +7718,7 @@ function openAddGroupModal() {
 function addNewGroup() {
   const groupName = document.getElementById('ng-name')?.value.trim() || '';
   const facilitator = document.getElementById('ng-facilitator')?.value.trim() || '';
+  const facilitatorNames = facilitator ? [facilitator] : [];
   const region = document.getElementById('ng-region')?.value || 'INDIA';
   const language = document.getElementById('ng-language')?.value || 'Hindi';
 
@@ -6289,7 +7730,8 @@ function addNewGroup() {
 
   GROUPS.push({
     group: groupName,
-    facilitator,
+    facilitator: facilitatorNames[0] || '',
+    facilitator_names: facilitatorNames,
     region,
     language,
     total: 0,
@@ -6346,6 +7788,7 @@ function addNewMember() {
     GROUPS.push({
       group: groupName,
       facilitator: '',
+      facilitator_names: [],
       region: document.getElementById('nm-region').value,
       language: document.getElementById('nm-language').value,
       total: 0,
@@ -6627,7 +8070,8 @@ function checkFirstLaunch(){
   ALL_PROGRAMS = JSON.parse(localStorage.getItem('pns_all_programs')||'[]');
   ACTIVE_PROGRAM_ID = localStorage.getItem('pns_active_program_id')||null;
   editableContent = JSON.parse(localStorage.getItem('pns_editable_content')||'{}');
-  currentRole='facilitator';applyRole();
+  currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
+  applyRole();
   const hasData=localStorage.getItem('pns_project_loaded');
   if(!hasData){document.getElementById('setup-screen').style.display='block';return;}
   
@@ -6758,115 +8202,6 @@ function toggleAutoBackup(en){const cfg=getAutoBackupConfig();cfg.enabled=en;sav
 function updateAutoBackupFreq(){const cfg=getAutoBackupConfig();cfg.frequency=document.getElementById('ab-freq').value;saveAutoBackupConfig(cfg);startAutoBackupScheduler();renderAutoBackupSettings();}
 function updateAutoBackupTime(){const cfg=getAutoBackupConfig();cfg.time=document.getElementById('ab-time').value;saveAutoBackupConfig(cfg);startAutoBackupScheduler();}
 
-// ── COMPLETE CSV BACKUP/RESTORE FOR ALL DATA ────────────────────────────────
-function exportCompleteDataCSV() {
-  if (!members.length) { showToast('No data to export'); return; }
-  const q = v => '"' + String(v || '').replace(/"/g, '""') + '"';
-  let csv = 'COMPLETE_DATA_BACKUP,'+new Date().toISOString()+'\n\n';
-  csv += '=== MEMBERS ===\n';
-  const mh = ['Name','Email','Mobile','Role','Region','Language','Country','CountryCode','Facilitators','Group','RegisteredThrough','WhatsAppStatus','InitStatus','CulminationStatus','Notes','RegisteredBy','CreatedAt','UpdatedAt',...DATES.map((d,i)=>'Session_'+(i+1))];
-  csv += mh.map(q).join(',') + '\n';
-  members.forEach(m => {
-    const row = [m.name,m.email,m.mobile||'',m.role||'',m.region||'',m.language||'',m.country||'',m.country_code||'',m.facilitators||'',m.group||'',m.registered_through||'',m.whatsapp_status||'',m.init_status||'',m.culmination_status||'',m.notes||'',m.registered_by||'',m.created_at||'',m.updated_at||'',...(m.att||[]).map(a=>a===1?'Present':a===0?'Absent':'')];
-    csv += row.map(q).join(',') + '\n';
-  });
-  csv += '\n=== GROUPS ===\n';
-  const gh = ['Group','Facilitator','Region','Language','MeetLink'];
-  csv += gh.map(q).join(',') + '\n';
-  (GROUPS || []).forEach(g => {
-    const row = [g.group||'',g.facilitator||'',g.region||'',g.language||'',g.meet_link||''];
-    csv += row.map(q).join(',') + '\n';
-  });
-  csv += '\n=== SESSION_DATES ===\n';
-  const dh = ['SessionNumber','DateLabel'];
-  csv += dh.map(q).join(',') + '\n';
-  DATES.forEach((d, i) => {
-    const row = ['Session '+(i+1), d];
-    csv += row.map(q).join(',') + '\n';
-  });
-  csv += '\n=== PROGRAMS ===\n';
-  const ph = ['ProgramID','ProgramName','Status','CreatedAt','MemberCount','SessionCount'];
-  csv += ph.map(q).join(',') + '\n';
-  (ALL_PROGRAMS || []).forEach(p => {
-    const row = [p.id||'',p.name||'',p.status||'active',p.created_at||'',p.meta?.member_count||0,p.meta?.session_count||0];
-    csv += row.map(q).join(',') + '\n';
-  });
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = 'Complete_Backup_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
-  showToast('✓ Complete backup exported');
-  localStorage.setItem('pns_ts_export_complete_csv', new Date().toISOString());
-  if (document.getElementById('ts-export-complete-csv')) document.getElementById('ts-export-complete-csv').textContent = 'Last exported: ' + new Date().toLocaleString();
-}
-
-function importCompleteDataCSV(file) {
-  if (!file) return;
-  if (!confirm('Import complete backup?\n\nThis will ADD data to current state.\nContinue?')) return;
-  const reader = new FileReader();
-  reader.onload = event => {
-    try {
-      const csv = event.target.result;
-      const lines = csv.trim().split('\n');
-      let current = null;
-      let m_imp = 0, g_imp = 0, s_imp = 0, p_imp = 0;
-      lines.forEach(line => {
-        line = line.trim();
-        if (line === '=== MEMBERS ===') { current = 'members'; return; }
-        if (line === '=== GROUPS ===') { current = 'groups'; return; }
-        if (line === '=== SESSION_DATES ===') { current = 'dates'; return; }
-        if (line === '=== PROGRAMS ===') { current = 'programs'; return; }
-        if (!line || line.startsWith('===') || line.startsWith('COMPLETE')) return;
-        if (current === 'members' && !line.startsWith('Name,')) {
-          const vals = line.match(/"([^"]*)"|([^,]+)/g).map(v => v.replace(/^"|"$/g,'').trim());
-          if (vals.length < 4) return;
-          const mem = {idx:members.length,name:vals[0],email:vals[1],mobile:vals[2],role:vals[3],region:vals[4]||'',language:vals[5]||'',country:vals[6]||'',country_code:vals[7]||'',facilitators:vals[8]||'',group:vals[9]||'',registered_through:vals[10]||'',whatsapp_status:vals[11]||'',init_status:vals[12]||'',culmination_status:vals[13]||'',notes:vals[14]||'',registered_by:vals[15]||'',created_at:vals[16]||new Date().toISOString(),att:new Array(DATES.length).fill(-1)};
-          if (!members.find(m => m.name.toLowerCase() === mem.name.toLowerCase() && m.email.toLowerCase() === mem.email.toLowerCase())) {
-            members.push(mem);
-            m_imp++;
-          }
-        }
-        if (current === 'groups' && !line.startsWith('Group,')) {
-          const vals = line.match(/"([^"]*)"|([^,]+)/g).map(v => v.replace(/^"|"$/g,'').trim());
-          if (!vals[0]) return;
-          if (!GROUPS.find(g => g.group === vals[0])) {
-            GROUPS.push({group:vals[0],facilitator:vals[1]||'',region:vals[2]||'',language:vals[3]||'',meet_link:vals[4]||''});
-            g_imp++;
-          }
-        }
-        if (current === 'dates' && !line.startsWith('SessionNumber,')) {
-          const vals = line.match(/"([^"]*)"|([^,]+)/g).map(v => v.replace(/^"|"$/g,'').trim());
-          if (vals[1] && !DATES.includes(vals[1])) {
-            DATES.push(vals[1]);
-            s_imp++;
-          }
-        }
-        if (current === 'programs' && !line.startsWith('ProgramID,')) {
-          const vals = line.match(/"([^"]*)"|([^,]+)/g).map(v => v.replace(/^"|"$/g,'').trim());
-          if (!vals[1]) return;
-          if (!ALL_PROGRAMS.find(p => p.name === vals[1])) {
-            ALL_PROGRAMS.push({id:vals[0],name:vals[1],status:vals[2]||'active',created_at:vals[3],meta:{member_count:parseInt(vals[4])||0,session_count:parseInt(vals[5])||0}});
-            p_imp++;
-          }
-        }
-      });
-      localStorage.setItem('pns_live_members', JSON.stringify(members));
-      localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
-      localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
-      localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
-      renderOverview();
-      renderMembersDisplay();
-      initGroups();
-      alert(`✓ Restored!\n\n• ${m_imp} members\n• ${g_imp} groups\n• ${s_imp} sessions\n• ${p_imp} programs`);
-      localStorage.setItem('pns_ts_import_complete_csv', new Date().toISOString());
-      if (document.getElementById('ts-import-complete-csv')) document.getElementById('ts-import-complete-csv').textContent = 'Last imported: ' + new Date().toLocaleString();
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
-  };
-  reader.readAsText(file);
-}
-
 // ── FAQ & GUIDELINES ADMIN CRUD ───────────────────────────────────────────
 function openAddFAQModal(idx){const faqs=JSON.parse(localStorage.getItem('pns_custom_faqs')||'null')||[...FAQS];const f=idx!==undefined?faqs[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(f?'Edit':'Add')+' FAQ</h2><div class="form-row"><label>Language</label><select id="faq-e-lang"><option value="en" '+((!f||f.lang==="en")?'selected':'')+'>English</option><option value="hi" '+(f&&f.lang==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Question *</label><input type="text" id="faq-e-q" value="'+(f?f.q.replace(/"/g,"&quot;"):'')+'" placeholder="Question…"></div><div class="form-row"><label>Answer *</label><textarea id="faq-e-a" style="height:120px">'+(f?f.a:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveFAQEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
 function saveFAQEdit(idx){const q=document.getElementById('faq-e-q').value.trim(),a=document.getElementById('faq-e-a').value.trim(),lang=document.getElementById('faq-e-lang').value;if(!q||!a){alert('Question and Answer required.');return;}let faqs=JSON.parse(localStorage.getItem('pns_custom_faqs')||'null')||[...FAQS];if(idx>=0)faqs[idx]={...faqs[idx],q,a,lang};else faqs.push({q,a,lang});localStorage.setItem('pns_custom_faqs',JSON.stringify(faqs));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());filterFAQ();}
@@ -6938,18 +8273,219 @@ function saveMeetLink(groupIdx, url) {
   showToast(url ? '✓ Meet link saved!' : 'Meet link removed.');
 }
 
-async function initCloudSync(){
-  if(cloudSyncClient) return true;
+function clearCloudSession({ expired = false } = {}){
+  _cloudSession = null;
+  try{ sessionStorage.removeItem(CLOUD_SESSION_STORAGE_KEY); }catch(_e){}
+  setRole('guest');
+  assignedProgramIds = null;
+  unlockRoleDropdown();
+  updateCloudAuthUI(null);
+  updateCloudSyncStatus(expired ? 'Cloud sync: Session expired' : 'Cloud sync: Signed out', false);
+}
+
+function persistCloudSession(){
   try{
-    const res = await fetch('/api/config', { cache:'no-store' });
-    if(!res.ok) return false;
-    const cfg = await res.json();
-    if(!cfg.supabaseUrl || !cfg.supabaseAnonKey) return false;
-    if(!window.supabase || typeof window.supabase.createClient !== 'function') return false;
-    cloudSyncClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    if(_cloudSession) sessionStorage.setItem(CLOUD_SESSION_STORAGE_KEY, JSON.stringify(_cloudSession));
+    else sessionStorage.removeItem(CLOUD_SESSION_STORAGE_KEY);
+  }catch(_e){}
+}
+
+function applyCloudUserContext(infoData, sessionData){
+  _cloudSession = {
+    email: infoData.email,
+    access_token: sessionData.access_token,
+    refresh_token: sessionData.refresh_token,
+      force_password_reset: !!(infoData.account_status?.force_password_reset || sessionData.force_password_reset),
+  };
+  persistCloudSession();
+  setRole(infoData.role);
+  lockRoleDropdown(infoData.role);
+  assignedProgramIds = (infoData.role === 'admin') ? null : (infoData.programIds || []);
+  updateCloudAuthUI({ email: infoData.email });
+  const scopeTxt = infoData.role === 'admin'
+    ? 'all programs'
+    : (infoData.programIds.length ? infoData.programIds.length + ' program(s)' : 'no program assigned');
+  updateCloudSyncStatus('Cloud sync: Signed in as ' + infoData.email + ' | ' + scopeTxt, true);
+  if(infoData.role !== 'admin') enforceProgramScope();
+}
+
+function isCloudAuthError(status, message){
+  return status === 401 || status === 403 || /jwt|token|auth|expired|session/i.test(String(message || ''));
+}
+
+async function handleCloudApiResponse(response, fallbackMessage, options = {}){
+  const { promptOnAuthError = true } = options;
+  const data = await response.json().catch(() => ({}));
+  if(!response.ok){
+    const message = data.error || fallbackMessage;
+    if(isCloudAuthError(response.status, message)){
+      clearCloudSession({ expired: true });
+      if(promptOnAuthError){
+        alert('Your cloud session expired. Please sign in again.');
+        showLoginModal();
+      }
+    }
+    throw new Error(message);
+  }
+  return data;
+}
+
+async function restoreCloudSession(){
+  let savedSession = null;
+  try{
+    savedSession = JSON.parse(sessionStorage.getItem(CLOUD_SESSION_STORAGE_KEY) || 'null');
+  }catch(_e){
+    savedSession = null;
+  }
+  if(!savedSession || !savedSession.access_token){
+    updateCloudSyncStatus('Cloud sync: Ready for sign in', false);
+    return true;
+  }
+  _cloudSession = savedSession;
+  updateCloudAuthUI({ email: savedSession.email || 'Signed in user' });
+  updateCloudSyncStatus('Cloud sync: Restoring session…', true);
+  try{
+    const infoRes = await fetch('/api/userinfo', {
+      headers: { 'Authorization': 'Bearer ' + savedSession.access_token }
+    });
+    const infoData = await handleCloudApiResponse(infoRes, 'Session restore failed', { promptOnAuthError: false });
+    applyCloudUserContext(infoData, savedSession);
     return true;
   }catch(_e){
+    updateCloudSyncStatus('Cloud sync: Ready for sign in', false);
     return false;
+  }
+}
+
+async function initCloudSync(){
+  if(!_cloudInitPromise) _cloudInitPromise = restoreCloudSession();
+  return _cloudInitPromise;
+}
+
+// ── CLOUD AUTH ──────────────────────────────────────────────────────────────
+function showLoginModal(){
+  const emailEl = document.getElementById('cloud-login-email');
+  const pwEl = document.getElementById('cloud-login-password');
+  const errEl = document.getElementById('cloud-login-error');
+  const btn = document.getElementById('cloud-login-btn');
+  if(emailEl) emailEl.value = '';
+  if(pwEl) pwEl.value = '';
+  if(errEl) errEl.textContent = '';
+  if(btn){ btn.disabled = false; btn.textContent = 'Sign In \u2192'; }
+  document.getElementById('cloud-login-modal').classList.add('open');
+}
+
+async function loginToCloud(){
+  const email = (document.getElementById('cloud-login-email').value || '').trim();
+  const password = document.getElementById('cloud-login-password').value || '';
+  const errEl = document.getElementById('cloud-login-error');
+  const btn = document.getElementById('cloud-login-btn');
+  errEl.textContent = '';
+  if(!email || !password){ errEl.textContent = 'Please enter email and password.'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Signing in\u2026';
+  const reset = () => { btn.disabled = false; btn.textContent = 'Sign In \u2192'; };
+  try{
+    // Step 1 — authenticate via server proxy
+    const signinRes = await fetch('/api/signin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const signinData = await signinRes.json();
+    if(!signinRes.ok){
+      errEl.textContent = signinData.error || 'Login failed. Please try again.';
+      reset(); return;
+    }
+    // Step 2 — fetch role + program IDs via server proxy (no direct Supabase call)
+    const infoRes = await fetch('/api/userinfo', {
+      headers: { 'Authorization': 'Bearer ' + signinData.access_token }
+    });
+    const infoData = await handleCloudApiResponse(infoRes, 'Could not load user info. Please try again.');
+    // Step 3 — apply auth state locally, no SDK calls needed
+    applyCloudUserContext(infoData, signinData);
+    if (_cloudSession?.force_password_reset) {
+      alert('Your account is marked for password reset. Please contact an admin for a reset link or temporary password.');
+    }
+    closeModal('cloud-login-modal');
+  } catch(e){
+    errEl.textContent = e.message || 'Login failed. Please try again.';
+    reset();
+  }
+}
+
+function enforceProgramScope(){
+  if(currentRole === 'admin' || !Array.isArray(assignedProgramIds)) return;
+  const allowed = new Set(assignedProgramIds);
+  ALL_PROGRAMS = (ALL_PROGRAMS || []).filter(p => p && allowed.has(p.id));
+  localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+
+  if(!ALL_PROGRAMS.length){
+    ACTIVE_PROGRAM_ID = null;
+    localStorage.removeItem('pns_active_program_id');
+    showToast('No assigned program for this account. Contact admin.');
+    return;
+  }
+
+  if(!ACTIVE_PROGRAM_ID || !allowed.has(ACTIVE_PROGRAM_ID)){
+    ACTIVE_PROGRAM_ID = ALL_PROGRAMS[0].id;
+    localStorage.setItem('pns_active_program_id', ACTIVE_PROGRAM_ID);
+    if(typeof loadProgramData === 'function') loadProgramData(ACTIVE_PROGRAM_ID);
+  }
+
+  if(typeof renderProgramsList === 'function') renderProgramsList();
+  if(typeof updateProgPill === 'function') updateProgPill();
+  if(typeof renderOverview === 'function') renderOverview();
+}
+
+async function logoutFromCloud(){
+  clearCloudSession();
+  showToast('\u2601 Signed out from cloud sync');
+}
+
+function lockRoleDropdown(role){
+  const rd = document.getElementById('role-display');
+  if(!rd) return;
+  rd.disabled = true;
+  rd.title = 'Role locked to your account (' + role + '). Sign out to change.';
+}
+
+function unlockRoleDropdown(){
+  const rd = document.getElementById('role-display');
+  if(!rd) return;
+  rd.disabled = false;
+  rd.title = 'Select role';
+}
+
+function updateCloudAuthUI(user){
+  const signinBtn = document.getElementById('cloud-signin-btn');
+  const signoutWrap = document.getElementById('cloud-signout-wrap');
+  const signedEmail = document.getElementById('cloud-signed-email');
+  const topbarSigninBtn = document.getElementById('topbar-cloud-signin-btn');
+  const topbarUserPill = document.getElementById('topbar-user-pill');
+  const topbarUserEmail = document.getElementById('topbar-user-email');
+
+  if(user){
+    if(signinBtn) signinBtn.style.display = 'none';
+    if(signoutWrap) signoutWrap.style.display = 'flex';
+    if(signedEmail) signedEmail.textContent = user.email;
+    if(topbarUserPill) topbarUserPill.style.display = 'flex';
+    if(topbarUserEmail) topbarUserEmail.textContent = user.email;
+    if(topbarSigninBtn){
+      topbarSigninBtn.style.display = 'inline-flex';
+      topbarSigninBtn.innerHTML = 'Sign Out';
+      topbarSigninBtn.onclick = logoutFromCloud;
+    }
+  } else {
+    if(signinBtn) signinBtn.style.display = '';
+    if(signoutWrap) signoutWrap.style.display = 'none';
+    if(topbarUserPill) topbarUserPill.style.display = 'none';
+    if(topbarUserEmail) topbarUserEmail.textContent = '';
+    if(topbarSigninBtn){
+      topbarSigninBtn.style.display = 'inline-flex';
+      topbarSigninBtn.innerHTML = '&#128274; Sign In';
+      topbarSigninBtn.onclick = showLoginModal;
+    }
   }
 }
 
@@ -6965,30 +8501,27 @@ function updateCloudSyncStatus(msg, ok){
 }
 
 async function cloudBackupNow(){
-  const ready = await initCloudSync();
-  if(!ready){
-    updateCloudSyncStatus('Cloud sync: Missing Supabase config in Vercel env', false);
-    alert('Cloud sync is not configured yet. Add SUPABASE_URL and SUPABASE_ANON_KEY in Vercel Environment Variables.');
+  if(!_cloudSession){
+    showLoginModal();
     return;
   }
   const payload = buildBackupPayload();
   const programId = getCloudProgramId();
   const projectName = localStorage.getItem('pns_project_name') || 'PNS';
-  const { error } = await cloudSyncClient
-    .from(CLOUD_SYNC_TABLE)
-    .upsert({
-      program_id: programId,
-      project_name: projectName,
-      payload
-    }, { onConflict: 'program_id' });
-
-  if(error){
-    updateCloudSyncStatus('Cloud sync failed: ' + error.message, false);
-    alert('Cloud backup failed: ' + error.message);
-    return;
+  try{
+    const r = await fetch('/api/snapshot', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + _cloudSession.access_token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ program_id: programId, project_name: projectName, payload }),
+    });
+    await handleCloudApiResponse(r, 'Backup failed');
+    updateCloudSyncStatus('Cloud sync: Snapshot saved (' + new Date().toLocaleTimeString() + ')', true);
+    showToast('☁ Snapshot saved to Supabase');
+  }catch(e){
+    if(isCloudAuthError(0, e.message)) return;
+    updateCloudSyncStatus('Cloud sync failed: ' + e.message, false);
+    alert('Cloud backup failed: ' + e.message);
   }
-  updateCloudSyncStatus('Cloud sync: Snapshot saved (' + new Date().toLocaleTimeString() + ')', true);
-  showToast('☁ Snapshot saved to Supabase');
 }
 
 function restoreBackupObject(b){
@@ -7016,74 +8549,28 @@ function restoreBackupObject(b){
 }
 
 async function cloudRestoreLatest(){
-  const ready = await initCloudSync();
-  if(!ready){
-    updateCloudSyncStatus('Cloud sync: Missing Supabase config in Vercel env', false);
-    alert('Cloud sync is not configured yet. Add SUPABASE_URL and SUPABASE_ANON_KEY in Vercel Environment Variables.');
+  if(!_cloudSession){
+    showLoginModal();
     return;
   }
   const programId = getCloudProgramId();
-  const { data, error } = await cloudSyncClient
-    .from(CLOUD_SYNC_TABLE)
-    .select('payload,updated_at,project_name')
-    .eq('program_id', programId)
-    .order('updated_at', { ascending:false })
-    .limit(1)
-    .maybeSingle();
-
-  if(error){
-    updateCloudSyncStatus('Cloud restore failed: ' + error.message, false);
-    alert('Cloud restore failed: ' + error.message);
-    return;
-  }
-  if(!data || !data.payload){
-    alert('No cloud snapshot found for this active program.');
-    return;
-  }
-
-  const readableDate = new Date(data.updated_at).toLocaleString();
-  if(!confirm('Restore latest cloud snapshot for this program?\n\nProject: ' + (data.project_name || 'PNS') + '\nSaved: ' + readableDate + '\n\nThis will overwrite local data.')) return;
-
   try{
+    const r = await fetch('/api/snapshot?program_id=' + encodeURIComponent(programId), {
+      headers: { 'Authorization': 'Bearer ' + _cloudSession.access_token },
+    });
+    const data = await handleCloudApiResponse(r, 'Restore failed');
+    if(!data || !data.payload) throw new Error('No snapshot found for this program.');
+    const readableDate = data.updated_at ? new Date(data.updated_at).toLocaleString() : 'unknown';
+    if(!confirm('Restore latest cloud snapshot for this program?\n\nProject: ' + (data.project_name || 'PNS') + '\nSaved: ' + readableDate + '\n\nThis will overwrite local data.')) return;
     restoreBackupObject(data.payload);
     updateCloudSyncStatus('Cloud sync: Restored snapshot from ' + readableDate, true);
     alert('☁ Cloud snapshot restored successfully. Reloading now...');
     location.reload();
-  }catch(err){
-    updateCloudSyncStatus('Cloud restore failed: ' + err.message, false);
-    alert('Cloud restore failed: ' + err.message);
+  }catch(e){
+    if(isCloudAuthError(0, e.message)) return;
+    updateCloudSyncStatus('Cloud restore failed: ' + e.message, false);
+    alert('Cloud restore failed: ' + e.message);
   }
-}
-
-function restoreBackupFile(file){
-  if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const b=JSON.parse(e.target.result);
-      if(!b._version)throw new Error('Not a valid PNS backup file.');
-      const ts=(b._timestamp||'').slice(0,10)||'unknown';
-      const mc=(b.members||[]).length;
-      const rc=(b.recordings||[]).length;
-      const tc=(b.transfers||[]).length;
-      const gc=(b.guru_questions||[]).length;
-      if(!confirm(
-        'Restore from backup?\n\n'+
-        'Project: '+(b._project||'PNS')+'\n'+
-        'Date: '+ts+'\n\n'+
-        'Contains:\n'+
-        '\u2022 '+mc+' members (with attendance)\n'+
-        (rc?'\u2022 '+rc+' recordings\n':'')+
-        (tc?'\u2022 '+tc+' transfer requests\n':'')+
-        (gc?'\u2022 '+gc+' Guru questions\n':'')+
-        '\nThis will OVERWRITE all current data. Continue?'
-      ))return;
-      restoreBackupObject(b);
-      alert('\u2713 Backup restored successfully!\n\nReloading now...');
-      location.reload();
-    }catch(err){alert('Could not restore backup:\n'+err.message);}
-  };
-  r.readAsText(file);
 }
 
 function renderBackupTimestamps() {
@@ -7137,6 +8624,22 @@ function applyEditableContent(){
 // ── PROGRAM MANAGEMENT FUNCTIONS ───────────────────────────────────────────
 let currentEditingProgId = null;
 let currentEditingSessions = [];
+let programCategoryFilter = localStorage.getItem('pns_program_category_filter') || 'All';
+
+function setProgramCategoryFilter(category) {
+  programCategoryFilter = category || 'All';
+  localStorage.setItem('pns_program_category_filter', programCategoryFilter);
+  renderProgramsList();
+}
+
+function _refreshCategoryDatalist() {
+  const cats = [...new Set(ALL_PROGRAMS.map(p => p.category || 'General').filter(Boolean))];
+  const opts = cats.map(c => `<option value="${c}">`).join('');
+  const dlNew = document.getElementById('prog-category-list');
+  const dlEdit = document.getElementById('prog-category-list-edit');
+  if (dlNew) dlNew.innerHTML = opts;
+  if (dlEdit) dlEdit.innerHTML = opts;
+}
 
 function editProgram(progId) {
   currentEditingProgId = progId;
@@ -7144,6 +8647,9 @@ function editProgram(progId) {
   if (!prog) return;
   
   document.getElementById('prog-name-edit').value = prog.name;
+  const catEdit = document.getElementById('prog-category-edit');
+  if (catEdit) catEdit.value = prog.category || 'General';
+  _refreshCategoryDatalist();
   
   // ✅ FIX: Convert sessions to proper format (array of objects with .date property)
   let sessions = prog.sessions || DATES || [];
@@ -7169,13 +8675,15 @@ function closeProgramEditor() {
 function updateProgramName() {
   const newName = document.getElementById('prog-name-edit').value.trim();
   if (!newName) { alert('Program name required'); return; }
+  const newCat = (document.getElementById('prog-category-edit')?.value || '').trim() || 'General';
   
   const prog = ALL_PROGRAMS.find(p => p.id === currentEditingProgId);
   if (prog) {
     prog.name = newName;
+    prog.category = newCat;
     localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
     renderProgramsList();
-    showToast('✓ Program name updated');
+    showToast('✓ Program details updated');
   }
 }
 
@@ -7237,30 +8745,53 @@ function renderProgramsList(){
   const listEl = document.getElementById('programs-list');
   const statsEl = document.getElementById('programs-stats-grid');
   if(!listEl) return;
+
+  const activeCount = ALL_PROGRAMS.filter(p=>p.status!=='archived').length;
+  const archivedCount = ALL_PROGRAMS.filter(p=>p.status==='archived').length;
+  const cats = [...new Set(ALL_PROGRAMS.map(p=>p.category||'General'))].sort();
+
   if(statsEl){
     statsEl.innerHTML = `
-      <div class="stat-card s-purple"><div class="val">${ALL_PROGRAMS.length||1}</div><div class="lbl">Programs</div></div>
-      <div class="stat-card s-saffron"><div class="val">${ALL_PROGRAMS.filter(p=>p.status==='active').length||1}</div><div class="lbl">Active</div></div>
-      <div class="stat-card s-bilva"><div class="val">${ALL_PROGRAMS.filter(p=>p.status==='archived').length}</div><div class="lbl">Archived</div></div>`;
+      <div class="stat-card s-purple"><div class="val">${cats.length}</div><div class="lbl">Categories</div></div>
+      <div class="stat-card s-saffron"><div class="val">${ALL_PROGRAMS.length}</div><div class="lbl">Programs</div></div>
+      <div class="stat-card s-bilva"><div class="val">${activeCount}</div><div class="lbl">Active</div></div>
+      <div class="stat-card s-rudra"><div class="val">${archivedCount}</div><div class="lbl">Archived</div></div>`;
   }
   if(!ALL_PROGRAMS.length){
+    if(currentRole !== 'admin' && Array.isArray(assignedProgramIds)){
+      listEl.innerHTML = '<div style="padding:18px;color:var(--text-soft)">No program assigned to this account.</div>';
+      return;
+    }
     // Seed from current loaded data
     const pname = localStorage.getItem('pns_project_name')||'Panchakshari Naad Sadhana | Mahashivaratri 2026';
     const pid = ACTIVE_PROGRAM_ID || ('prog_'+Date.now());
     ACTIVE_PROGRAM_ID = pid;
-    ALL_PROGRAMS = [{id:pid, name:pname, status:'active', created_at:new Date().toISOString(),
+    ALL_PROGRAMS = [{id:pid, name:pname, category:'General', status:'active', created_at:new Date().toISOString(),
       meta:{member_count:members.filter(m=>(m.role||'Sadhak')!=='Facilitator').length, session_count:DATES.length}}];
     localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
     localStorage.setItem('pns_active_program_id', pid);
-    if(statsEl) statsEl.querySelector('.stat-card.s-saffron .val').textContent='1';
   }
+  _refreshCategoryDatalist();
+  const categoryOptions = [...new Set(ALL_PROGRAMS.map(p => p.category || 'General'))].sort();
+  if (programCategoryFilter !== 'All' && !categoryOptions.includes(programCategoryFilter)) {
+    programCategoryFilter = 'All';
+    localStorage.setItem('pns_program_category_filter', programCategoryFilter);
+  }
+  const visiblePrograms = programCategoryFilter === 'All'
+    ? ALL_PROGRAMS
+    : ALL_PROGRAMS.filter(p => (p.category || 'General') === programCategoryFilter);
+
   listEl.innerHTML = (() => {
-    // Group programs by status for better organization
-    const activeProgs = ALL_PROGRAMS.filter(p => p.status !== 'archived');
-    const archivedProgs = ALL_PROGRAMS.filter(p => p.status === 'archived');
-    
+    const esc = value => String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
     const renderProgCard = (p) => {
       const isActive = p.id === ACTIVE_PROGRAM_ID;
+      const isArchived = p.status === 'archived';
       const meta = p.meta || {};
       const menuId = 'menu-' + p.id;
       
@@ -7268,19 +8799,16 @@ function renderProgramsList(){
         <div style="flex:1;min-width:200px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span class="prog-card-name">${p.name}</span>
-            <span class="prog-status ${isActive?'active':'archived'}">${isActive?'Active':'Archived'}</span>
+            <span class="prog-status ${isArchived?'archived':'active'}">${isArchived?'Archived':'Active'}</span>
           </div>
           <div style="font-size:11px;color:var(--text-mute)">${meta.member_count||0} members · ${meta.session_count||0} sessions · Created ${(p.created_at||'').slice(0,10)}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <!-- Action Buttons -->
           <div style="display:flex;gap:4px">
             ${isActive
               ? `<button class="btn btn-primary btn-sm" onclick="showSection('overview')" title="Go to dashboard" style="border-color:var(--saffron-dk);color:var(--saffron-dk)">▶ Dashboard</button>`
               : `<button class="btn btn-outline btn-sm" onclick="switchToProgram('${p.id}')" title="Activate program">↻ Activate</button>`}
           </div>
-          
-          <!-- Dropdown Menu -->
           <div style="position:relative;display:inline-block">
             <button class="btn btn-outline btn-sm" onclick="toggleMenu('${menuId}')" title="More options">⋮ More</button>
             <div id="${menuId}" class="prog-menu" style="display:none;position:absolute;right:0;top:100%;background:white;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;min-width:180px;margin-top:4px">
@@ -7296,35 +8824,50 @@ function renderProgramsList(){
         </div>
       </div>`;
     };
-    
-    // Build organized HTML with sections
-    let html = '';
-    
-    // Active Programs Section
-    if (activeProgs.length > 0) {
-      html += `<div style="margin-bottom:24px">
-        <div style="font-size:13px;font-weight:600;color:var(--saffron-dk);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--saffron-lt)">
-          🟢 ACTIVE PROGRAMS (${activeProgs.length})
-        </div>
+
+    const categoryCounts = ALL_PROGRAMS.reduce((acc, item) => {
+      const cat = item.category || 'General';
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {});
+
+    const filterBar = `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:10px 12px;background:linear-gradient(180deg,#fcfbff,#f5f2ff);border:1px solid var(--border-light);border-radius:12px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${['All', ...categoryOptions].map(cat => {
+          const selected = cat === programCategoryFilter;
+          const count = cat === 'All' ? ALL_PROGRAMS.length : (categoryCounts[cat] || 0);
+          return `<button class="btn btn-sm ${selected ? 'btn-saffron' : 'btn-outline'}" onclick='setProgramCategoryFilter(${JSON.stringify(cat)})' style="${selected ? '' : 'background:#fff;'}">${esc(cat)} (${count})</button>`;
+        }).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--text-soft)">Showing ${visiblePrograms.length} of ${ALL_PROGRAMS.length} programs</div>
+    </div>`;
+
+    // Group by category
+    const grouped = {};
+    visiblePrograms.forEach(p => {
+      const cat = p.category || 'General';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(p);
+    });
+
+    const catKeys = Object.keys(grouped).sort();
+    const groupedHtml = catKeys.map(cat => {
+      const progs = grouped[cat];
+      const activeInCat = progs.filter(p => p.status !== 'archived').length;
+      const archivedInCat = progs.length - activeInCat;
+      return `<details open style="margin-bottom:20px">
+        <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:2px solid var(--saffron-lt);margin-bottom:12px">
+          <span style="font-size:14px;font-weight:700;color:var(--shiva-mid);flex:1">${esc(cat)}</span>
+          <span style="font-size:11px;color:var(--text-soft)">${activeInCat} active${archivedInCat ? ' · ' + archivedInCat + ' archived' : ''}</span>
+          <span style="font-size:11px;color:var(--text-mute);user-select:none">▾</span>
+        </summary>
         <div style="display:flex;flex-direction:column;gap:8px">
-          ${activeProgs.map(renderProgCard).join('')}
+          ${progs.map(renderProgCard).join('')}
         </div>
-      </div>`;
-    }
-    
-    // Archived Programs Section
-    if (archivedProgs.length > 0) {
-      html += `<div>
-        <div style="font-size:13px;font-weight:600;color:#9a8abb;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e8dfff">
-          📦 ARCHIVED PROGRAMS (${archivedProgs.length})
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;opacity:0.8">
-          ${archivedProgs.map(renderProgCard).join('')}
-        </div>
-      </div>`;
-    }
-    
-    return html;
+      </details>`;
+    }).join('');
+
+    return filterBar + (groupedHtml || '<div style="padding:16px;border:1px dashed var(--border-med);border-radius:10px;color:var(--text-soft)">No programs in this category yet.</div>');
   })();
   // Update pill and banner
   const pill = document.getElementById('prog-pill-name');
@@ -7351,7 +8894,8 @@ function createNewProgram(){
   ALL_PROGRAMS.forEach(p=>{ if(p.id===ACTIVE_PROGRAM_ID) p.status='archived'; });
   
   const newId = 'prog_'+Date.now();
-  const newProg = {id:newId, name, status:'active', created_at:new Date().toISOString(),
+  const newCategory = (document.getElementById('new-prog-category')?.value || '').trim() || 'General';
+  const newProg = {id:newId, name, category:newCategory, status:'active', created_at:new Date().toISOString(),
     meta:{member_count:0, session_count:sessions.length}};
   ALL_PROGRAMS.unshift(newProg);
   ACTIVE_PROGRAM_ID = newId;
@@ -7400,6 +8944,10 @@ function createNewProgram(){
 }
 
 function switchToProgram(id){
+  if(currentRole !== 'admin' && Array.isArray(assignedProgramIds) && !assignedProgramIds.includes(id)){
+    alert('Access denied: this program is not assigned to your account.');
+    return;
+  }
   if(!confirm('Switch to this program as active? Current will be archived.')) return;
   
   // Save current program's data before switching
@@ -7821,8 +9369,12 @@ function updateProgPill(){
   // Show pill only in admin mode and when more than 1 program
   pill.style.display = (currentRole==='admin' && ALL_PROGRAMS.length>1) ? 'flex' : 'none';
   const active = ALL_PROGRAMS.find(p=>p.id===ACTIVE_PROGRAM_ID);
-  if(pillName && active) pillName.textContent = active.name;
-  if(bannerName && active) bannerName.textContent = active.name;
+  if(active) {
+    const cat = active.category || '';
+    const label = cat && cat !== 'General' ? cat + ' › ' + active.name : active.name;
+    if(pillName) pillName.textContent = label;
+    if(bannerName) bannerName.textContent = active.name;
+  }
 }
 
 // ── EDIT MODE ─────────────────────────────────────────────────────────────────
@@ -8448,9 +10000,31 @@ initDarkMode();
 // Dashboard starts completely blank - user will create programs and add data manually
 checkFirstLaunch();
 startAutoBackupScheduler();
-initCloudSync().then(ready => {
-  if (ready) updateCloudSyncStatus('Cloud sync: Ready', true);
-});
+initCloudSync();
 </script>
+
+<!-- CLOUD LOGIN MODAL -->
+<div class="modal-overlay" id="cloud-login-modal">
+  <div class="modal" style="max-width:400px">
+    <h2>&#9729; Sign in to Cloud Sync</h2>
+    <p style="font-size:12px;color:var(--text-soft);margin-bottom:16px;line-height:1.7">
+      Enter your Saadho Bodhashala credentials to enable cloud sync.
+    </p>
+    <div class="form-row">
+      <label>Email</label>
+      <input type="email" id="cloud-login-email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')loginToCloud()">
+    </div>
+    <div class="form-row">
+      <label>Password</label>
+      <input type="password" id="cloud-login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginToCloud()">
+    </div>
+    <div id="cloud-login-error" style="font-size:12px;color:var(--rudra);margin:6px 0 10px;min-height:16px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('cloud-login-modal')">Cancel</button>
+      <button class="btn btn-saffron" id="cloud-login-btn" onclick="loginToCloud()">Sign In &#8594;</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
