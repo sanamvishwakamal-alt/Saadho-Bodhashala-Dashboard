@@ -9045,6 +9045,10 @@ async function loginToCloud(){
     if (_cloudSession?.force_password_reset) {
       alert('Your account is marked for password reset. Please contact an admin for a reset link or temporary password.');
     }
+    // Save to browser credential manager — survives site data clears
+    if(window.PasswordCredential){
+      try{ navigator.credentials.store(new PasswordCredential({ id: email, password: password })); }catch(_e){}
+    }
     closeModal('cloud-login-modal');
   } catch(e){
     errEl.textContent = e.message || 'Login failed. Please try again.';
@@ -9201,20 +9205,43 @@ async function tryColdStartCloudRestore(){
   try{
     await initCloudSync();
     if(!_cloudSession || !_cloudSession.access_token){
-      showColdStartRecoveryBanner();
-      return;
+      const didAutoSignIn = await tryAutoSignInWithSavedCredentials();
+      if(!didAutoSignIn){ showColdStartRecoveryBanner(); return; }
     }
     const programId = getCloudProgramId();
     const r = await fetch('/api/snapshot?program_id=' + encodeURIComponent(programId), {
       headers: { 'Authorization': 'Bearer ' + _cloudSession.access_token }
     });
-    if(!r.ok){ showColdStartRecoveryBanner(); return; }
+    if(!r.ok){ showColdStartRecoveryBanner(); return ; }
     const data = await r.json().catch(()=>null);
-    if(!data || !data.payload){ showColdStartRecoveryBanner(); return; }
+    if(!data || !data.payload){ showColdStartRecoveryBanner(); return ; }
     restoreBackupObject(data.payload);
     showToast('☁ Programs restored from cloud. Reloading...');
     setTimeout(() => location.reload(), 1500);
   }catch(e){ showColdStartRecoveryBanner(); }
+}
+
+async function tryAutoSignInWithSavedCredentials(){
+  if(!window.PasswordCredential || typeof navigator.credentials?.get !== 'function') return false;
+  try{
+    const cred = await navigator.credentials.get({ password: true, mediation: 'silent' });
+    if(!cred || !cred.id || !cred.password) return false;
+    const signinRes = await fetch('/api/signin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: cred.id, password: cred.password }),
+    });
+    if(!signinRes.ok) return false;
+    const signinData = await signinRes.json();
+    if(!signinData.access_token) return false;
+    const infoRes = await fetch('/api/userinfo', {
+      headers: { 'Authorization': 'Bearer ' + signinData.access_token }
+    });
+    if(!infoRes.ok) return false;
+    const infoData = await infoRes.json();
+    applyCloudUserContext(infoData, signinData);
+    return true;
+  }catch(_e){ return false; }
 }
 
 function showColdStartRecoveryBanner(){
