@@ -59,7 +59,7 @@ module.exports = async function handler(req, res) {
       const { program_id, project_name, payload } = req.body || {};
       if (!program_id || !payload) return res.status(400).json({ error: 'program_id and payload are required.' });
 
-      const r = await fetch(`${supabaseUrl}/rest/v1/dashboard_snapshots`, {
+      const r = await fetch(`${supabaseUrl}/rest/v1/dashboard_snapshots?on_conflict=program_id`, {
         method: 'POST',
         headers: {
           ...headers,
