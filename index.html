@@ -3079,6 +3079,10 @@ body.dark-mode .filter-dropdown {
   </div>
   <div id="res-workflow">
     <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px;gap:8px;flex-wrap:wrap">
+      <div id="checklist-admin-controls" style="display:none;gap:8px">
+        <button class="btn btn-saffron btn-sm" onclick="openChecklistItemModal()">+ Add Checklist Item</button>
+        <button class="btn btn-outline btn-sm" onclick="resetChecklistToTemplate()" title="Discard custom checklist and restore template defaults">↺ Checklist Reset</button>
+      </div>
       <div id="workflow-admin-controls" style="display:none;gap:8px">
         <button class="btn btn-saffron btn-sm" onclick="openWorkflowPhaseModal()">+ Add Phase</button>
         <button class="btn btn-outline btn-sm" onclick="resetWorkflowToTemplate()" title="Discard custom workflow and restore template defaults">↺ Reset to Template</button>
@@ -7733,7 +7737,55 @@ function getActiveWorkflowPhases() {
 
 function getActiveChecklistItems() {
   if (!ACTIVE_PROGRAM_ID) return CHECKLIST_ITEMS;
+  try {
+    const stored = localStorage.getItem('pns_prog_checklist_items_' + ACTIVE_PROGRAM_ID);
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
   return getProgramTemplate(ACTIVE_PROGRAM_ID).checklist || CHECKLIST_ITEMS;
+}
+
+function resetChecklistToTemplate(){
+  if(!confirm('Reset Checklist to template? All custom checklist items for this program will be removed.')) return;
+  localStorage.removeItem('pns_prog_checklist_items_' + ACTIVE_PROGRAM_ID);
+  localStorage.removeItem('pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default'));
+  saveCurrentProgramData();
+  renderChecklist();
+  showToast('Checklist reset to template.');
+}
+
+function openChecklistItemModal(idx){
+  const items = [...getActiveChecklistItems()];
+  const existing = idx !== undefined ? items[idx] : '';
+  const ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';
+  ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:22px;width:90%;max-width:520px;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(idx!==undefined?'Edit':'Add')+' Checklist Item</h2><div class="form-row"><label>Checklist item *</label><input type="text" id="cl-e-item" value="'+String(existing||'').replace(/"/g,'&quot;')+'" placeholder="Enter checklist item..."></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveChecklistItemEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+}
+
+function saveChecklistItemEdit(idx){
+  const item = (document.getElementById('cl-e-item')?.value || '').trim();
+  if(!item){ alert('Checklist item is required.'); return; }
+  const key = 'pns_prog_checklist_items_' + ACTIVE_PROGRAM_ID;
+  let items = [...getActiveChecklistItems()];
+  if(idx >= 0) items[idx] = item;
+  else items.push(item);
+  localStorage.setItem(key, JSON.stringify(items));
+  localStorage.removeItem('pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default'));
+  document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());
+  saveCurrentProgramData();
+  renderChecklist();
+}
+
+function deleteChecklistItem(idx){
+  if(!confirm('Delete this checklist item? This cannot be undone.')) return;
+  const key = 'pns_prog_checklist_items_' + ACTIVE_PROGRAM_ID;
+  let items = [...getActiveChecklistItems()];
+  items.splice(idx, 1);
+  localStorage.setItem(key, JSON.stringify(items));
+  localStorage.removeItem('pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default'));
+  saveCurrentProgramData();
+  renderChecklist();
 }
 
 function resetFAQsToTemplate(){
@@ -7837,16 +7889,22 @@ function showResTab(tab, btn) {
 function renderChecklist() {
   const panel = document.getElementById('checklist-panel');
   if (!panel) return;
+  const adminCtrl = document.getElementById('checklist-admin-controls');
+  if (adminCtrl) adminCtrl.style.display = currentRole === 'admin' ? 'flex' : 'none';
   const checklistKey = 'pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default');
   const saved = JSON.parse(localStorage.getItem(checklistKey) || '{}');
   const checklistItems = getActiveChecklistItems();
+  const isAdmin = currentRole === 'admin';
   panel.innerHTML = checklistItems.map((item, i) => {
     const key = 'cl_' + i;
     const checked = saved[key] ? 'checked' : '';
-    return `<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid #e8e5f0;cursor:pointer;font-size:12px;background:#faf8ff">
-      <input type="checkbox" ${checked} onchange="saveCheckItem(${i},this.checked)" style="margin-top:2px;accent-color:#6c4db0;flex-shrink:0">
-      <span>${item}</span>
-    </label>`;
+    return `<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid #e8e5f0;font-size:12px;background:#faf8ff">
+      <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;flex:1">
+        <input type="checkbox" ${checked} onchange="saveCheckItem(${i},this.checked)" style="margin-top:2px;accent-color:#6c4db0;flex-shrink:0">
+        <span>${item}</span>
+      </label>
+      ${isAdmin ? `<button onclick="openChecklistItemModal(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#6c4db0;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Edit checklist item">✏</button><button onclick="deleteChecklistItem(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#c0392b;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Delete checklist item">✕</button>` : ''}
+    </div>`;
   }).join('');
 }
 
@@ -8454,6 +8512,7 @@ function buildBackupPayload(){
     admin_pin:     localStorage.getItem('pns_admin_pin')||'',
     custom_faqs:        JSON.parse(localStorage.getItem('pns_prog_faqs_' + (ACTIVE_PROGRAM_ID || 'default'))||localStorage.getItem('pns_custom_faqs')||'null'),
     custom_guidelines:  JSON.parse(localStorage.getItem('pns_prog_guidelines_' + (ACTIVE_PROGRAM_ID || 'default'))||localStorage.getItem('pns_custom_guidelines')||'null'),
+    custom_checklist_items: JSON.parse(localStorage.getItem('pns_prog_checklist_items_' + (ACTIVE_PROGRAM_ID || 'default'))||'null'),
     custom_workflow_phases: JSON.parse(localStorage.getItem('pns_prog_workflow_' + (ACTIVE_PROGRAM_ID || 'default'))||'null'),
     auto_backup_config: JSON.parse(localStorage.getItem('pns_auto_backup_config')||'null'),
     editable_content:   JSON.parse(localStorage.getItem('pns_editable_content')||'{}'),
@@ -8929,6 +8988,9 @@ function restoreBackupObject(b){
   }
   if(b.custom_workflow_phases) {
     localStorage.setItem('pns_prog_workflow_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_workflow_phases));
+  }
+  if(b.custom_checklist_items) {
+    localStorage.setItem('pns_prog_checklist_items_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_checklist_items));
   }
   if(b.auto_backup_config)localStorage.setItem('pns_auto_backup_config',JSON.stringify(b.auto_backup_config));
   if(b.editable_content) localStorage.setItem('pns_editable_content',JSON.stringify(b.editable_content));
@@ -9465,6 +9527,7 @@ function saveCurrentProgramData(){
     guru_q: scopedGuruQ,
     transfers: scopedTransfers,
     notes: scopedNotes,
+    custom_checklist_items: JSON.parse(localStorage.getItem('pns_prog_checklist_items_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_workflow_phases: JSON.parse(localStorage.getItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_faqs: JSON.parse(localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_guidelines: JSON.parse(localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID) || 'null'),
@@ -9566,7 +9629,9 @@ function loadProgramData(progId){
         localStorage.setItem('pns_notes', JSON.stringify(notesLog));
       }
 
-      // Restore per-program resource overrides (Workflow, FAQs & Guidelines)
+      // Restore per-program resource overrides (Checklist, Workflow, FAQs & Guidelines)
+      if(data.custom_checklist_items) localStorage.setItem('pns_prog_checklist_items_' + progId, JSON.stringify(data.custom_checklist_items));
+      else localStorage.removeItem('pns_prog_checklist_items_' + progId);
       if(data.custom_workflow_phases) localStorage.setItem('pns_prog_workflow_' + progId, JSON.stringify(data.custom_workflow_phases));
       else localStorage.removeItem('pns_prog_workflow_' + progId);
       const legacyFaqs = localStorage.getItem('pns_custom_faqs');
@@ -9595,6 +9660,7 @@ function loadProgramData(progId){
   } else {
     // ✅ NEW PROGRAM: No saved data, so keep everything cleared
     // All in-memory variables cleared above, all localStorage cleared
+    localStorage.removeItem('pns_prog_checklist_items_' + progId);
     localStorage.removeItem('pns_prog_workflow_' + progId);
     const legacyFaqs = localStorage.getItem('pns_custom_faqs');
     const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
