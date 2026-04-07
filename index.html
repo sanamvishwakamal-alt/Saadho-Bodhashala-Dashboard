@@ -8615,9 +8615,6 @@ function bootstrapProjectStateFromLocal(markLoaded){
   }
 
   if(markLoaded) localStorage.setItem('pns_project_loaded', '1');
-  const brand = document.querySelector('.brand-text h1');
-  if(brand) brand.textContent = projectName;
-
   if(ACTIVE_PROGRAM_ID && !localStorage.getItem('pns_prog_data_' + ACTIVE_PROGRAM_ID)) {
     if(typeof saveCurrentProgramData === 'function') saveCurrentProgramData();
   }
@@ -8741,7 +8738,6 @@ function launchWithData(){
     if (m.group && gMap[m.group]) gMap[m.group].total++;
   });
   const newGroups=Object.values(gMap);GROUPS.length=0;newGroups.forEach(g=>GROUPS.push(g));RAW.groups=newGroups;
-  const h1=document.querySelector('.brand-text h1');if(h1)h1.textContent=pname;
   members.forEach((m,i)=>m.idx=i);
   localStorage.setItem('pns_project_loaded','1');localStorage.setItem('pns_project_name',pname);
   localStorage.setItem('pns_live_members',JSON.stringify(members));localStorage.setItem('pns_live_groups',JSON.stringify(newGroups));
@@ -8789,6 +8785,7 @@ function checkFirstLaunch(){
     applyEditableContent();
     updateProgPill();
     setTimeout(renderOverview, 0);
+    tryColdStartCloudRestore();
     return;
   }
   
@@ -9363,6 +9360,23 @@ function restoreBackupObject(b){
   localStorage.setItem('pns_project_loaded','1');
   if(b._project)localStorage.setItem('pns_project_name',b._project);
   localStorage.setItem('pns_last_restore',new Date().toISOString());
+}
+
+async function tryColdStartCloudRestore(){
+  try{
+    await initCloudSync();
+    if(!_cloudSession || !_cloudSession.access_token) return;
+    const programId = getCloudProgramId();
+    const r = await fetch('/api/snapshot?program_id=' + encodeURIComponent(programId), {
+      headers: { 'Authorization': 'Bearer ' + _cloudSession.access_token }
+    });
+    if(!r.ok) return;
+    const data = await r.json().catch(()=>null);
+    if(!data || !data.payload) return;
+    restoreBackupObject(data.payload);
+    showToast('☁ Programs restored from cloud. Reloading...');
+    setTimeout(() => location.reload(), 1500);
+  }catch(e){ /* silent fail — user keeps bootstrap recovery state */ }
 }
 
 async function cloudRestoreLatest(){
