@@ -3075,7 +3075,7 @@ body.dark-mode .filter-dropdown {
   <div class="tab-pills" id="res-tabs">
     <button class="tab-pill active" onclick="showResTab('workflow',this)">Session Workflow</button>
     <button class="tab-pill" onclick="showResTab('faq',this)">FAQ</button>
-    <button class="tab-pill" onclick="showResTab('guidelines',this)">42-Day Guidelines</button>
+    <button class="tab-pill" onclick="showResTab('guidelines',this)">Guidelines</button>
   </div>
   <div id="res-workflow"><div class="card" style="margin-bottom:16px"><div class="card-header"><span class="ch-icon">✦</span> Pre-Session Checklist</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px" id="checklist-panel"></div></div><div id="workflow-phases"></div></div>
   <div id="res-faq" style="display:none">
@@ -7630,43 +7630,37 @@ const GUIDELINES = [
 ];
 
 // ── PROGRAM TYPE TEMPLATE REGISTRY ───────────────────────────────────────
+const SHIVIR_WORKFLOW_PHASES = WORKFLOW_PHASES.map((p) => ({ ...p }));
+if (SHIVIR_WORKFLOW_PHASES[0]) SHIVIR_WORKFLOW_PHASES[0] = { ...SHIVIR_WORKFLOW_PHASES[0], title: 'Shivir Welcome', time: '3-4 min' };
+if (SHIVIR_WORKFLOW_PHASES[5]) SHIVIR_WORKFLOW_PHASES[5] = { ...SHIVIR_WORKFLOW_PHASES[5], title: 'Shivir Closing Circle', time: '5-7 min' };
+const SHIVIR_CHECKLIST_ITEMS = [...CHECKLIST_ITEMS, 'Venue hall and seating verified', 'Onsite logistics team check-in completed'];
+
 const PROGRAM_TYPE_TEMPLATES = {
   'Naad Programs': {
+    workflow_phases: WORKFLOW_PHASES,
+    checklist: CHECKLIST_ITEMS,
     faqs: FAQS,
     guidelines: GUIDELINES
   },
   'Shivir Programs': {
-    faqs: [
-      { lang:'en', q:'What should I bring to the Shivir?', a:'Comfortable clothing for meditation and yoga, a notebook and pen, personal medicines, and a willingness to participate fully. Avoid electronics during sessions. Check the specific Shivir communication for any additional requirements.' },
-      { lang:'en', q:'What is the daily schedule like?', a:'A typical Shivir day begins early morning (5–6 AM) with meditation, followed by sessions, meals, and evening practices. Full schedule will be shared before you arrive. Punctuality is essential — please arrive for every session on time.' },
-      { lang:'en', q:'Are there any dietary restrictions during the Shivir?', a:'Sattvic (pure, vegetarian) food will be served. Meals are provided as part of the program. Onion and garlic are generally avoided. Please inform organizers of any medical dietary needs in advance.' },
-      { lang:'en', q:'Can I leave the Shivir premises during the program?', a:'The Shivir is a residential, immersive experience. Leaving during sessions is not recommended as it affects practice continuity. Any emergencies should be communicated to the coordination team.' },
-      { lang:'en', q:'Is this Shivir suitable for beginners?', a:'Yes, unless otherwise specified. Facilitators will guide step by step. Prior meditation experience is helpful but not required. Come with an open mind and sincere intention.' },
-      { lang:'hi', q:'शिविर में क्या लाना चाहिए?', a:'आरामदायक कपड़े, नोटबुक और पेन, व्यक्तिगत दवाइयाँ, और पूरे मन से भाग लेने की तैयारी। सत्र के दौरान इलेक्ट्रॉनिक उपकरणों से बचें। किसी अतिरिक्त आवश्यकता के लिए शिविर के संचार की जांच करें।' },
-      { lang:'hi', q:'दैनिक कार्यक्रम कैसा होता है?', a:'एक सामान्य शिविर दिन सुबह 5–6 बजे ध्यान से शुरू होता है, फिर सत्र, भोजन और शाम की साधना होती है। पूरा कार्यक्रम पहले से साझा किया जाएगा। समयपालन अत्यंत महत्वपूर्ण है।' },
-    ],
-    guidelines: [
-      { title:'Full attendance and presence', body:'A Shivir is an intensive transformative experience. Attending every session in full is essential. Partial attendance significantly reduces the benefit. If you register, commit fully for the entire duration.' },
-      { title:'Sattvic lifestyle during the Shivir', body:'Maintain a sattvic (pure) lifestyle: vegetarian food, minimal conversation outside designated sharing circles, limited or no screen time, and early sleep. This prepares the system for deeper work during sessions.' },
-      { title:'Silence and inner focus', body:'Honor silence between sessions unless in designated sharing time. Silence is a powerful container for integration. Avoid discussing experiences with others until guided to do so.' },
-      { title:'Following facilitator guidance', body:'Trust the facilitators and the process. Guidance given during sessions is for collective benefit. Follow instructions without internal resistance — transformation happens in surrender.' },
-      { title:'Post-Shivir integration', body:'The Shivir is the beginning of the journey. Maintain your daily practice for at least 21 days after leaving. Integration time is important — avoid rushing into intense social or professional situations immediately after.' },
-    ]
+    workflow_phases: SHIVIR_WORKFLOW_PHASES,
+    checklist: SHIVIR_CHECKLIST_ITEMS,
+    faqs: FAQS,
+    guidelines: GUIDELINES
   },
   'General': {
-    faqs: [
-      { lang:'en', q:'What is this program about?', a:'This program is designed to support your spiritual growth and practice. Please refer to program-specific communications for detailed information about the content, schedule, and requirements.' },
-      { lang:'en', q:'Who can join this program?', a:'Anyone who is sincerely interested in spiritual growth and self-development is welcome. Please check the specific program details for any prerequisites or eligibility criteria.' },
-      { lang:'en', q:'How should I prepare for sessions?', a:'Come with a calm mind and sincere intention. Find a quiet space, minimize distractions, and be on time. Specific preparation instructions will be shared by the facilitator.' },
-      { lang:'hi', q:'यह कार्यक्रम किसके लिए है?', a:'यह कार्यक्रम आध्यात्मिक विकास में रुचि रखने वाले सभी साधकों के लिए है। विस्तृत जानकारी के लिए कार्यक्रम के संचार की जांच करें।' },
-    ],
-    guidelines: [
-      { title:'Commitment and sincerity', body:'Approach this program with full commitment and sincerity. Show up for every session and engage genuinely with the practice and community.' },
-      { title:'Respect and openness', body:'Maintain respect for fellow participants and facilitators. Come with an open mind, free from preconceptions about how the experience "should" be.' },
-      { title:'Consistency of practice', body:'Regular practice between sessions reinforces the work done in group meetings. Build a daily routine and maintain it throughout the program.' },
-    ]
+    workflow_phases: WORKFLOW_PHASES,
+    checklist: CHECKLIST_ITEMS,
+    faqs: FAQS,
+    guidelines: GUIDELINES
   }
 };
+
+function getProgramTemplate(programId) {
+  const prog = (ALL_PROGRAMS || []).find(p => p.id === programId);
+  const cat = prog?.category || 'Naad Programs';
+  return PROGRAM_TYPE_TEMPLATES[cat] || PROGRAM_TYPE_TEMPLATES['Naad Programs'];
+}
 
 function getActiveFAQs() {
   if (!ACTIVE_PROGRAM_ID) return FAQS;
@@ -7674,9 +7668,14 @@ function getActiveFAQs() {
     const stored = localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID);
     if (stored) return JSON.parse(stored);
   } catch(e) {}
-  const prog = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
-  const cat = prog?.category || 'Naad Programs';
-  return (PROGRAM_TYPE_TEMPLATES[cat] || PROGRAM_TYPE_TEMPLATES['Naad Programs']).faqs;
+  try {
+    const legacy = localStorage.getItem('pns_custom_faqs');
+    if (legacy) {
+      localStorage.setItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID, legacy);
+      return JSON.parse(legacy);
+    }
+  } catch(e) {}
+  return getProgramTemplate(ACTIVE_PROGRAM_ID).faqs;
 }
 
 function getActiveGuidelines() {
@@ -7685,9 +7684,24 @@ function getActiveGuidelines() {
     const stored = localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID);
     if (stored) return JSON.parse(stored);
   } catch(e) {}
-  const prog = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
-  const cat = prog?.category || 'Naad Programs';
-  return (PROGRAM_TYPE_TEMPLATES[cat] || PROGRAM_TYPE_TEMPLATES['Naad Programs']).guidelines;
+  try {
+    const legacy = localStorage.getItem('pns_custom_guidelines');
+    if (legacy) {
+      localStorage.setItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID, legacy);
+      return JSON.parse(legacy);
+    }
+  } catch(e) {}
+  return getProgramTemplate(ACTIVE_PROGRAM_ID).guidelines;
+}
+
+function getActiveWorkflowPhases() {
+  if (!ACTIVE_PROGRAM_ID) return WORKFLOW_PHASES;
+  return getProgramTemplate(ACTIVE_PROGRAM_ID).workflow_phases || WORKFLOW_PHASES;
+}
+
+function getActiveChecklistItems() {
+  if (!ACTIVE_PROGRAM_ID) return CHECKLIST_ITEMS;
+  return getProgramTemplate(ACTIVE_PROGRAM_ID).checklist || CHECKLIST_ITEMS;
 }
 
 function resetFAQsToTemplate(){
@@ -7724,8 +7738,10 @@ function showResTab(tab, btn) {
 function renderChecklist() {
   const panel = document.getElementById('checklist-panel');
   if (!panel) return;
-  const saved = JSON.parse(localStorage.getItem('pns_checklist') || '{}');
-  panel.innerHTML = CHECKLIST_ITEMS.map((item, i) => {
+  const checklistKey = 'pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default');
+  const saved = JSON.parse(localStorage.getItem(checklistKey) || '{}');
+  const checklistItems = getActiveChecklistItems();
+  panel.innerHTML = checklistItems.map((item, i) => {
     const key = 'cl_' + i;
     const checked = saved[key] ? 'checked' : '';
     return `<label style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid #e8e5f0;cursor:pointer;font-size:12px;background:#faf8ff">
@@ -7736,16 +7752,18 @@ function renderChecklist() {
 }
 
 function saveCheckItem(i, val) {
-  const saved = JSON.parse(localStorage.getItem('pns_checklist') || '{}');
+  const checklistKey = 'pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default');
+  const saved = JSON.parse(localStorage.getItem(checklistKey) || '{}');
   saved['cl_' + i] = val;
-  localStorage.setItem('pns_checklist', JSON.stringify(saved));
+  localStorage.setItem(checklistKey, JSON.stringify(saved));
 }
 
 let openPhase = -1;
 function renderWorkflowPhases() {
   const container = document.getElementById('workflow-phases');
   if (!container) return;
-  container.innerHTML = WORKFLOW_PHASES.map((p, i) => `
+  const phases = getActiveWorkflowPhases();
+  container.innerHTML = phases.map((p, i) => `
     <div style="margin-bottom:2px">
       <div style="background:${p.bg};border:1.5px solid ${p.border};border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s" onclick="togglePhase(${i})">
         <div style="display:flex;align-items:center;gap:10px">
@@ -7785,7 +7803,7 @@ function renderWorkflowPhases() {
           </div>
         </div>
       </div>
-      ${i < WORKFLOW_PHASES.length-1 ? `<div style="width:2px;height:14px;margin:0 auto;background:${p.border}"></div>` : ''}
+      ${i < phases.length-1 ? `<div style="width:2px;height:14px;margin:0 auto;background:${p.border}"></div>` : ''}
     </div>
   `).join('');
 }
@@ -8321,11 +8339,11 @@ function buildBackupPayload(){
     guru_questions:JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
     transfers:     JSON.parse(localStorage.getItem('pns_transfers')||'[]'),
     notes:         JSON.parse(localStorage.getItem('pns_notes')||'[]'),
-    checklist:     JSON.parse(localStorage.getItem('pns_checklist')||'[]'),
+    checklist:     JSON.parse(localStorage.getItem('pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default'))||'[]'),
     notifications: JSON.parse(localStorage.getItem('pns_notifs')||'[]'),
     admin_pin:     localStorage.getItem('pns_admin_pin')||'',
-    custom_faqs:        JSON.parse(localStorage.getItem('pns_custom_faqs')||'null'),
-    custom_guidelines:  JSON.parse(localStorage.getItem('pns_custom_guidelines')||'null'),
+    custom_faqs:        JSON.parse(localStorage.getItem('pns_prog_faqs_' + (ACTIVE_PROGRAM_ID || 'default'))||localStorage.getItem('pns_custom_faqs')||'null'),
+    custom_guidelines:  JSON.parse(localStorage.getItem('pns_prog_guidelines_' + (ACTIVE_PROGRAM_ID || 'default'))||localStorage.getItem('pns_custom_guidelines')||'null'),
     auto_backup_config: JSON.parse(localStorage.getItem('pns_auto_backup_config')||'null'),
     editable_content:   JSON.parse(localStorage.getItem('pns_editable_content')||'{}'),
     all_programs:       JSON.parse(localStorage.getItem('pns_all_programs')||'[]'),
@@ -8667,7 +8685,6 @@ function enforceProgramScope(){
   if(currentRole === 'admin' || !Array.isArray(assignedProgramIds)) return;
   const allowed = new Set(assignedProgramIds);
   ALL_PROGRAMS = (ALL_PROGRAMS || []).filter(p => p && allowed.has(p.id));
-  localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
 
   if(!ALL_PROGRAMS.length){
     ACTIVE_PROGRAM_ID = null;
@@ -8788,11 +8805,17 @@ function restoreBackupObject(b){
   if(b.guru_questions)localStorage.setItem('pns_guru_q',JSON.stringify(b.guru_questions));
   if(b.transfers)    localStorage.setItem('pns_transfers',JSON.stringify(b.transfers));
   if(b.notes)        localStorage.setItem('pns_notes',JSON.stringify(b.notes));
-  if(b.checklist)    localStorage.setItem('pns_checklist',JSON.stringify(b.checklist));
+  if(b.checklist)    localStorage.setItem('pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.checklist));
   if(b.notifications)localStorage.setItem('pns_notifs',JSON.stringify(b.notifications));
   if(b.admin_pin)    localStorage.setItem('pns_admin_pin',b.admin_pin);
-  if(b.custom_faqs)       localStorage.setItem('pns_custom_faqs',JSON.stringify(b.custom_faqs));
-  if(b.custom_guidelines) localStorage.setItem('pns_custom_guidelines',JSON.stringify(b.custom_guidelines));
+  if(b.custom_faqs) {
+    localStorage.setItem('pns_custom_faqs',JSON.stringify(b.custom_faqs));
+    localStorage.setItem('pns_prog_faqs_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_faqs));
+  }
+  if(b.custom_guidelines) {
+    localStorage.setItem('pns_custom_guidelines',JSON.stringify(b.custom_guidelines));
+    localStorage.setItem('pns_prog_guidelines_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_guidelines));
+  }
   if(b.auto_backup_config)localStorage.setItem('pns_auto_backup_config',JSON.stringify(b.auto_backup_config));
   if(b.editable_content) localStorage.setItem('pns_editable_content',JSON.stringify(b.editable_content));
   if(b.all_programs) localStorage.setItem('pns_all_programs',JSON.stringify(b.all_programs));
@@ -9429,9 +9452,13 @@ function loadProgramData(progId){
       }
 
       // Restore per-program resource overrides (FAQs & Guidelines)
+      const legacyFaqs = localStorage.getItem('pns_custom_faqs');
+      const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
       if(data.custom_faqs) localStorage.setItem('pns_prog_faqs_' + progId, JSON.stringify(data.custom_faqs));
+      else if (legacyFaqs) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
       else localStorage.removeItem('pns_prog_faqs_' + progId);
       if(data.custom_guidelines) localStorage.setItem('pns_prog_guidelines_' + progId, JSON.stringify(data.custom_guidelines));
+      else if (legacyGuidelines) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
       else localStorage.removeItem('pns_prog_guidelines_' + progId);
 
       // Persist migration if legacy untagged data was adopted into this program.
@@ -9451,8 +9478,12 @@ function loadProgramData(progId){
   } else {
     // ✅ NEW PROGRAM: No saved data, so keep everything cleared
     // All in-memory variables cleared above, all localStorage cleared
-    localStorage.removeItem('pns_prog_faqs_' + progId);
-    localStorage.removeItem('pns_prog_guidelines_' + progId);
+    const legacyFaqs = localStorage.getItem('pns_custom_faqs');
+    const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
+    if (legacyFaqs) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
+    else localStorage.removeItem('pns_prog_faqs_' + progId);
+    if (legacyGuidelines) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
+    else localStorage.removeItem('pns_prog_guidelines_' + progId);
   }
 
   // Enforce strict scoped state in multi-program setups.
