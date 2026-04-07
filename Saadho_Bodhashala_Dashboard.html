@@ -3077,7 +3077,16 @@ body.dark-mode .filter-dropdown {
     <button class="tab-pill" onclick="showResTab('faq',this)">FAQ</button>
     <button class="tab-pill" onclick="showResTab('guidelines',this)">Guidelines</button>
   </div>
-  <div id="res-workflow"><div class="card" style="margin-bottom:16px"><div class="card-header"><span class="ch-icon">✦</span> Pre-Session Checklist</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px" id="checklist-panel"></div></div><div id="workflow-phases"></div></div>
+  <div id="res-workflow">
+    <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:10px;gap:8px;flex-wrap:wrap">
+      <div id="workflow-admin-controls" style="display:none;gap:8px">
+        <button class="btn btn-saffron btn-sm" onclick="openWorkflowPhaseModal()">+ Add Phase</button>
+        <button class="btn btn-outline btn-sm" onclick="resetWorkflowToTemplate()" title="Discard custom workflow and restore template defaults">↺ Reset to Template</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px"><div class="card-header"><span class="ch-icon">✦</span> Pre-Session Checklist</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px" id="checklist-panel"></div></div>
+    <div id="workflow-phases"></div>
+  </div>
   <div id="res-faq" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
       <div class="search-row" style="margin:0;flex:1">
@@ -7631,6 +7640,10 @@ function getActiveGuidelines() {
 
 function getActiveWorkflowPhases() {
   if (!ACTIVE_PROGRAM_ID) return WORKFLOW_PHASES;
+  try {
+    const stored = localStorage.getItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID);
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
   return getProgramTemplate(ACTIVE_PROGRAM_ID).workflow_phases || WORKFLOW_PHASES;
 }
 
@@ -7653,6 +7666,73 @@ function resetGuidelinesToTemplate(){
   saveCurrentProgramData();
   renderGuidelines();
   showToast('Guidelines reset to template.');
+}
+
+function resetWorkflowToTemplate(){
+  if(!confirm('Reset Workflow to template? All custom workflow phases for this program will be removed.')) return;
+  localStorage.removeItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID);
+  saveCurrentProgramData();
+  renderWorkflowPhases();
+  showToast('Workflow reset to template.');
+}
+
+function renumberWorkflowPhases(phases){
+  return (phases || []).map((p, i) => ({ ...p, num: i + 1 }));
+}
+
+function openWorkflowPhaseModal(idx){
+  const phases = getActiveWorkflowPhases().map(p => ({ ...p }));
+  const existing = idx !== undefined ? phases[idx] : null;
+  const base = existing || {
+    num: (phases.length + 1),
+    color:'#6c4db0', bg:'#f0edf8', border:'#c9b8f0',
+    title:'New Phase', time:'5 min', script_en:'', script_hi:'',
+    facilitator:[], sadhak:[], media:[], notes:[]
+  };
+  const ov = document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';
+  ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:22px;width:92%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(existing?'Edit':'Add')+' Workflow Phase</h2><div class="form-row"><label>Title *</label><input type="text" id="wf-e-title" value="'+(base.title||'').replace(/"/g,'&quot;')+'"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-row"><label>Duration</label><input type="text" id="wf-e-time" value="'+(base.time||'').replace(/"/g,'&quot;')+'" placeholder="e.g. 10-12 min"></div><div class="form-row"><label>Color</label><input type="color" id="wf-e-color" value="'+(base.color||'#6c4db0')+'"></div></div><div class="form-row"><label>Script (English)</label><textarea id="wf-e-en" style="height:80px">'+(base.script_en||'')+'</textarea></div><div class="form-row"><label>Script (Hindi)</label><textarea id="wf-e-hi" style="height:80px">'+(base.script_hi||'')+'</textarea></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-row"><label>Facilitator actions (one per line)</label><textarea id="wf-e-fac" style="height:90px">'+((base.facilitator||[]).join('\n'))+'</textarea></div><div class="form-row"><label>Sadhak experience (one per line)</label><textarea id="wf-e-sadh" style="height:90px">'+((base.sadhak||[]).join('\n'))+'</textarea></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div class="form-row"><label>Media / resources (one per line)</label><textarea id="wf-e-media" style="height:90px">'+((base.media||[]).join('\n'))+'</textarea></div><div class="form-row"><label>Notes & tips (one per line)</label><textarea id="wf-e-notes" style="height:90px">'+((base.notes||[]).join('\n'))+'</textarea></div></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveWorkflowPhaseEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});
+}
+
+function saveWorkflowPhaseEdit(idx){
+  const title = (document.getElementById('wf-e-title')?.value || '').trim();
+  if(!title){ alert('Phase title is required.'); return; }
+  const splitLines = (id) => (document.getElementById(id)?.value || '').split('\n').map(s=>s.trim()).filter(Boolean);
+  let phases = getActiveWorkflowPhases().map(p => ({ ...p }));
+  const color = document.getElementById('wf-e-color')?.value || '#6c4db0';
+  const phase = {
+    ...(idx >= 0 ? phases[idx] : {}),
+    title,
+    time: (document.getElementById('wf-e-time')?.value || '').trim() || '5 min',
+    color,
+    bg: idx >= 0 ? (phases[idx]?.bg || '#f0edf8') : '#f0edf8',
+    border: idx >= 0 ? (phases[idx]?.border || '#c9b8f0') : '#c9b8f0',
+    script_en: document.getElementById('wf-e-en')?.value || '',
+    script_hi: document.getElementById('wf-e-hi')?.value || '',
+    facilitator: splitLines('wf-e-fac'),
+    sadhak: splitLines('wf-e-sadh'),
+    media: splitLines('wf-e-media'),
+    notes: splitLines('wf-e-notes'),
+  };
+  if(idx >= 0) phases[idx] = phase;
+  else phases.push(phase);
+  phases = renumberWorkflowPhases(phases);
+  localStorage.setItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID, JSON.stringify(phases));
+  document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());
+  saveCurrentProgramData();
+  renderWorkflowPhases();
+}
+
+function deleteWorkflowPhase(idx){
+  if(!confirm('Delete this workflow phase? This cannot be undone.')) return;
+  let phases = getActiveWorkflowPhases().map(p => ({ ...p }));
+  phases.splice(idx, 1);
+  phases = renumberWorkflowPhases(phases);
+  localStorage.setItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID, JSON.stringify(phases));
+  saveCurrentProgramData();
+  renderWorkflowPhases();
 }
 
 function initResources() {
@@ -7697,7 +7777,10 @@ let openPhase = -1;
 function renderWorkflowPhases() {
   const container = document.getElementById('workflow-phases');
   if (!container) return;
+  const adminCtrl = document.getElementById('workflow-admin-controls');
+  if (adminCtrl) adminCtrl.style.display = currentRole === 'admin' ? 'flex' : 'none';
   const phases = getActiveWorkflowPhases();
+  const isAdmin = currentRole === 'admin';
   container.innerHTML = phases.map((p, i) => `
     <div style="margin-bottom:2px">
       <div style="background:${p.bg};border:1.5px solid ${p.border};border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .15s" onclick="togglePhase(${i})">
@@ -7705,6 +7788,7 @@ function renderWorkflowPhases() {
           <div style="width:28px;height:28px;border-radius:50%;background:${p.color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${p.num}</div>
           <div style="font-weight:600;font-size:14px;color:${p.color};flex:1">${p.title}</div>
           <div style="font-size:11px;color:${p.color};opacity:.7">${p.time}</div>
+          ${isAdmin ? `<button onclick="event.stopPropagation();openWorkflowPhaseModal(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#6c4db0;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Edit phase">✏</button><button onclick="event.stopPropagation();deleteWorkflowPhase(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#c0392b;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Delete phase">✕</button>` : ''}
           <div style="font-size:11px;color:${p.color}" id="parr${i}">▼</div>
         </div>
         <div id="pdet${i}" style="display:none;margin-top:12px;border-top:1px solid rgba(0,0,0,.08);padding-top:12px">
@@ -8262,6 +8346,7 @@ function buildBackupPayload(){
     admin_pin:     localStorage.getItem('pns_admin_pin')||'',
     custom_faqs:        JSON.parse(localStorage.getItem('pns_prog_faqs_' + (ACTIVE_PROGRAM_ID || 'default'))||localStorage.getItem('pns_custom_faqs')||'null'),
     custom_guidelines:  JSON.parse(localStorage.getItem('pns_prog_guidelines_' + (ACTIVE_PROGRAM_ID || 'default'))||localStorage.getItem('pns_custom_guidelines')||'null'),
+    custom_workflow_phases: JSON.parse(localStorage.getItem('pns_prog_workflow_' + (ACTIVE_PROGRAM_ID || 'default'))||'null'),
     auto_backup_config: JSON.parse(localStorage.getItem('pns_auto_backup_config')||'null'),
     editable_content:   JSON.parse(localStorage.getItem('pns_editable_content')||'{}'),
     all_programs:       JSON.parse(localStorage.getItem('pns_all_programs')||'[]'),
@@ -8667,6 +8752,9 @@ function restoreBackupObject(b){
   if(b.custom_guidelines) {
     localStorage.setItem('pns_custom_guidelines',JSON.stringify(b.custom_guidelines));
     localStorage.setItem('pns_prog_guidelines_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_guidelines));
+  }
+  if(b.custom_workflow_phases) {
+    localStorage.setItem('pns_prog_workflow_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_workflow_phases));
   }
   if(b.auto_backup_config)localStorage.setItem('pns_auto_backup_config',JSON.stringify(b.auto_backup_config));
   if(b.editable_content) localStorage.setItem('pns_editable_content',JSON.stringify(b.editable_content));
@@ -9139,6 +9227,7 @@ function saveCurrentProgramData(){
     guru_q: JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
     transfers: JSON.parse(localStorage.getItem('pns_transfers')||'[]'),
     notes: JSON.parse(localStorage.getItem('pns_notes')||'[]'),
+    custom_workflow_phases: JSON.parse(localStorage.getItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_faqs: JSON.parse(localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_guidelines: JSON.parse(localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID) || 'null'),
   };
@@ -9212,7 +9301,9 @@ function loadProgramData(progId){
         localStorage.setItem('pns_notes', JSON.stringify(data.notes));
       }
 
-      // Restore per-program resource overrides (FAQs & Guidelines)
+      // Restore per-program resource overrides (Workflow, FAQs & Guidelines)
+      if(data.custom_workflow_phases) localStorage.setItem('pns_prog_workflow_' + progId, JSON.stringify(data.custom_workflow_phases));
+      else localStorage.removeItem('pns_prog_workflow_' + progId);
       const legacyFaqs = localStorage.getItem('pns_custom_faqs');
       const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
       if(data.custom_faqs) localStorage.setItem('pns_prog_faqs_' + progId, JSON.stringify(data.custom_faqs));
@@ -9228,6 +9319,7 @@ function loadProgramData(progId){
   } else {
     // ✅ NEW PROGRAM: No saved data, so keep everything cleared
     // All in-memory variables cleared above, all localStorage cleared
+    localStorage.removeItem('pns_prog_workflow_' + progId);
     const legacyFaqs = localStorage.getItem('pns_custom_faqs');
     const legacyGuidelines = localStorage.getItem('pns_custom_guidelines');
     if (legacyFaqs && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_faqs_' + progId, legacyFaqs);
