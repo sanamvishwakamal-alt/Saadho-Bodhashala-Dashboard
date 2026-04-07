@@ -2723,9 +2723,6 @@ body.dark-mode .filter-dropdown {
     <button class="btn" id="btn-group-form" onclick="switchFormMode('groups')" style="background:#ddd;color:#333;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600">+ Add Group</button>
     <div style="flex:1"></div>
     <button class="btn btn-outline btn-sm" onclick="downloadDataTemplate()">📥 Template</button>
-    <button class="btn btn-outline btn-sm" onclick="document.getElementById('csv-import-input').click()">📤 Import CSV</button>
-    <button class="btn btn-outline btn-sm" onclick="exportAllMembers()">💾 Export CSV</button>
-    <input type="file" id="csv-import-input" accept=".csv" onchange="handleCsvImport(event)" style="display:none">
   </div>
 
   <!-- MEMBER FORM -->
@@ -3087,14 +3084,14 @@ body.dark-mode .filter-dropdown {
         <input type="text" id="faq-search" placeholder="Search FAQs…" oninput="filterFAQ()" style="max-width:320px">
         <select id="faq-lang" onchange="filterFAQ()"><option value="">All Languages</option><option value="en">English</option><option value="hi">Hindi</option></select>
       </div>
-      <div id="faq-admin-controls" style="display:none;gap:8px"><button class="btn btn-saffron btn-sm" onclick="openAddFAQModal()">+ Add FAQ</button></div>
+      <div id="faq-admin-controls" style="display:none;gap:8px"><button class="btn btn-saffron btn-sm" onclick="openAddFAQModal()">+ Add FAQ</button><button class="btn btn-outline btn-sm" onclick="resetFAQsToTemplate()" title="Discard custom FAQs and restore template defaults">↺ Reset to Template</button></div>
     </div>
     <div id="faq-list"></div>
   </div>
   <div id="res-guidelines" style="display:none">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
       <div style="font-size:13px;color:var(--text-soft)">Core guidelines for sadhaks.</div>
-      <div id="guidelines-admin-controls" style="display:none;gap:8px"><button class="btn btn-saffron btn-sm" onclick="openAddGuidelineModal()">+ Add Guideline</button></div>
+      <div id="guidelines-admin-controls" style="display:none;gap:8px"><button class="btn btn-saffron btn-sm" onclick="openAddGuidelineModal()">+ Add Guideline</button><button class="btn btn-outline btn-sm" onclick="resetGuidelinesToTemplate()" title="Discard custom guidelines and restore template defaults">↺ Reset to Template</button></div>
     </div>
     <div id="guidelines-panel"></div>
   </div>
@@ -7548,6 +7545,83 @@ const GUIDELINES = [
   { title:'After the session', body:'Slowly drink a full glass of water immediately after completing the 30-minute session to keep the system cool and hydrated. Do not rush — take a moment of stillness before resuming activity.' },
 ];
 
+// ── PROGRAM TYPE TEMPLATE REGISTRY ───────────────────────────────────────
+const PROGRAM_TYPE_TEMPLATES = {
+  'Naad Programs': {
+    faqs: FAQS,
+    guidelines: GUIDELINES
+  },
+  'Shivir Programs': {
+    faqs: [
+      { lang:'en', q:'What should I bring to the Shivir?', a:'Comfortable clothing for meditation and yoga, a notebook and pen, personal medicines, and a willingness to participate fully. Avoid electronics during sessions. Check the specific Shivir communication for any additional requirements.' },
+      { lang:'en', q:'What is the daily schedule like?', a:'A typical Shivir day begins early morning (5–6 AM) with meditation, followed by sessions, meals, and evening practices. Full schedule will be shared before you arrive. Punctuality is essential — please arrive for every session on time.' },
+      { lang:'en', q:'Are there any dietary restrictions during the Shivir?', a:'Sattvic (pure, vegetarian) food will be served. Meals are provided as part of the program. Onion and garlic are generally avoided. Please inform organizers of any medical dietary needs in advance.' },
+      { lang:'en', q:'Can I leave the Shivir premises during the program?', a:'The Shivir is a residential, immersive experience. Leaving during sessions is not recommended as it affects practice continuity. Any emergencies should be communicated to the coordination team.' },
+      { lang:'en', q:'Is this Shivir suitable for beginners?', a:'Yes, unless otherwise specified. Facilitators will guide step by step. Prior meditation experience is helpful but not required. Come with an open mind and sincere intention.' },
+      { lang:'hi', q:'शिविर में क्या लाना चाहिए?', a:'आरामदायक कपड़े, नोटबुक और पेन, व्यक्तिगत दवाइयाँ, और पूरे मन से भाग लेने की तैयारी। सत्र के दौरान इलेक्ट्रॉनिक उपकरणों से बचें। किसी अतिरिक्त आवश्यकता के लिए शिविर के संचार की जांच करें।' },
+      { lang:'hi', q:'दैनिक कार्यक्रम कैसा होता है?', a:'एक सामान्य शिविर दिन सुबह 5–6 बजे ध्यान से शुरू होता है, फिर सत्र, भोजन और शाम की साधना होती है। पूरा कार्यक्रम पहले से साझा किया जाएगा। समयपालन अत्यंत महत्वपूर्ण है।' },
+    ],
+    guidelines: [
+      { title:'Full attendance and presence', body:'A Shivir is an intensive transformative experience. Attending every session in full is essential. Partial attendance significantly reduces the benefit. If you register, commit fully for the entire duration.' },
+      { title:'Sattvic lifestyle during the Shivir', body:'Maintain a sattvic (pure) lifestyle: vegetarian food, minimal conversation outside designated sharing circles, limited or no screen time, and early sleep. This prepares the system for deeper work during sessions.' },
+      { title:'Silence and inner focus', body:'Honor silence between sessions unless in designated sharing time. Silence is a powerful container for integration. Avoid discussing experiences with others until guided to do so.' },
+      { title:'Following facilitator guidance', body:'Trust the facilitators and the process. Guidance given during sessions is for collective benefit. Follow instructions without internal resistance — transformation happens in surrender.' },
+      { title:'Post-Shivir integration', body:'The Shivir is the beginning of the journey. Maintain your daily practice for at least 21 days after leaving. Integration time is important — avoid rushing into intense social or professional situations immediately after.' },
+    ]
+  },
+  'General': {
+    faqs: [
+      { lang:'en', q:'What is this program about?', a:'This program is designed to support your spiritual growth and practice. Please refer to program-specific communications for detailed information about the content, schedule, and requirements.' },
+      { lang:'en', q:'Who can join this program?', a:'Anyone who is sincerely interested in spiritual growth and self-development is welcome. Please check the specific program details for any prerequisites or eligibility criteria.' },
+      { lang:'en', q:'How should I prepare for sessions?', a:'Come with a calm mind and sincere intention. Find a quiet space, minimize distractions, and be on time. Specific preparation instructions will be shared by the facilitator.' },
+      { lang:'hi', q:'यह कार्यक्रम किसके लिए है?', a:'यह कार्यक्रम आध्यात्मिक विकास में रुचि रखने वाले सभी साधकों के लिए है। विस्तृत जानकारी के लिए कार्यक्रम के संचार की जांच करें।' },
+    ],
+    guidelines: [
+      { title:'Commitment and sincerity', body:'Approach this program with full commitment and sincerity. Show up for every session and engage genuinely with the practice and community.' },
+      { title:'Respect and openness', body:'Maintain respect for fellow participants and facilitators. Come with an open mind, free from preconceptions about how the experience "should" be.' },
+      { title:'Consistency of practice', body:'Regular practice between sessions reinforces the work done in group meetings. Build a daily routine and maintain it throughout the program.' },
+    ]
+  }
+};
+
+function getActiveFAQs() {
+  if (!ACTIVE_PROGRAM_ID) return FAQS;
+  try {
+    const stored = localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID);
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
+  const prog = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
+  const cat = prog?.category || 'Naad Programs';
+  return (PROGRAM_TYPE_TEMPLATES[cat] || PROGRAM_TYPE_TEMPLATES['Naad Programs']).faqs;
+}
+
+function getActiveGuidelines() {
+  if (!ACTIVE_PROGRAM_ID) return GUIDELINES;
+  try {
+    const stored = localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID);
+    if (stored) return JSON.parse(stored);
+  } catch(e) {}
+  const prog = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
+  const cat = prog?.category || 'Naad Programs';
+  return (PROGRAM_TYPE_TEMPLATES[cat] || PROGRAM_TYPE_TEMPLATES['Naad Programs']).guidelines;
+}
+
+function resetFAQsToTemplate(){
+  if(!confirm('Reset FAQs to template? All custom FAQs for this program will be removed.')) return;
+  localStorage.removeItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID);
+  saveCurrentProgramData();
+  filterFAQ();
+  showToast('FAQs reset to template.');
+}
+
+function resetGuidelinesToTemplate(){
+  if(!confirm('Reset Guidelines to template? All custom guidelines for this program will be removed.')) return;
+  localStorage.removeItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID);
+  saveCurrentProgramData();
+  renderGuidelines();
+  showToast('Guidelines reset to template.');
+}
+
 function initResources() {
   renderChecklist();
   renderWorkflowPhases();
@@ -7653,17 +7727,20 @@ function filterFAQ() {
   const lang = document.getElementById('faq-lang')?.value || '';
   const container = document.getElementById('faq-list');
   if (!container) return;
-  const filtered = FAQS.filter(f => {
+  const allFaqs = getActiveFAQs();
+  const filtered = allFaqs.map((f, idx) => ({...f, _idx: idx})).filter(f => {
     if (lang && f.lang !== lang) return false;
     if (q && !f.q.toLowerCase().includes(q) && !f.a.toLowerCase().includes(q)) return false;
     return true;
   });
   if (!filtered.length) { container.innerHTML = '<div class="empty-state">No FAQs found</div>'; return; }
-  container.innerHTML = filtered.map((f, i) => `
+  const isAdmin = currentRole === 'admin';
+  container.innerHTML = filtered.map((f) => `
     <div style="border:1px solid #e8e5f0;border-radius:10px;margin-bottom:8px;overflow:hidden">
       <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;cursor:pointer;background:#faf8ff" onclick="toggleFAQ(this)">
         <span style="display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;background:${f.lang==='en'?'#e8f5e9':'#fce4ec'};color:${f.lang==='en'?'#1b5e20':'#880e4f'};flex-shrink:0;margin-top:1px">${f.lang==='en'?'EN':'हि'}</span>
         <div style="font-weight:500;font-size:13px;color:#2d1b4e;flex:1">${f.q}</div>
+        ${isAdmin ? `<button onclick="event.stopPropagation();openAddFAQModal(${f._idx})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#6c4db0;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Edit">✏</button><button onclick="event.stopPropagation();deleteFAQ(${f._idx})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#c0392b;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Delete">✕</button>` : ''}
         <div style="color:#aaa;font-size:12px;flex-shrink:0">▼</div>
       </div>
       <div class="faq-ans" style="display:none;padding:10px 14px 12px 14px;font-size:12px;color:#444;line-height:1.7;border-top:1px solid #f0edf8;background:#fff">${f.a}</div>
@@ -7684,11 +7761,14 @@ function renderGuidelines() {
   if (adminCtrl) adminCtrl.style.display = currentRole === 'admin' ? 'flex' : 'none';
   const container = document.getElementById('guidelines-panel');
   if (!container) return;
-  container.innerHTML = GUIDELINES.map((g, i) => `
+  const isAdmin = currentRole === 'admin';
+  const gls = getActiveGuidelines();
+  container.innerHTML = gls.map((g, i) => `
     <div style="background:#fff;border:1px solid #e8e5f0;border-radius:10px;padding:16px;margin-bottom:12px">
       <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
         <div style="width:26px;height:26px;border-radius:50%;background:#2d1b4e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</div>
-        <div style="font-weight:600;font-size:14px;color:#2d1b4e">${g.title}</div>
+        <div style="font-weight:600;font-size:14px;color:#2d1b4e;flex:1">${g.title}</div>
+        ${isAdmin ? `<button onclick="openAddGuidelineModal(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#6c4db0;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Edit">✏</button><button onclick="deleteGuideline(${i})" style="background:none;border:none;cursor:pointer;font-size:11px;color:#c0392b;padding:2px 6px;border-radius:4px;flex-shrink:0" title="Delete">✕</button>` : ''}
       </div>
       <div style="font-size:13px;color:#555;line-height:1.7;padding-left:36px">${g.body}</div>
     </div>
@@ -8203,12 +8283,12 @@ function updateAutoBackupFreq(){const cfg=getAutoBackupConfig();cfg.frequency=do
 function updateAutoBackupTime(){const cfg=getAutoBackupConfig();cfg.time=document.getElementById('ab-time').value;saveAutoBackupConfig(cfg);startAutoBackupScheduler();}
 
 // ── FAQ & GUIDELINES ADMIN CRUD ───────────────────────────────────────────
-function openAddFAQModal(idx){const faqs=JSON.parse(localStorage.getItem('pns_custom_faqs')||'null')||[...FAQS];const f=idx!==undefined?faqs[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(f?'Edit':'Add')+' FAQ</h2><div class="form-row"><label>Language</label><select id="faq-e-lang"><option value="en" '+((!f||f.lang==="en")?'selected':'')+'>English</option><option value="hi" '+(f&&f.lang==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Question *</label><input type="text" id="faq-e-q" value="'+(f?f.q.replace(/"/g,"&quot;"):'')+'" placeholder="Question…"></div><div class="form-row"><label>Answer *</label><textarea id="faq-e-a" style="height:120px">'+(f?f.a:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveFAQEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
-function saveFAQEdit(idx){const q=document.getElementById('faq-e-q').value.trim(),a=document.getElementById('faq-e-a').value.trim(),lang=document.getElementById('faq-e-lang').value;if(!q||!a){alert('Question and Answer required.');return;}let faqs=JSON.parse(localStorage.getItem('pns_custom_faqs')||'null')||[...FAQS];if(idx>=0)faqs[idx]={...faqs[idx],q,a,lang};else faqs.push({q,a,lang});localStorage.setItem('pns_custom_faqs',JSON.stringify(faqs));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());filterFAQ();}
-function deleteFAQ(idx){if(!confirm('Delete this FAQ? This cannot be undone.'))return;let faqs=JSON.parse(localStorage.getItem('pns_custom_faqs')||'null')||[...FAQS];faqs.splice(idx,1);localStorage.setItem('pns_custom_faqs',JSON.stringify(faqs));filterFAQ();}
-function openAddGuidelineModal(idx){const gls=JSON.parse(localStorage.getItem('pns_custom_guidelines')||'null')||[...GUIDELINES];const g=idx!==undefined?gls[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(g?'Edit':'Add')+' Guideline</h2><div class="form-row"><label>Title *</label><input type="text" id="gl-e-title" value="'+(g?g.title.replace(/"/g,"&quot;"):'')+'" placeholder="Title…"></div><div class="form-row"><label>Content *</label><textarea id="gl-e-body" style="height:140px">'+(g?g.body:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveGuidelineEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
-function saveGuidelineEdit(idx){const title=document.getElementById('gl-e-title').value.trim(),body=document.getElementById('gl-e-body').value.trim();if(!title||!body){alert('Title and content required.');return;}let gls=JSON.parse(localStorage.getItem('pns_custom_guidelines')||'null')||[...GUIDELINES];if(idx>=0)gls[idx]={...gls[idx],title,body};else gls.push({title,body});localStorage.setItem('pns_custom_guidelines',JSON.stringify(gls));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());renderGuidelines();}
-function deleteGuideline(idx){if(!confirm('Delete this guideline? This cannot be undone.'))return;let gls=JSON.parse(localStorage.getItem('pns_custom_guidelines')||'null')||[...GUIDELINES];gls.splice(idx,1);localStorage.setItem('pns_custom_guidelines',JSON.stringify(gls));renderGuidelines();}
+function openAddFAQModal(idx){const faqs=JSON.parse(localStorage.getItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID)||'null')||getActiveFAQs();const f=idx!==undefined?faqs[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(f?'Edit':'Add')+' FAQ</h2><div class="form-row"><label>Language</label><select id="faq-e-lang"><option value="en" '+((!f||f.lang==="en")?'selected':'')+'>English</option><option value="hi" '+(f&&f.lang==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Question *</label><input type="text" id="faq-e-q" value="'+(f?f.q.replace(/"/g,"&quot;"):'')+'" placeholder="Question…"></div><div class="form-row"><label>Answer *</label><textarea id="faq-e-a" style="height:120px">'+(f?f.a:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveFAQEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
+function saveFAQEdit(idx){const q=document.getElementById('faq-e-q').value.trim(),a=document.getElementById('faq-e-a').value.trim(),lang=document.getElementById('faq-e-lang').value;if(!q||!a){alert('Question and Answer required.');return;}let faqs=JSON.parse(localStorage.getItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID)||'null')||getActiveFAQs();if(idx>=0)faqs[idx]={...faqs[idx],q,a,lang};else faqs.push({q,a,lang});localStorage.setItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID,JSON.stringify(faqs));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());saveCurrentProgramData();filterFAQ();}
+function deleteFAQ(idx){if(!confirm('Delete this FAQ? This cannot be undone.'))return;let faqs=JSON.parse(localStorage.getItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID)||'null')||getActiveFAQs();faqs.splice(idx,1);localStorage.setItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID,JSON.stringify(faqs));saveCurrentProgramData();filterFAQ();}
+function openAddGuidelineModal(idx){const gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();const g=idx!==undefined?gls[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(g?'Edit':'Add')+' Guideline</h2><div class="form-row"><label>Title *</label><input type="text" id="gl-e-title" value="'+(g?g.title.replace(/"/g,"&quot;"):'')+'" placeholder="Title…"></div><div class="form-row"><label>Content *</label><textarea id="gl-e-body" style="height:140px">'+(g?g.body:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveGuidelineEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
+function saveGuidelineEdit(idx){const title=document.getElementById('gl-e-title').value.trim(),body=document.getElementById('gl-e-body').value.trim();if(!title||!body){alert('Title and content required.');return;}let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();if(idx>=0)gls[idx]={...gls[idx],title,body};else gls.push({title,body});localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());saveCurrentProgramData();renderGuidelines();}
+function deleteGuideline(idx){if(!confirm('Delete this guideline? This cannot be undone.'))return;let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();gls.splice(idx,1);localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));saveCurrentProgramData();renderGuidelines();}
 function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:Nunito,sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
 
 // ── MEET LINK ─────────────────────────────────────────────────────────────
@@ -8933,6 +9013,7 @@ function createNewProgram(){
     if (sectionId === 's-groups') initGroups();
     if (sectionId === 's-overview') renderOverview();
     if (sectionId === 's-data-entry') initDataEntry();
+    if (sectionId === 's-resources') initResources();
   }
   
   // Update program pill and banner
@@ -8986,6 +9067,7 @@ function switchToProgram(id){
     if (sectionId === 's-groups') initGroups();
     if (sectionId === 's-overview') renderOverview();
     if (sectionId === 's-data-entry') initDataEntry();
+    if (sectionId === 's-resources') initResources();
   }
   
   // Update display
@@ -9008,6 +9090,8 @@ function saveCurrentProgramData(){
     guru_q: JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
     transfers: JSON.parse(localStorage.getItem('pns_transfers')||'[]'),
     notes: JSON.parse(localStorage.getItem('pns_notes')||'[]'),
+    custom_faqs: JSON.parse(localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID) || 'null'),
+    custom_guidelines: JSON.parse(localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID) || 'null'),
   };
   localStorage.setItem(key, JSON.stringify(data));
 }
@@ -9078,6 +9162,12 @@ function loadProgramData(progId){
         notesLog = JSON.parse(JSON.stringify(data.notes));
         localStorage.setItem('pns_notes', JSON.stringify(data.notes));
       }
+
+      // Restore per-program resource overrides (FAQs & Guidelines)
+      if(data.custom_faqs) localStorage.setItem('pns_prog_faqs_' + progId, JSON.stringify(data.custom_faqs));
+      else localStorage.removeItem('pns_prog_faqs_' + progId);
+      if(data.custom_guidelines) localStorage.setItem('pns_prog_guidelines_' + progId, JSON.stringify(data.custom_guidelines));
+      else localStorage.removeItem('pns_prog_guidelines_' + progId);
       
     } catch(e) {
       console.log('Error loading program data:', e);
@@ -9085,6 +9175,8 @@ function loadProgramData(progId){
   } else {
     // ✅ NEW PROGRAM: No saved data, so keep everything cleared
     // All in-memory variables cleared above, all localStorage cleared
+    localStorage.removeItem('pns_prog_faqs_' + progId);
+    localStorage.removeItem('pns_prog_guidelines_' + progId);
   }
 }
 
