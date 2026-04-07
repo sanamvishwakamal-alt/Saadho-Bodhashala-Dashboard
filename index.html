@@ -2907,45 +2907,33 @@ body.dark-mode .filter-dropdown {
           <input type="text" id="m-name" placeholder="Full name" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Email Address</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Email Address *</label>
           <input type="text" id="m-email" placeholder="email@example.com" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Mobile / WhatsApp</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Mobile / WhatsApp *</label>
           <input type="text" id="m-mobile" placeholder="9876543210" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role</label>
-          <select id="m-role" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="Admin">Admin</option>
-            <option value="Facilitator">Facilitator</option>
-            <option value="Sadhak" selected>Sadhak</option>
-            <option value="Guest">Guest</option>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country Code *</label>
+          <select id="m-country-code" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Code</option>
+            <option value="+91">India (+91)</option>
+            <option value="+1">USA / Canada (+1)</option>
+            <option value="+44">United Kingdom (+44)</option>
+            <option value="+61">Australia (+61)</option>
+            <option value="+971">UAE (+971)</option>
+            <option value="+49">Germany (+49)</option>
+            <option value="+46">Sweden (+46)</option>
+            <option value="+41">Switzerland (+41)</option>
+            <option value="+34">Spain (+34)</option>
+            <option value="+54">Argentina (+54)</option>
+            <option value="+855">Cambodia (+855)</option>
+            <option value="+81">Japan (+81)</option>
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">City</label>
-          <select id="m-city" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select City</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region</label>
-          <select id="m-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="INDIA">India</option>
-            <option value="NON INDIA">Non India</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language</label>
-          <select id="m-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="English">English</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Any" selected>Any</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country *</label>
           <select id="m-country" onchange="syncMemberCountryCode(); syncMemberRegionWithCountry()" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Country</option>
             <option value="India">India</option>
@@ -2965,41 +2953,60 @@ body.dark-mode .filter-dropdown {
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country Code</label>
-          <select id="m-country-code" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Code</option>
-            <option value="+91">India (+91)</option>
-            <option value="+1">USA / Canada (+1)</option>
-            <option value="+44">United Kingdom (+44)</option>
-            <option value="+61">Australia (+61)</option>
-            <option value="+971">UAE (+971)</option>
-            <option value="+49">Germany (+49)</option>
-            <option value="+46">Sweden (+46)</option>
-            <option value="+41">Switzerland (+41)</option>
-            <option value="+34">Spain (+34)</option>
-            <option value="+54">Argentina (+54)</option>
-            <option value="+855">Cambodia (+855)</option>
-            <option value="+81">Japan (+81)</option>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region *</label>
+          <select id="m-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Region</option>
+            <option value="INDIA">India</option>
+            <option value="NON INDIA">Non India</option>
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Facilitator(s)</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">City *</label>
+          <select id="m-city" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select City</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role *</label>
+          <select id="m-role" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Role</option>
+            <option value="Admin">Admin</option>
+            <option value="Facilitator">Facilitator</option>
+            <option value="Sadhak">Sadhak</option>
+            <option value="Guest">Guest</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language *</label>
+          <select id="m-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+            <option value="">Select Language</option>
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Any">Any</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Facilitator(s) *</label>
           <select id="m-facilitators" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Facilitator</option>
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Name</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Name *</label>
           <select id="m-group" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Group</option>
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered Through</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered Through *</label>
           <input type="text" id="m-reg-through" placeholder="Facebook, WhatsApp, Referral" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">WhatsApp Group Status</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered By *</label>
+          <input type="text" id="m-reg-by" placeholder="Admin name or ID" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+        </div>
+        <div>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">WhatsApp Group Status *</label>
           <select id="m-wa-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Status</option>
             <option value="Yes">Yes</option>
@@ -3008,7 +3015,7 @@ body.dark-mode .filter-dropdown {
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Initiation Status</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Initiation Status *</label>
           <select id="m-init-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Status</option>
             <option value="Yes">Yes</option>
@@ -3017,7 +3024,7 @@ body.dark-mode .filter-dropdown {
           </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Culmination Status</label>
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Culmination Status *</label>
           <select id="m-culm-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Status</option>
             <option value="Yes">Yes</option>
@@ -3028,10 +3035,6 @@ body.dark-mode .filter-dropdown {
         <div style="grid-column:1/-1">
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Notes</label>
           <textarea id="m-notes" placeholder="Additional notes or comments" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;min-height:60px;font-family:inherit;resize:vertical;"></textarea>
-        </div>
-        <div style="grid-column:1/-1">
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered By</label>
-          <input type="text" id="m-reg-by" placeholder="Admin name or ID" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
       </div>
 
@@ -4509,10 +4512,39 @@ function checkDuplicates() {
 }
 
 function saveMemberForm() {
-  const name = document.getElementById('m-name').value.trim();
-  if (!name) { alert('Name is required'); return; }
-  
-  const email = document.getElementById('m-email').value.trim();
+  const requiredFields = [
+    ['m-name', 'Name'],
+    ['m-email', 'Email Address'],
+    ['m-mobile', 'Mobile / WhatsApp'],
+    ['m-country-code', 'Country Code'],
+    ['m-country', 'Country'],
+    ['m-region', 'Region'],
+    ['m-city', 'City'],
+    ['m-role', 'Role'],
+    ['m-language', 'Language'],
+    ['m-facilitators', 'Facilitator(s)'],
+    ['m-group', 'Group Name'],
+    ['m-reg-through', 'Registered Through'],
+    ['m-reg-by', 'Registered By'],
+    ['m-wa-status', 'WhatsApp Group Status'],
+    ['m-init-status', 'Initiation Status'],
+    ['m-culm-status', 'Culmination Status']
+  ];
+  const values = {};
+  for (const [id, label] of requiredFields) {
+    const value = document.getElementById(id)?.value?.trim() || '';
+    if (!value) {
+      alert(label + ' is required');
+      return;
+    }
+    values[id] = value;
+  }
+  const name = values['m-name'];
+  const email = values['m-email'];
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    alert('Please enter a valid Email Address');
+    return;
+  }
   
   // ✅ DUPLICATE VALIDATION: Check Name + Email combination
   const duplicate = members.find(m => 
@@ -4529,21 +4561,21 @@ function saveMemberForm() {
     idx: members.length,
     name: name,
     email: email,
-    mobile: document.getElementById('m-mobile').value.trim(),
-    role: document.getElementById('m-role').value.trim(),
-    city: document.getElementById('m-city').value.trim(),
-    region: getNormalizedMemberRegion(document.getElementById('m-country').value.trim(), document.getElementById('m-region').value.trim()),
-    language: document.getElementById('m-language').value.trim(),
-    country: document.getElementById('m-country').value.trim(),
-    country_code: document.getElementById('m-country-code').value.trim(),
-    facilitators: document.getElementById('m-facilitators').value.trim(),
-    group: document.getElementById('m-group').value.trim(),
-    registered_through: document.getElementById('m-reg-through').value.trim(),
-    whatsapp_status: document.getElementById('m-wa-status').value.trim(),
-    init_status: document.getElementById('m-init-status').value.trim(),
-    culmination_status: document.getElementById('m-culm-status').value.trim(),
+    mobile: values['m-mobile'],
+    role: values['m-role'],
+    city: values['m-city'],
+    region: getNormalizedMemberRegion(values['m-country'], values['m-region']),
+    language: values['m-language'],
+    country: values['m-country'],
+    country_code: values['m-country-code'],
+    facilitators: values['m-facilitators'],
+    group: values['m-group'],
+    registered_through: values['m-reg-through'],
+    whatsapp_status: values['m-wa-status'],
+    init_status: values['m-init-status'],
+    culmination_status: values['m-culm-status'],
     notes: document.getElementById('m-notes').value.trim(),
-    registered_by: document.getElementById('m-reg-by').value.trim(),
+    registered_by: values['m-reg-by'],
     att: new Array(DATES.length).fill(-1),
     created_at: new Date().toISOString()
   };
@@ -4601,9 +4633,9 @@ function clearMemberForm() {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-  document.getElementById('m-role').value = 'Sadhak';
-  document.getElementById('m-region').value = 'INDIA';
-  document.getElementById('m-language').value = 'Any';
+  document.getElementById('m-role').value = '';
+  document.getElementById('m-region').value = '';
+  document.getElementById('m-language').value = '';
   populateMemberRegistrationDropdowns();
   document.getElementById('member-status').innerHTML = '';
 }
@@ -4810,23 +4842,54 @@ function editMember(idx) {
   const origSave = window.saveMemberFormOrig || saveMemberForm;
   window.saveMemberFormOrig = saveMemberForm;
   window.saveMemberForm = function() {
-    members[idx].name = document.getElementById('m-name').value.trim();
-    members[idx].email = document.getElementById('m-email').value.trim();
-    members[idx].mobile = document.getElementById('m-mobile').value.trim();
-    members[idx].role = document.getElementById('m-role').value.trim();
-    members[idx].city = document.getElementById('m-city').value.trim();
-    members[idx].region = getNormalizedMemberRegion(document.getElementById('m-country').value.trim(), document.getElementById('m-region').value.trim());
-    members[idx].language = document.getElementById('m-language').value.trim();
-    members[idx].country = document.getElementById('m-country').value.trim();
-    members[idx].country_code = document.getElementById('m-country-code').value.trim();
-    members[idx].facilitators = document.getElementById('m-facilitators').value.trim();
-    members[idx].group = document.getElementById('m-group').value.trim();
-    members[idx].registered_through = document.getElementById('m-reg-through').value.trim();
-    members[idx].whatsapp_status = document.getElementById('m-wa-status').value.trim();
-    members[idx].init_status = document.getElementById('m-init-status').value.trim();
-    members[idx].culmination_status = document.getElementById('m-culm-status').value.trim();
+    const requiredFields = [
+      ['m-name', 'Name'],
+      ['m-email', 'Email Address'],
+      ['m-mobile', 'Mobile / WhatsApp'],
+      ['m-country-code', 'Country Code'],
+      ['m-country', 'Country'],
+      ['m-region', 'Region'],
+      ['m-city', 'City'],
+      ['m-role', 'Role'],
+      ['m-language', 'Language'],
+      ['m-facilitators', 'Facilitator(s)'],
+      ['m-group', 'Group Name'],
+      ['m-reg-through', 'Registered Through'],
+      ['m-reg-by', 'Registered By'],
+      ['m-wa-status', 'WhatsApp Group Status'],
+      ['m-init-status', 'Initiation Status'],
+      ['m-culm-status', 'Culmination Status']
+    ];
+    const values = {};
+    for (const [id, label] of requiredFields) {
+      const value = document.getElementById(id)?.value?.trim() || '';
+      if (!value) {
+        alert(label + ' is required');
+        return;
+      }
+      values[id] = value;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(values['m-email'])) {
+      alert('Please enter a valid Email Address');
+      return;
+    }
+    members[idx].name = values['m-name'];
+    members[idx].email = values['m-email'];
+    members[idx].mobile = values['m-mobile'];
+    members[idx].role = values['m-role'];
+    members[idx].city = values['m-city'];
+    members[idx].region = getNormalizedMemberRegion(values['m-country'], values['m-region']);
+    members[idx].language = values['m-language'];
+    members[idx].country = values['m-country'];
+    members[idx].country_code = values['m-country-code'];
+    members[idx].facilitators = values['m-facilitators'];
+    members[idx].group = values['m-group'];
+    members[idx].registered_through = values['m-reg-through'];
+    members[idx].whatsapp_status = values['m-wa-status'];
+    members[idx].init_status = values['m-init-status'];
+    members[idx].culmination_status = values['m-culm-status'];
     members[idx].notes = document.getElementById('m-notes').value.trim();
-    members[idx].registered_by = document.getElementById('m-reg-by').value.trim();
+    members[idx].registered_by = values['m-reg-by'];
     members[idx].updated_at = new Date().toISOString();
     
     localStorage.setItem('pns_live_members', JSON.stringify(members));
