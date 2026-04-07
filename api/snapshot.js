@@ -23,19 +23,34 @@ module.exports = async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
-      // Read snapshot for program_id
-      const programId = req.query.program_id || '';
-      if (!programId) return res.status(400).json({ error: 'program_id is required.' });
+      // Read snapshot for program_id. If not found, fall back to latest snapshot user can access.
+      const programId = (req.query.program_id || '').trim();
 
-      const r = await fetch(
-        `${supabaseUrl}/rest/v1/dashboard_snapshots?program_id=eq.${encodeURIComponent(programId)}&select=payload,updated_at,project_name&limit=1`,
-        { headers }
-      );
-      const data = await r.json();
-      if (!r.ok) return res.status(r.status).json({ error: data.message || 'Fetch failed.' });
+      const fetchRows = async (query) => {
+        const r = await fetch(`${supabaseUrl}/rest/v1/dashboard_snapshots?${query}`, { headers });
+        const data = await r.json();
+        if (!r.ok) {
+          const msg = (data && (data.message || data.error_description || data.error)) || 'Fetch failed.';
+          const err = new Error(msg);
+          err.status = r.status;
+          throw err;
+        }
+        return Array.isArray(data) ? data : [];
+      };
 
-      const row = Array.isArray(data) ? data[0] : null;
-      if (!row) return res.status(404).json({ error: 'No snapshot found for this program.' });
+      let rows = [];
+      if (programId) {
+        rows = await fetchRows(
+          `program_id=eq.${encodeURIComponent(programId)}&select=payload,updated_at,project_name,program_id&order=updated_at.desc&limit=1`
+        );
+      }
+
+      if (!rows.length) {
+        rows = await fetchRows('select=payload,updated_at,project_name,program_id&order=updated_at.desc&limit=1');
+      }
+
+      const row = rows[0] || null;
+      if (!row) return res.status(404).json({ error: 'No snapshot found.' });
 
       return res.status(200).json(row);
 
