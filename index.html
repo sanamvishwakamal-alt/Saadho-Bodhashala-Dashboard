@@ -9315,10 +9315,11 @@ function updateCloudSyncStatus(msg, ok){
   el.style.color = ok ? 'var(--bilva)' : 'var(--text-mute)';
 }
 
-async function cloudBackupNow(){
-  if(!_cloudSession){
-    showLoginModal();
-    return;
+async function cloudBackupNow(opts = {}){
+  const silent = !!opts.silent;
+  if(!_cloudSession || !_cloudSession.access_token){
+    if(!silent) showLoginModal();
+    return false;
   }
   const payload = buildBackupPayload();
   const programId = getCloudProgramId();
@@ -9330,12 +9331,17 @@ async function cloudBackupNow(){
       body: JSON.stringify({ program_id: programId, project_name: projectName, payload }),
     });
     await handleCloudApiResponse(r, 'Backup failed');
-    updateCloudSyncStatus('Cloud sync: Snapshot saved (' + new Date().toLocaleTimeString() + ')', true);
-    showToast('☁ Snapshot saved to Supabase');
+    if(!silent){
+      updateCloudSyncStatus('Cloud sync: Snapshot saved (' + new Date().toLocaleTimeString() + ')', true);
+      showToast('☁ Snapshot saved to Supabase');
+    }
+    return true;
   }catch(e){
-    if(isCloudAuthError(0, e.message)) return;
+    if(silent) throw e;
+    if(isCloudAuthError(0, e.message)) return false;
     updateCloudSyncStatus('Cloud sync failed: ' + e.message, false);
     alert('Cloud backup failed: ' + e.message);
+    return false;
   }
 }
 
@@ -10248,6 +10254,36 @@ function loadProgramData(progId){
 function autoSaveData(){
   if(!ACTIVE_PROGRAM_ID) return;
   saveCurrentProgramData();
+  scheduleRealtimeCloudSync('autoSaveData');
+}
+
+// Debounced Supabase sync: every local mutation schedules one cloud save.
+let cloudSaveTimeout;
+let cloudSaveInFlight = false;
+let cloudSaveQueued = false;
+function scheduleRealtimeCloudSync(reason){
+  if(!_cloudSession || !_cloudSession.access_token || !ACTIVE_PROGRAM_ID) return;
+  clearTimeout(cloudSaveTimeout);
+  updateCloudSyncStatus('Cloud sync: Saving changes…', true);
+  cloudSaveTimeout = setTimeout(async () => {
+    if(cloudSaveInFlight){
+      cloudSaveQueued = true;
+      return;
+    }
+    cloudSaveInFlight = true;
+    try{
+      await cloudBackupNow({ silent: true });
+      updateCloudSyncStatus('Cloud sync: Live saved (' + new Date().toLocaleTimeString() + ')', true);
+    }catch(e){
+      updateCloudSyncStatus('Cloud sync autosave failed: ' + (e?.message || 'Unknown error'), false);
+    }finally{
+      cloudSaveInFlight = false;
+      if(cloudSaveQueued){
+        cloudSaveQueued = false;
+        scheduleRealtimeCloudSync('queued:' + (reason || 'mutation'));
+      }
+    }
+  }, 1400);
 }
 
 // Override key save functions to auto-save program data
@@ -10258,11 +10294,20 @@ localStorage.setItem = function(key, value) {
   originalSetItem.call(this, key, value);
   
   // Auto-save program data when these keys are modified
-  if(!suspendAutoSave && ['pns_live_members', 'pns_live_groups', 'pns_live_dates', 'pns_live_facilitators', 
-      'pns_recordings', 'pns_guru_q', 'pns_transfers', 'pns_notes'].includes(key) && ACTIVE_PROGRAM_ID) {
+  const shouldTrack = (
+    ['pns_live_members', 'pns_live_groups', 'pns_live_dates', 'pns_live_facilitators',
+     'pns_recordings', 'pns_guru_q', 'pns_transfers', 'pns_notes', 'pns_all_programs'].includes(key)
+    || key.startsWith('pns_prog_data_')
+    || key.startsWith('pns_prog_faqs_')
+    || key.startsWith('pns_prog_guidelines_')
+    || key.startsWith('pns_prog_workflow_')
+    || key.startsWith('pns_prog_checklist_items_')
+  );
+  if(!suspendAutoSave && shouldTrack && ACTIVE_PROGRAM_ID) {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
       saveCurrentProgramData();
+      scheduleRealtimeCloudSync(key);
     }, 500);
   }
 };
