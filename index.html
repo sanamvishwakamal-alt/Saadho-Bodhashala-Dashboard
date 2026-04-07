@@ -8527,6 +8527,101 @@ function handleFileUpload(file){if(!file)return;const r=new FileReader();r.onloa
 function parseCSVLine2(line){const res=[];let cur='',inQ=false;for(const ch of line){if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){res.push(cur);cur='';}else cur+=ch;}res.push(cur);return res;}
 function findCol2(hdrs,cands){for(const c of cands){const i=hdrs.findIndex(h=>h===c||h.includes(c));if(i>=0)return i;}return -1;}
 function getSessionDates(){const raw=(document.getElementById('setup-sessions')?.value||'').trim();const lines=raw.split('\n').map(s=>s.trim()).filter(Boolean);return lines.length>=1?lines:['Session 1','Session 2','Session 3','Session 4','Session 5'];}
+function isLikelyEmailName(value){
+  const raw = String(value || '').trim();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
+}
+function normalizeProjectName(name){
+  const raw = String(name || '').trim();
+  if(!raw || isLikelyEmailName(raw)) return 'Panchakshari Naad Sadhana | Mahashivaratri 2026';
+  return raw;
+}
+function safeReadArray(key){
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    return [];
+  }
+}
+function bootstrapProjectStateFromLocal(markLoaded){
+  const projectName = normalizeProjectName(localStorage.getItem('pns_project_name'));
+  localStorage.setItem('pns_project_name', projectName);
+
+  const liveMembers = safeReadArray('pns_live_members');
+  const liveGroups = safeReadArray('pns_live_groups');
+  const liveDates = safeReadArray('pns_live_dates');
+  const liveFacilitators = safeReadArray('pns_live_facilitators');
+
+  if(!DATES.length){
+    const dates = liveDates.length ? liveDates : ['Session 1','Session 2','Session 3','Session 4','Session 5'];
+    DATES.length = 0;
+    dates.forEach(d => DATES.push(d));
+    RAW.dates.length = 0;
+    dates.forEach(d => RAW.dates.push(d));
+    localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
+  }
+  if(!GROUPS.length && liveGroups.length){
+    GROUPS.length = 0;
+    liveGroups.forEach(g => GROUPS.push(g));
+    RAW.groups = JSON.parse(JSON.stringify(GROUPS));
+    localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+  }
+  if((!members || !members.length) && liveMembers.length){
+    members = liveMembers.map((m, i) => ({ ...m, idx: i }));
+    localStorage.setItem('pns_live_members', JSON.stringify(members));
+  }
+  if(!FACILITATORS.length && liveFacilitators.length){
+    FACILITATORS.length = 0;
+    liveFacilitators.forEach(f => FACILITATORS.push(f));
+    localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
+  }
+
+  if(!ALL_PROGRAMS.length){
+    const pid = 'prog_' + Date.now();
+    ACTIVE_PROGRAM_ID = pid;
+    ALL_PROGRAMS = [{
+      id: pid,
+      name: projectName,
+      category: 'General',
+      status: 'active',
+      created_at: new Date().toISOString(),
+      sessions: DATES.map(d => ({ date: d, label: d, created_at: new Date().toISOString() })),
+      meta: {
+        member_count: (members || []).filter(m => (m.role || 'Sadhak') !== 'Facilitator').length,
+        session_count: DATES.length
+      }
+    }];
+    localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+    localStorage.setItem('pns_active_program_id', ACTIVE_PROGRAM_ID);
+  }
+
+  if(!ACTIVE_PROGRAM_ID || !ALL_PROGRAMS.some(p => p.id === ACTIVE_PROGRAM_ID)){
+    ACTIVE_PROGRAM_ID = ALL_PROGRAMS[0].id;
+    localStorage.setItem('pns_active_program_id', ACTIVE_PROGRAM_ID);
+  }
+
+  const activeProg = ALL_PROGRAMS.find(p => p.id === ACTIVE_PROGRAM_ID);
+  if(activeProg){
+    if(isLikelyEmailName(activeProg.name)) activeProg.name = projectName;
+    if(!Array.isArray(activeProg.sessions) || !activeProg.sessions.length){
+      activeProg.sessions = DATES.map(d => ({ date: d, label: d, created_at: new Date().toISOString() }));
+    }
+    activeProg.meta = {
+      member_count: (members || []).filter(m => (m.role || 'Sadhak') !== 'Facilitator').length,
+      session_count: DATES.length
+    };
+    localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+  }
+
+  if(markLoaded) localStorage.setItem('pns_project_loaded', '1');
+  const brand = document.querySelector('.brand-text h1');
+  if(brand) brand.textContent = projectName;
+
+  if(ACTIVE_PROGRAM_ID && !localStorage.getItem('pns_prog_data_' + ACTIVE_PROGRAM_ID)) {
+    if(typeof saveCurrentProgramData === 'function') saveCurrentProgramData();
+  }
+}
 function parseCSVSetup(text){
   const lines=text.trim().split(/\r?\n/);
   if(lines.length<2){showCSVError('File empty.');return;}
@@ -8591,7 +8686,7 @@ function showCSVPreview(data){
   const ls=document.getElementById('launch-status');if(ls)ls.textContent='Ready — '+data.members.length+' sadhaks'+(fc?' + '+fc+' facilitators':'');
 }
 function launchWithData(){
-  const sess=getSessionDates();const pname=(document.getElementById('setup-project-name')?.value||'').trim()||'Panchakshari Naad Sadhana | Mahashivaratri 2026';
+  const sess=getSessionDates();const pname=normalizeProjectName((document.getElementById('setup-project-name')?.value||'').trim());
   DATES.length=0;sess.forEach(s=>DATES.push(s));RAW.dates.length=0;sess.forEach(s=>RAW.dates.push(s));
   if(loadMode==='upload'&&parsedCSVData){
     // Build combined members list: sadhaks + facilitators (tagged by role)
@@ -8688,7 +8783,14 @@ function checkFirstLaunch(){
   currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
   applyRole();
   const hasData=localStorage.getItem('pns_project_loaded');
-  if(!hasData){document.getElementById('setup-screen').style.display='block';return;}
+  if(!hasData){
+    bootstrapProjectStateFromLocal(true);
+    document.getElementById('setup-screen').style.display='none';
+    applyEditableContent();
+    updateProgPill();
+    setTimeout(renderOverview, 0);
+    return;
+  }
   
   // Try to load program-specific data first when snapshot exists
   if(ACTIVE_PROGRAM_ID && hasActiveProgramSnapshot) {
@@ -8736,6 +8838,7 @@ function checkFirstLaunch(){
     saveCurrentProgramData();
   }
   
+  bootstrapProjectStateFromLocal(false);
   document.getElementById('setup-screen').style.display='none';
   applyEditableContent();
   updateProgPill();
