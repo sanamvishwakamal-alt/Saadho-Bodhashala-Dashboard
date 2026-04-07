@@ -8860,6 +8860,43 @@ function resetProject(){
 
 // ── BACKUP & RESTORE ──────────────────────────────────────────────────────
 function buildBackupPayload(){
+  const allPrograms = JSON.parse(localStorage.getItem('pns_all_programs')||'[]');
+  const programSnapshots = {};
+  const programFaqs = {};
+  const programGuidelines = {};
+  const programWorkflowPhases = {};
+  const programChecklistItems = {};
+  const programChecklists = {};
+
+  (allPrograms || []).forEach(p => {
+    const pid = (p && p.id) ? String(p.id) : '';
+    if(!pid) return;
+    try{
+      const raw = localStorage.getItem('pns_prog_data_' + pid);
+      if(raw) programSnapshots[pid] = JSON.parse(raw);
+    }catch(_e){}
+    try{
+      const raw = localStorage.getItem('pns_prog_faqs_' + pid);
+      if(raw) programFaqs[pid] = JSON.parse(raw);
+    }catch(_e){}
+    try{
+      const raw = localStorage.getItem('pns_prog_guidelines_' + pid);
+      if(raw) programGuidelines[pid] = JSON.parse(raw);
+    }catch(_e){}
+    try{
+      const raw = localStorage.getItem('pns_prog_workflow_' + pid);
+      if(raw) programWorkflowPhases[pid] = JSON.parse(raw);
+    }catch(_e){}
+    try{
+      const raw = localStorage.getItem('pns_prog_checklist_items_' + pid);
+      if(raw) programChecklistItems[pid] = JSON.parse(raw);
+    }catch(_e){}
+    try{
+      const raw = localStorage.getItem('pns_checklist_' + pid);
+      if(raw) programChecklists[pid] = JSON.parse(raw);
+    }catch(_e){}
+  });
+
   return {
     _version:3, _timestamp:new Date().toISOString(),
     _project:localStorage.getItem('pns_project_name')||'PNS',
@@ -8877,8 +8914,14 @@ function buildBackupPayload(){
     custom_workflow_phases: JSON.parse(localStorage.getItem('pns_prog_workflow_' + (ACTIVE_PROGRAM_ID || 'default'))||'null'),
     auto_backup_config: JSON.parse(localStorage.getItem('pns_auto_backup_config')||'null'),
     editable_content:   JSON.parse(localStorage.getItem('pns_editable_content')||'{}'),
-    all_programs:       JSON.parse(localStorage.getItem('pns_all_programs')||'[]'),
+    all_programs:       allPrograms,
     active_program_id:  localStorage.getItem('pns_active_program_id')||null,
+    program_snapshots:  programSnapshots,
+    program_faqs:       programFaqs,
+    program_guidelines: programGuidelines,
+    program_workflow_phases: programWorkflowPhases,
+    program_checklist_items: programChecklistItems,
+    program_checklists: programChecklists,
   };
 }
 
@@ -9347,6 +9390,16 @@ async function cloudBackupNow(opts = {}){
 
 function restoreBackupObject(b){
   if(!b || !b._version) throw new Error('Not a valid PNS backup object.');
+  if(b.all_programs) localStorage.setItem('pns_all_programs',JSON.stringify(b.all_programs));
+  if(b.active_program_id) {
+    localStorage.setItem('pns_active_program_id',b.active_program_id);
+  } else {
+    const existingActive = localStorage.getItem('pns_active_program_id');
+    const firstProgramId = Array.isArray(b.all_programs) && b.all_programs[0] ? b.all_programs[0].id : null;
+    if(!existingActive && firstProgramId) localStorage.setItem('pns_active_program_id', firstProgramId);
+  }
+  const restoredActiveProgramId = localStorage.getItem('pns_active_program_id') || ACTIVE_PROGRAM_ID || 'default';
+
   if(b.members)      localStorage.setItem('pns_live_members',JSON.stringify(b.members));
   if(b.groups)       localStorage.setItem('pns_live_groups',JSON.stringify(b.groups));
   if(b.dates)        localStorage.setItem('pns_live_dates',JSON.stringify(b.dates));
@@ -9355,27 +9408,61 @@ function restoreBackupObject(b){
   if(b.guru_questions)localStorage.setItem('pns_guru_q',JSON.stringify(b.guru_questions));
   if(b.transfers)    localStorage.setItem('pns_transfers',JSON.stringify(b.transfers));
   if(b.notes)        localStorage.setItem('pns_notes',JSON.stringify(b.notes));
-  if(b.checklist)    localStorage.setItem('pns_checklist_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.checklist));
+  if(b.checklist)    localStorage.setItem('pns_checklist_' + restoredActiveProgramId,JSON.stringify(b.checklist));
   if(b.notifications)localStorage.setItem('pns_notifs',JSON.stringify(b.notifications));
   if(b.admin_pin)    localStorage.setItem('pns_admin_pin',b.admin_pin);
   if(b.custom_faqs) {
     localStorage.setItem('pns_custom_faqs',JSON.stringify(b.custom_faqs));
-    localStorage.setItem('pns_prog_faqs_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_faqs));
+    localStorage.setItem('pns_prog_faqs_' + restoredActiveProgramId,JSON.stringify(b.custom_faqs));
   }
   if(b.custom_guidelines) {
     localStorage.setItem('pns_custom_guidelines',JSON.stringify(b.custom_guidelines));
-    localStorage.setItem('pns_prog_guidelines_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_guidelines));
+    localStorage.setItem('pns_prog_guidelines_' + restoredActiveProgramId,JSON.stringify(b.custom_guidelines));
   }
   if(b.custom_workflow_phases) {
-    localStorage.setItem('pns_prog_workflow_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_workflow_phases));
+    localStorage.setItem('pns_prog_workflow_' + restoredActiveProgramId,JSON.stringify(b.custom_workflow_phases));
   }
   if(b.custom_checklist_items) {
-    localStorage.setItem('pns_prog_checklist_items_' + (ACTIVE_PROGRAM_ID || 'default'),JSON.stringify(b.custom_checklist_items));
+    localStorage.setItem('pns_prog_checklist_items_' + restoredActiveProgramId,JSON.stringify(b.custom_checklist_items));
+  }
+  if(b.program_snapshots && typeof b.program_snapshots === 'object') {
+    Object.entries(b.program_snapshots).forEach(([pid, data]) => {
+      if(!pid || data == null) return;
+      localStorage.setItem('pns_prog_data_' + pid, JSON.stringify(data));
+    });
+  }
+  if(b.program_faqs && typeof b.program_faqs === 'object') {
+    Object.entries(b.program_faqs).forEach(([pid, data]) => {
+      if(!pid || data == null) return;
+      localStorage.setItem('pns_prog_faqs_' + pid, JSON.stringify(data));
+    });
+  }
+  if(b.program_guidelines && typeof b.program_guidelines === 'object') {
+    Object.entries(b.program_guidelines).forEach(([pid, data]) => {
+      if(!pid || data == null) return;
+      localStorage.setItem('pns_prog_guidelines_' + pid, JSON.stringify(data));
+    });
+  }
+  if(b.program_workflow_phases && typeof b.program_workflow_phases === 'object') {
+    Object.entries(b.program_workflow_phases).forEach(([pid, data]) => {
+      if(!pid || data == null) return;
+      localStorage.setItem('pns_prog_workflow_' + pid, JSON.stringify(data));
+    });
+  }
+  if(b.program_checklist_items && typeof b.program_checklist_items === 'object') {
+    Object.entries(b.program_checklist_items).forEach(([pid, data]) => {
+      if(!pid || data == null) return;
+      localStorage.setItem('pns_prog_checklist_items_' + pid, JSON.stringify(data));
+    });
+  }
+  if(b.program_checklists && typeof b.program_checklists === 'object') {
+    Object.entries(b.program_checklists).forEach(([pid, data]) => {
+      if(!pid || data == null) return;
+      localStorage.setItem('pns_checklist_' + pid, JSON.stringify(data));
+    });
   }
   if(b.auto_backup_config)localStorage.setItem('pns_auto_backup_config',JSON.stringify(b.auto_backup_config));
   if(b.editable_content) localStorage.setItem('pns_editable_content',JSON.stringify(b.editable_content));
-  if(b.all_programs) localStorage.setItem('pns_all_programs',JSON.stringify(b.all_programs));
-  if(b.active_program_id) localStorage.setItem('pns_active_program_id',b.active_program_id);
   localStorage.setItem('pns_project_loaded','1');
   if(b._project)localStorage.setItem('pns_project_name',b._project);
   localStorage.setItem('pns_last_restore',new Date().toISOString());
