@@ -47,11 +47,58 @@
   --dm-text-mute:#8FA4C0;
   --dm-border:   rgba(143,164,192,0.28);
   --dm-glow:     rgba(122,158,78,0.14);
+  --dm-accent-rgb: 122,158,78;
+  --dm-accent-text: #d9efb9;
 }
 
 body.dark-mode {
-  background: radial-gradient(1200px 700px at 20% -10%, rgba(122,158,78,0.08), transparent 60%), linear-gradient(160deg, var(--dm-bg) 0%, var(--dm-bg-alt) 100%);
+  background: radial-gradient(1200px 700px at 20% -10%, rgba(var(--dm-accent-rgb),0.08), transparent 60%), linear-gradient(160deg, var(--dm-bg) 0%, var(--dm-bg-alt) 100%);
   color: var(--dm-text);
+}
+
+body.dark-mode[data-dark-preset="blue"] {
+  --dm-bg: #0D1420;
+  --dm-bg-alt: #111B2A;
+  --dm-surface: #152235;
+  --dm-card: #1B2A40;
+  --dm-elev: #223552;
+  --dm-text: #E6EEF8;
+  --dm-text-soft: #B7C6DA;
+  --dm-text-mute: #8FA4C0;
+  --dm-border: rgba(143,164,192,0.28);
+  --dm-glow: rgba(122,158,78,0.14);
+  --dm-accent-rgb: 122,158,78;
+  --dm-accent-text: #d9efb9;
+}
+
+body.dark-mode[data-dark-preset="forest"] {
+  --dm-bg: #0E1712;
+  --dm-bg-alt: #122018;
+  --dm-surface: #17281f;
+  --dm-card: #1D3026;
+  --dm-elev: #23382c;
+  --dm-text: #E8F3EA;
+  --dm-text-soft: #BFD5C3;
+  --dm-text-mute: #98B5A0;
+  --dm-border: rgba(138,174,146,0.26);
+  --dm-glow: rgba(184,147,74,0.16);
+  --dm-accent-rgb: 184,147,74;
+  --dm-accent-text: #f0d9a7;
+}
+
+body.dark-mode[data-dark-preset="dusk"] {
+  --dm-bg: #1A1116;
+  --dm-bg-alt: #231821;
+  --dm-surface: #2A1E29;
+  --dm-card: #33243A;
+  --dm-elev: #3D2B45;
+  --dm-text: #F3EAF2;
+  --dm-text-soft: #D4BDD2;
+  --dm-text-mute: #B89FB6;
+  --dm-border: rgba(184,145,182,0.26);
+  --dm-glow: rgba(232,135,58,0.16);
+  --dm-accent-rgb: 232,135,58;
+  --dm-accent-text: #ffd7b3;
 }
 
 body.dark-mode .card,
@@ -82,7 +129,7 @@ body.dark-mode .nav-btn {
 
 body.dark-mode .nav-btn:hover,
 body.dark-mode .nav-btn.active {
-  background: rgba(122,158,78,0.14);
+  background: rgba(var(--dm-accent-rgb),0.14);
   color: var(--dm-text);
 }
 
@@ -126,7 +173,7 @@ body.dark-mode .btn-outline {
 }
 
 body.dark-mode .btn-outline:hover {
-  background: rgba(122,158,78,0.12);
+  background: rgba(var(--dm-accent-rgb),0.12);
   color: var(--dm-text);
 }
 
@@ -385,10 +432,47 @@ body.dark-mode .program-banner-text {
 }
 
 .theme-toggle.dark-active {
-  background: linear-gradient(135deg, rgba(122,158,78,0.22), rgba(122,158,78,0.08));
-  color: #d9efb9;
-  border-color: rgba(122,158,78,0.45);
+  background: linear-gradient(135deg, rgba(var(--dm-accent-rgb),0.22), rgba(var(--dm-accent-rgb),0.08));
+  color: var(--dm-accent-text);
+  border-color: rgba(var(--dm-accent-rgb),0.45);
   box-shadow: 0 0 0 2px var(--dm-glow);
+}
+
+.dark-preset-select {
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.26);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  padding: 0 28px 0 10px;
+  min-width: 130px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.7) 50%), linear-gradient(135deg, rgba(255,255,255,0.7) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 13px, calc(100% - 9px) 13px;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.dark-preset-select option {
+  color: #1A0A2E;
+  background: #fff;
+}
+
+body.dark-mode .dark-preset-select {
+  border-color: rgba(var(--dm-accent-rgb),0.45);
+  background-color: rgba(20,32,51,0.7);
+  color: var(--dm-text);
+}
+
+body.dark-mode .dark-preset-select option {
+  color: var(--dm-text);
+  background: var(--dm-card);
 }
 
 /* ── TOPBAR QUICK STATS ── */
@@ -2690,6 +2774,11 @@ body.dark-mode .filter-dropdown {
       <span style="opacity:.6">&#9662;</span>
     </div>
     <div class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</div>
+    <select id="dark-preset-select" class="dark-preset-select" onchange="setDarkModePreset(this.value)" title="Dark theme preset">
+      <option value="blue">Soothing Blue</option>
+      <option value="forest">Forest Night</option>
+      <option value="dusk">Warm Dusk</option>
+    </select>
     <button class="btn-edit-toggle" id="edit-toggle-btn" onclick="toggleEditMode()" title="Edit dashboard content">&#10002; <span id="edit-toggle-lbl">Edit</span></button>
     <div id="topbar-user-pill" style="display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(184,147,74,0.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff;font-weight:600;max-width:200px;overflow:hidden">
       <span style="width:7px;height:7px;border-radius:50%;background:#4caf50;flex-shrink:0;display:inline-block"></span>
@@ -3933,6 +4022,31 @@ function toggleRole() {
 }
 
 // ── DARK MODE TOGGLE ──────────────────────────────────────────────────────
+const DARK_PRESET_KEY = 'pns_dark_preset';
+
+function applyDarkModePreset(preset){
+  const validPreset = ['blue', 'forest', 'dusk'].includes(preset) ? preset : 'blue';
+  document.body.setAttribute('data-dark-preset', validPreset);
+  const presetSelect = document.getElementById('dark-preset-select');
+  if(presetSelect){
+    presetSelect.value = validPreset;
+  }
+  return validPreset;
+}
+
+function setDarkModePreset(preset){
+  const appliedPreset = applyDarkModePreset(preset);
+  localStorage.setItem(DARK_PRESET_KEY, appliedPreset);
+  if(document.body.classList.contains('dark-mode')){
+    const labels = {
+      blue: 'Soothing Blue',
+      forest: 'Forest Night',
+      dusk: 'Warm Dusk'
+    };
+    showToast(`✓ Dark preset: ${labels[appliedPreset] || appliedPreset}`);
+  }
+}
+
 function toggleDarkMode(){
   const isDark = document.body.classList.toggle('dark-mode');
   localStorage.setItem('pns_dark_mode', isDark ? 'true' : 'false');
@@ -3945,6 +4059,8 @@ function toggleDarkMode(){
 }
 
 function initDarkMode(){
+  const savedPreset = localStorage.getItem(DARK_PRESET_KEY) || 'blue';
+  applyDarkModePreset(savedPreset);
   const savedDarkMode = localStorage.getItem('pns_dark_mode') === 'true';
   if(savedDarkMode){
     document.body.classList.add('dark-mode');
