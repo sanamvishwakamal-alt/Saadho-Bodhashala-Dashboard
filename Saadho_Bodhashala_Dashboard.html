@@ -9218,7 +9218,113 @@ function saveProgramChanges() {
 
 // ── BACKUP & RESTORE FUNCTIONS ─────────────────────────────────────────────
 // ── PROGRAMS FUNCTIONS ────────────────────────────────────────────────────────
+function deriveProgramMetaFromData(program, data){
+  const source = data || null;
+  const memberList = Array.isArray(source?.members) ? source.members : [];
+  const sessionList = Array.isArray(program?.sessions) && program.sessions.length
+    ? program.sessions
+    : (Array.isArray(source?.dates) ? source.dates : []);
+  return {
+    member_count: memberList.filter(m => (m?.role || 'Sadhak') !== 'Facilitator').length,
+    session_count: sessionList.length
+  };
+}
+
+function getProgramMeta(program){
+  if(!program || !program.id) return { member_count: 0, session_count: 0 };
+  const readJsonArray = (key) => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || 'null');
+      return Array.isArray(value) ? value : [];
+    } catch (err) {
+      return [];
+    }
+  };
+  const normalizeSessions = (items) => (items || [])
+    .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
+    .filter(Boolean);
+  const liveDates = readJsonArray('pns_live_dates');
+  const liveMembers = readJsonArray('pns_live_members');
+  const snapshotData = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('pns_prog_data_' + program.id) || 'null');
+    } catch (err) {
+      console.warn('Could not read program snapshot for meta', program.id, err);
+      return null;
+    }
+  })();
+  const sessionCandidates = [
+    normalizeSessions(program.sessions),
+    normalizeSessions(snapshotData?.dates),
+    program.id === ACTIVE_PROGRAM_ID ? normalizeSessions(DATES) : [],
+    program.id === ACTIVE_PROGRAM_ID ? normalizeSessions(liveDates) : []
+  ];
+  const memberCandidates = [
+    Array.isArray(snapshotData?.members) ? snapshotData.members : [],
+    program.id === ACTIVE_PROGRAM_ID ? (Array.isArray(members) ? members : []) : [],
+    program.id === ACTIVE_PROGRAM_ID ? liveMembers : []
+  ];
+  const resolvedSessions = sessionCandidates.find(list => list.length) || [];
+  const resolvedMembers = memberCandidates.find(list => list.length) || [];
+  if(resolvedSessions.length || resolvedMembers.length){
+    return deriveProgramMetaFromData(program, { members: resolvedMembers, dates: resolvedSessions });
+  }
+  if(program.id === ACTIVE_PROGRAM_ID){
+    return deriveProgramMetaFromData(program, { members, dates: DATES });
+  }
+  if(snapshotData){
+    return deriveProgramMetaFromData(program, snapshotData);
+  }
+  return program.meta || deriveProgramMetaFromData(program, { members: [], dates: [] });
+}
+
+function syncActiveProgramSnapshotFromLiveState(){
+  if(!ACTIVE_PROGRAM_ID) return;
+  const activeProg = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
+  if(!activeProg) return;
+  const readJsonArray = (key) => {
+    try {
+      const value = JSON.parse(localStorage.getItem(key) || 'null');
+      return Array.isArray(value) ? value : [];
+    } catch (err) {
+      return [];
+    }
+  };
+  const liveMembers = readJsonArray('pns_live_members');
+  const liveGroups = readJsonArray('pns_live_groups');
+  const liveDates = readJsonArray('pns_live_dates');
+  const liveFacilitators = readJsonArray('pns_live_facilitators');
+  const snapshotKey = 'pns_prog_data_' + ACTIVE_PROGRAM_ID;
+  let snapshot = null;
+  try {
+    snapshot = JSON.parse(localStorage.getItem(snapshotKey) || 'null');
+  } catch (err) {
+    snapshot = null;
+  }
+  const hasSnapshotMembers = Array.isArray(snapshot?.members) && snapshot.members.length > 0;
+  const hasSnapshotDates = Array.isArray(snapshot?.dates) && snapshot.dates.length > 0;
+  const hasProgramSessions = Array.isArray(activeProg.sessions) && activeProg.sessions.length > 0;
+  if(!hasProgramSessions && liveDates.length){
+    activeProg.sessions = liveDates.map(date => ({ date, label: date, created_at: new Date().toISOString() }));
+  }
+  if((!hasSnapshotMembers && liveMembers.length) || (!hasSnapshotDates && liveDates.length)){
+    localStorage.setItem(snapshotKey, JSON.stringify({
+      ...(snapshot || {}),
+      dates: liveDates.length ? liveDates : (snapshot?.dates || []),
+      groups: liveGroups.length ? liveGroups : (snapshot?.groups || []),
+      members: liveMembers.length ? liveMembers.map((m, i) => ({ ...m, program_id: m.program_id || ACTIVE_PROGRAM_ID, idx: i })) : (snapshot?.members || []),
+      facilitators: liveFacilitators.length ? liveFacilitators.map(f => ({ ...f, program_id: f.program_id || ACTIVE_PROGRAM_ID })) : (snapshot?.facilitators || [])
+    }));
+  }
+  activeProg.meta = deriveProgramMetaFromData(activeProg, {
+    members: liveMembers.length ? liveMembers : (snapshot?.members || []),
+    dates: liveDates.length ? liveDates : (snapshot?.dates || [])
+  });
+  localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+}
+
 function renderProgramsList(){
+  syncActiveProgramSnapshotFromLiveState();
   const listEl = document.getElementById('programs-list');
   const statsEl = document.getElementById('programs-stats-grid');
   if(!listEl) return;
@@ -9269,7 +9375,7 @@ function renderProgramsList(){
     const renderProgCard = (p) => {
       const isActive = p.id === ACTIVE_PROGRAM_ID;
       const isArchived = p.status === 'archived';
-      const meta = p.meta || {};
+      const meta = getProgramMeta(p);
       const menuId = 'menu-' + p.id;
       
       return `<div class="prog-card ${isActive?'active-prog':''}">
@@ -9478,6 +9584,7 @@ function switchToProgram(id){
 function saveCurrentProgramData(){
   if(!ACTIVE_PROGRAM_ID) return;
   const key = 'pns_prog_data_' + ACTIVE_PROGRAM_ID;
+  const activeProg = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
   const data = {
     dates: DATES,
     groups: GROUPS,
@@ -9493,6 +9600,10 @@ function saveCurrentProgramData(){
     custom_guidelines: JSON.parse(localStorage.getItem('pns_prog_guidelines_' + ACTIVE_PROGRAM_ID) || 'null'),
   };
   localStorage.setItem(key, JSON.stringify(data));
+  if(activeProg){
+    activeProg.meta = deriveProgramMetaFromData(activeProg, data);
+    localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+  }
 }
 
 function loadProgramData(progId){
