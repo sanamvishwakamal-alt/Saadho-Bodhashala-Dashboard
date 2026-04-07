@@ -9073,6 +9073,7 @@ function saveMeetLink(groupIdx, url) {
 // initCloudSync kept for compatibility but auth is handled server-side via proxies
 function clearCloudSession({ expired = false } = {}){
   _cloudSession = null;
+  try{ localStorage.removeItem(CLOUD_SESSION_STORAGE_KEY); }catch(_e){}
   try{ sessionStorage.removeItem(CLOUD_SESSION_STORAGE_KEY); }catch(_e){}
   setRole('guest');
   assignedProgramIds = null;
@@ -9083,8 +9084,13 @@ function clearCloudSession({ expired = false } = {}){
 
 function persistCloudSession(){
   try{
-    if(_cloudSession) sessionStorage.setItem(CLOUD_SESSION_STORAGE_KEY, JSON.stringify(_cloudSession));
-    else sessionStorage.removeItem(CLOUD_SESSION_STORAGE_KEY);
+    if(_cloudSession){
+      localStorage.setItem(CLOUD_SESSION_STORAGE_KEY, JSON.stringify(_cloudSession));
+      sessionStorage.setItem(CLOUD_SESSION_STORAGE_KEY, JSON.stringify(_cloudSession));
+    } else {
+      localStorage.removeItem(CLOUD_SESSION_STORAGE_KEY);
+      sessionStorage.removeItem(CLOUD_SESSION_STORAGE_KEY);
+    }
   }catch(_e){}
 }
 
@@ -9132,8 +9138,11 @@ async function restoreCloudSession(){
   let savedSession = null;
   try{
     savedSession = JSON.parse(sessionStorage.getItem(CLOUD_SESSION_STORAGE_KEY) || 'null');
-  }catch(_e){
-    savedSession = null;
+  }catch(_e){ savedSession = null; }
+  if(!savedSession || !savedSession.access_token){
+    try{
+      savedSession = JSON.parse(localStorage.getItem(CLOUD_SESSION_STORAGE_KEY) || 'null');
+    }catch(_e){ savedSession = null; }
   }
   if(!savedSession || !savedSession.access_token){
     updateCloudSyncStatus('Cloud sync: Ready for sign in', false);
@@ -9365,18 +9374,37 @@ function restoreBackupObject(b){
 async function tryColdStartCloudRestore(){
   try{
     await initCloudSync();
-    if(!_cloudSession || !_cloudSession.access_token) return;
+    if(!_cloudSession || !_cloudSession.access_token){
+      // No session — local data was cleared. Show a recovery banner so user can sign in.
+      showColdStartRecoveryBanner();
+      return;
+    }
     const programId = getCloudProgramId();
     const r = await fetch('/api/snapshot?program_id=' + encodeURIComponent(programId), {
       headers: { 'Authorization': 'Bearer ' + _cloudSession.access_token }
     });
-    if(!r.ok) return;
+    if(!r.ok){ showColdStartRecoveryBanner(); return; }
     const data = await r.json().catch(()=>null);
-    if(!data || !data.payload) return;
+    if(!data || !data.payload){ showColdStartRecoveryBanner(); return; }
     restoreBackupObject(data.payload);
     showToast('☁ Programs restored from cloud. Reloading...');
     setTimeout(() => location.reload(), 1500);
-  }catch(e){ /* silent fail — user keeps bootstrap recovery state */ }
+  }catch(e){ showColdStartRecoveryBanner(); }
+}
+
+function showColdStartRecoveryBanner(){
+  if(document.getElementById('cold-start-banner')) return; // already shown
+  const banner = document.createElement('div');
+  banner.id = 'cold-start-banner';
+  banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#7b1c2e;color:#fff;padding:12px 20px;' +
+    'display:flex;align-items:center;gap:12px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
+  banner.innerHTML =
+    '<span style="flex:1">⚠ Your local data was cleared. Sign in to Cloud Sync to restore your programs and members.</span>' +
+    '<button onclick="document.getElementById(\'cold-start-banner\').remove();showLoginModal();" ' +
+    'style="background:#b8934a;border:none;color:#fff;padding:7px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;white-space:nowrap">Sign In & Restore</button>' +
+    '<button onclick="document.getElementById(\'cold-start-banner\').remove();" ' +
+    'style="background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:12px">Dismiss</button>';
+  document.body.prepend(banner);
 }
 
 async function cloudRestoreLatest(){
