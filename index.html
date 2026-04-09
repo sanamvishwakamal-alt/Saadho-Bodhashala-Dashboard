@@ -1,3 +1,6 @@
+<!-- ADMIN TASK TAB SECTION -->
+</div>
+</div>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -3030,6 +3033,7 @@ window.addEventListener('DOMContentLoaded', updateAdminMode);
   </button>
   <button class="nav-btn" onclick="showSection('changes')"><span class="nav-icon">⇄</span> Group Changes</button>
   <button class="nav-btn admin-only" id="programs-nav-btn" onclick="showSection('programs')" style="display:none"><span class="nav-icon">&#10041;</span> Programs</button>
+  <button class="nav-btn admin-only" id="admin-task-nav-btn" onclick="showSection('admin-task')" style="display:none"><span class="nav-icon">🗂️</span> Admin Task</button>
 </div>
 
 <!-- PROGRAM BANNER -->
@@ -3888,79 +3892,79 @@ window.addEventListener('DOMContentLoaded', updateAdminMode);
 
   <div class="card">
     <div class="card-header"><span class="ch-icon">🔔</span> Custom Alert Rules</div>
-    <div id="alerts-rules-panel"></div>
-  </div>
-</div>
+    <div id="admin-users" style="display:none"></div>
+    <div id="admin-transfers"></div>
+    <div id="admin-tasks" style="display:none"></div>
+    <div id="admin-guru-q" style="display:none"></div>
+    <div id="admin-notes" style="display:none"></div>
+    <div id="admin-settings" style="display:none">
+      <div class="two-col" style="margin-bottom:16px">
 
-<!-- EXPORT & TEMPLATES -->
-<div class="section" id="s-exports">
-  <div class="card">
-    <div class="card-header"><span class="ch-icon">📤</span> Export Templates</div>
-    <div class="template-grid" id="export-templates"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><span class="ch-icon">🔧</span> Advanced Export Options</div>
-    <div class="advanced-filter-panel">
-      <div class="filter-section">
-        <div class="filter-section-title">Select Data to Export</div>
-        <div class="filter-options">
-          <label class="filter-option">
-            <input type="checkbox" class="filter-checkbox" id="exp-members" checked>
-            <span class="filter-label">Members</span>
-          </label>
-          <label class="filter-option">
-            <input type="checkbox" class="filter-checkbox" id="exp-groups" checked>
-            <span class="filter-label">Groups</span>
-          </label>
-          <label class="filter-option">
-            <input type="checkbox" class="filter-checkbox" id="exp-attendance" checked>
-            <span class="filter-label">Attendance</span>
-          </label>
-          <label class="filter-option">
-            <input type="checkbox" class="filter-checkbox" id="exp-reports" checked>
-            <span class="filter-label">Reports</span>
-          </label>
+        <!-- Backup & Restore card -->
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header"><span class="ch-icon">💾</span> Backup &amp; Restore</div>
+          <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">
+            Download a complete backup of all data — members, attendance, groups, transfer logs, Gurudev questions, notes and recordings. Restore from a backup file to recover data after a reset or file loss.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-outline" onclick="cloudBackupNow()" style="text-align:left;flex:1;min-width:180px">☁ Save Snapshot to Supabase</button>
+              <button class="btn btn-outline" onclick="cloudRestoreLatest()" style="text-align:left;flex:1;min-width:180px">☁ Restore Latest Snapshot</button>
+              <button class="btn btn-outline" onclick="loadCloudSnapshotList()" style="text-align:left;flex:1;min-width:180px">↻ Refresh Snapshot List</button>
+            </div>
+            <div id="cloud-sync-status" style="font-size:11px;color:var(--text-mute);margin:-2px 0 6px 2px">Cloud sync: Not configured</div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-4px 0 4px 2px">
+              <div id="db-sync-health" style="font-size:11px;color:var(--text-soft);padding:6px 8px;border:1px solid var(--border-light);border-radius:8px;background:rgba(255,255,255,0.7);flex:1;min-width:280px">DB Sync: Waiting for sign-in</div>
+              <button id="db-sync-manual-btn" class="btn btn-outline btn-sm" onclick="manualDbStateSyncNow()" style="font-size:11px">⟳ Sync Now</button>
+            </div>
+            <div id="ts-last-backup" style="font-size:11px;color:var(--text-mute);margin:-4px 0 4px 2px">Last backup: Never</div>
+            <div style="margin:6px 0 4px;border-top:1px dashed var(--border);padding-top:10px">
+              <div style="font-size:11px;font-weight:700;color:var(--shiva-mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Cloud Snapshots (DB)</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+                <button class="btn btn-outline btn-sm" onclick="loadCloudSnapshotList()" style="font-size:11px">↻ Refresh Snapshot List</button>
+                <button class="btn btn-outline btn-sm" onclick="resetLocalDashboardCache()" style="font-size:11px">⚠ Reset Local Cache (Browser)</button>
+              </div>
+              <div id="cloud-snapshots-status" style="font-size:11px;color:var(--text-mute);margin:0 0 6px 2px">Sign in to view snapshots</div>
+              <div id="cloud-snapshots-list" style="max-height:220px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:8px;background:rgba(74,43,138,0.03)"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <button id="cloud-signin-btn" class="btn btn-outline btn-sm" onclick="showLoginModal()" style="font-size:11px">&#128274; Sign In to Cloud</button>
+              <div id="cloud-signout-wrap" style="display:none;align-items:center;gap:8px">
+                <span id="cloud-signed-email" style="font-size:11px;color:var(--shiva-mid)"></span>
+                <button class="btn btn-outline btn-sm" onclick="logoutFromCloud()" style="font-size:11px">Sign Out</button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="filter-section">
-        <div class="filter-section-title">Format</div>
-        <div class="filter-options">
-          <label class="filter-option">
-            <input type="radio" name="export-format" value="csv" checked style="accent-color:var(--saffron)">
-            <span class="filter-label">CSV</span>
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="export-format" value="json" style="accent-color:var(--saffron)">
-            <span class="filter-label">JSON</span>
-          </label>
-          <label class="filter-option">
-            <input type="radio" name="export-format" value="pdf" style="accent-color:var(--saffron)">
-            <span class="filter-label">PDF</span>
-          </label>
+
+        <!-- Role Switcher info card (replaces old PIN/passcode card) -->
+        <div class="card" style="margin-bottom:0">
+          <div class="card-header"><span class="ch-icon">&#128272;</span> Role &amp; Access</div>
+          <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">
+            Use the role dropdown in the top-right corner to switch between <b>Admin, Facilitator, Sadhak,</b> and <b>Guest</b>. The matrix below covers all navigation tabs and shows exact access depth for each role.
+          </p>
+          <div style="background:rgba(74,43,138,0.05);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px">
+            <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:8px">Role Access Details</div>
+            <div style="font-size:11px;color:var(--text-soft);line-height:1.7">Open <b>Action Center → Users &amp; Access</b> to view the live tab-wise access matrix.</div>
+            <div style="font-size:11px;color:var(--text-mute);line-height:1.7;margin-top:6px">That matrix is auto-generated from the current role and permission configuration.</div>
+          </div>
+          <div style="margin-top:14px;background:rgba(74,43,138,0.04);border:1px solid rgba(122,85,192,0.15);border-radius:10px;padding:14px 16px">
+            <div style="font-size:11px;font-weight:700;color:var(--shiva-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">&#128190; What's included in Full Backup (.json)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> All Members &amp; Profiles</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> Full Attendance (all sessions)</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> All Groups &amp; Meet Links</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> Session Date Labels</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> Recordings &amp; Links</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> Ask Gurudev (Q&amp;A)</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> Transfer Requests &amp; Notes</div>
+              <div style="font-size:11px;color:var(--text-soft);display:flex;align-items:center;gap:6px"><span style="color:#4CAF50;font-size:13px">&#10003;</span> Workflow &amp; FAQ (custom)</div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div style="margin-top:16px">
-        <button class="btn btn-saffron" onclick="customExport()">↓ Export Now</button>
       </div>
     </div>
-  </div>
-</div>
-
-</div><!-- /content -->
-
-
-<!-- ADD RECORDING MODAL -->
-<div class="modal-overlay" id="add-rec-modal">
-  <div class="modal" style="max-width:580px">
-    <h2 id="rec-modal-title">Add Recording</h2>
-    <input type="hidden" id="rec-edit-id">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-row" style="grid-column:1/-1"><label>Title *</label>
-        <input type="text" id="rec-title" placeholder="e.g. Session 1 — Guru Dev Discourse"></div>
-      <div class="form-row"><label>Category *</label>
         <input type="text" id="rec-cat" placeholder="e.g. Guru Dev Session, PNS Practice, Initiation, etc." style="border:1px solid var(--border-med);padding:8px;border-radius:6px;font-size:13px;width:100%;box-sizing:border-box;"></div>
       <div class="form-row"><label>Language *</label>
         <select id="rec-lang"><option value="Hindi">Hindi</option><option value="English">English</option><option value="Both">Hindi + English</option></select></div>
@@ -3984,8 +3988,7 @@ window.addEventListener('DOMContentLoaded', updateAdminMode);
         <textarea id="rec-desc" placeholder="Topics covered, instructions for facilitators…"></textarea></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('add-rec-modal')">Cancel</button>
-      <button class="btn btn-success" onclick="saveRecording()">Save Recording</button>
+      <!-- Removed Cancel and Save Recording buttons as per user request -->
     </div>
   </div>
 </div>
