@@ -2972,10 +2972,6 @@ body.edit-mode .nav-wrap { top: 108px; }
       <span id="prog-pill-name" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Programs</span>
       <span style="opacity:.6">&#9662;</span>
     </div>
-    <div id="admin-selector-pill" class="admin-only" style="display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(74,43,138,0.3);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:11px;color:#fff;font-weight:600;margin-left:8px" onclick="showSection('admin')">
-      <span style="width:7px;height:7px;border-radius:50%;background:#7B55C0;flex-shrink:0;display:inline-block"></span>
-      <span id="admin-pill-name" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Admin Task Tab</span>
-    </div>
 
 <script>
 // Show admin-only elements if user is admin
@@ -2999,13 +2995,6 @@ window.addEventListener('DOMContentLoaded', updateAdminMode);
       </div>
       <button id="topbar-sync-now-btn" class="btn-edit-toggle" onclick="manualDbStateSyncNow()" style="font-size:10px;padding:5px 10px;min-width:84px">Sync Now</button>
     </div>
-    <div class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</div>
-    <select id="dark-preset-select" class="dark-preset-select" onchange="setDarkModePreset(this.value)" title="Dark theme preset">
-      <option value="blue">Soothing Blue</option>
-      <option value="forest">Forest Night</option>
-      <option value="dusk">Warm Dusk</option>
-    </select>
-    <button class="btn-edit-toggle" id="edit-toggle-btn" onclick="toggleEditMode()" title="Edit dashboard content">&#10002; <span id="edit-toggle-lbl">Edit</span></button>
     <div id="topbar-user-pill" style="display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.1);border:1px solid rgba(184,147,74,0.4);border-radius:20px;padding:4px 12px;font-size:11px;color:#fff;font-weight:600;max-width:200px;overflow:hidden">
       <span style="width:7px;height:7px;border-radius:50%;background:#4caf50;flex-shrink:0;display:inline-block"></span>
       <span id="topbar-user-email" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
@@ -3021,18 +3010,6 @@ window.addEventListener('DOMContentLoaded', updateAdminMode);
 </div>
 
 
-<!-- EDIT MODE BANNER -->
-<div class="edit-mode-bar" id="edit-mode-bar">
-  <div class="em-left">
-    <div class="em-pulse"></div>
-    &#10002; Edit Mode — click any highlighted text to edit directly
-  </div>
-  <div class="em-right">
-    <button onclick="discardEdits()" style="padding:4px 12px;border-radius:6px;border:1px solid rgba(74,43,138,0.3);background:#fff;color:var(--shiva-soft);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">&#10005; Discard</button>
-    <button onclick="saveAllEdits()" style="padding:4px 12px;border-radius:6px;border:none;background:linear-gradient(135deg,var(--saffron-dk),var(--saffron));color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">&#10003; Save Changes</button>
-    <button onclick="toggleEditMode()" style="padding:4px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:var(--shiva-mid);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">Exit Edit</button>
-  </div>
-</div>
 
 <!-- NAV -->
 <div class="nav-wrap" id="main-nav">
@@ -3062,10 +3039,6 @@ window.addEventListener('DOMContentLoaded', updateAdminMode);
 </div>
 
 <div class="content">
-<!-- ADMIN TASK TAB SECTION (empty page) -->
-<div class="section" id="s-admin" style="display:none">
-  <div style="height:200px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--shiva-mid);font-weight:600;">Admin Task Tab (Empty Page)</div>
-</div>
 
 <!-- OVERVIEW -->
 <div class="section active" id="s-overview">
