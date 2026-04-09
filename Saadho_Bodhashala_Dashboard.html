@@ -9472,17 +9472,18 @@ function restoreBackupObject(b){
   if(restoredSnapshotIds.length){
     const byId = new Map(restoredPrograms.map(item => [item.id, item]));
     restoredSnapshotIds.forEach((pid, idx) => {
-      if(byId.has(pid)) return;
       const snap = restoredSnapshotMap[pid] || {};
       const snapDates = Array.isArray(snap.dates) ? snap.dates : [];
       const snapMembers = Array.isArray(snap.members) ? snap.members : [];
+      const existing = byId.get(pid) || {};
       byId.set(pid, {
+        ...existing,
         id: pid,
-        name: snap.project_name || snap.project || (b._project ? (b._project + ' [' + (idx + 1) + ']') : ('Program ' + (idx + 1))),
-        category: 'General',
-        status: 'active',
-        created_at: new Date().toISOString(),
-        sessions: snapDates.map(d => ({ date: d, label: d, created_at: new Date().toISOString() })),
+        name: existing.name || snap.project_name || snap.project || (b._project ? (b._project + ' [' + (idx + 1) + ']') : ('Program ' + (idx + 1))),
+        category: existing.category || 'General',
+        status: existing.status || 'active',
+        created_at: existing.created_at || new Date().toISOString(),
+        sessions: snapDates.length ? snapDates.map(d => ({ date: d, label: d, created_at: new Date().toISOString() })) : (existing.sessions || []),
         meta: {
           member_count: snapMembers.filter(m => (m && (m.role || 'Sadhak') !== 'Facilitator')).length,
           session_count: snapDates.length,
@@ -9496,7 +9497,13 @@ function restoreBackupObject(b){
     const currentActive = localStorage.getItem('pns_active_program_id');
     const validActive = currentActive && restoredPrograms.some(item => item.id === currentActive) ? currentActive : null;
     const requestedActive = b.active_program_id && restoredPrograms.some(item => item.id === b.active_program_id) ? b.active_program_id : null;
-    localStorage.setItem('pns_active_program_id', requestedActive || validActive || restoredPrograms[0].id);
+    let nextActive = requestedActive || validActive || restoredPrograms[0].id;
+    if(restoredSnapshotIds.length){
+      if(!(nextActive && restoredSnapshotIds.includes(nextActive))) {
+        nextActive = restoredSnapshotIds[0];
+      }
+    }
+    localStorage.setItem('pns_active_program_id', nextActive);
   }
 
   localStorage.setItem('pns_project_loaded','1');
