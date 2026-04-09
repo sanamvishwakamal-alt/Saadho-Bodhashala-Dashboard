@@ -2811,7 +2811,7 @@ body.dark-mode .filter-dropdown {
 <!-- NAV -->
 <div class="nav-wrap" id="main-nav">
   <button class="nav-btn active" onclick="showSection('overview')"><span class="nav-icon">◈</span> Overview</button>
-  <button class="nav-btn" onclick="showSection('data-entry')"><span class="nav-icon">📝</span> Registrations</button>
+  <button class="nav-btn" id="registrations-nav-btn" onclick="showSection('data-entry')"><span class="nav-icon">📝</span> Registrations</button>
   <button class="nav-btn" onclick="showSection('groups')"><span class="nav-icon">◎</span> Groups</button>
   <button class="nav-btn" onclick="showSection('members')"><span class="nav-icon">⊕</span> Members</button>
   <button class="nav-btn" onclick="showSection('attendance')"><span class="nav-icon">✦</span> Attendance</button>
@@ -2894,6 +2894,8 @@ body.dark-mode .filter-dropdown {
     <button class="btn" id="btn-group-form" onclick="switchFormMode('groups')" style="background:#ddd;color:#333;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;font-weight:600">+ Add Group</button>
     <div style="flex:1"></div>
     <button class="btn btn-outline btn-sm" onclick="downloadDataTemplate()">📥 Template</button>
+    <button class="btn btn-outline btn-sm admin-only" onclick="exportMembersData()" style="display:none">↓ Export CSV</button>
+    <label class="btn btn-outline btn-sm admin-only" style="cursor:pointer;margin:0;display:none">↑ Import CSV<input type="file" accept=".csv" style="display:none" onchange="importMembersData(this.files[0]);this.value=''"></label>
   </div>
 
   <!-- MEMBER FORM -->
@@ -3329,11 +3331,16 @@ body.dark-mode .filter-dropdown {
             <button class="btn btn-outline" onclick="loadCloudSnapshotList()" style="text-align:left;flex:1;min-width:180px">↻ Refresh Snapshot List</button>
           </div>
           <div id="cloud-sync-status" style="font-size:11px;color:var(--text-mute);margin:-2px 0 6px 2px">Cloud sync: Not configured</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-4px 0 4px 2px">
+            <div id="db-sync-health" style="font-size:11px;color:var(--text-soft);padding:6px 8px;border:1px solid var(--border-light);border-radius:8px;background:rgba(255,255,255,0.7);flex:1;min-width:280px">DB Sync: Waiting for sign-in</div>
+            <button class="btn btn-outline btn-sm" onclick="retryDbStateSyncNow()" style="font-size:11px">⟳ Retry Now</button>
+          </div>
           <div id="ts-last-backup" style="font-size:11px;color:var(--text-mute);margin:-4px 0 4px 2px">Last backup: Never</div>
           <div style="margin:6px 0 4px;border-top:1px dashed var(--border);padding-top:10px">
             <div style="font-size:11px;font-weight:700;color:var(--shiva-mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Cloud Snapshots (DB)</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
               <button class="btn btn-outline btn-sm" onclick="loadCloudSnapshotList()" style="font-size:11px">↻ Refresh Snapshot List</button>
+              <button class="btn btn-outline btn-sm" onclick="resetLocalDashboardCache()" style="font-size:11px">⚠ Reset Local Cache (Browser)</button>
             </div>
             <div id="cloud-snapshots-status" style="font-size:11px;color:var(--text-mute);margin:0 0 6px 2px">Sign in to view snapshots</div>
             <div id="cloud-snapshots-list" style="max-height:220px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:8px;background:rgba(74,43,138,0.03)"></div>
@@ -3399,8 +3406,10 @@ body.dark-mode .filter-dropdown {
     <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;font-style:italic">For questions raised by sadhaks during sessions that need Gurudev's guidance. Once answered, the facilitator and Admin will be notified.</p>
     <div class="two-col">
       <div>
-        <div class="form-row"><label>Your Name (Facilitator)</label><input type="text" id="gq-facilitator" placeholder="Your name"></div>
-        <div class="form-row"><label>Sadhak's Name (Optional)</label><input type="text" id="gq-sadhak" placeholder="Who asked this?"></div>
+        <div class="form-row"><label>Your Name (Facilitator)</label><input type="text" id="gq-facilitator" list="gq-facilitator-options" placeholder="Search or select facilitator"></div>
+        <datalist id="gq-facilitator-options"></datalist>
+        <div class="form-row"><label>Sadhak's Name (Optional)</label><input type="text" id="gq-sadhak" list="gq-sadhak-options" placeholder="Search or select sadhak"></div>
+        <datalist id="gq-sadhak-options"></datalist>
         <div class="form-row"><label>Group</label><select id="gq-group"><option value="">Select group…</option></select></div>
         <div class="form-row"><label>Question Language</label>
           <select id="gq-lang"><option value="English">English</option><option value="Hindi">Hindi</option></select></div>
@@ -3992,7 +4001,26 @@ body.dark-mode .filter-dropdown {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>const RAW = {"groups":[],"members":[],"dates":["Session 1","Session 2","Session 3","Session 4","Session 5"]};
+<script>
+// ── RESET CACHE via URL parameter ?resetcache=1 ─────────────────────────
+(function(){
+  try{
+    var p = new URLSearchParams(window.location.search);
+    if(p.get('resetcache') === '1'){
+      var keep = {pns_cloud_session:1,pns_current_role:1,pns_dark_mode:1,pns_dark_preset:1};
+      Object.keys(localStorage).forEach(function(k){
+        if(k && k.indexOf('pns_')===0 && !keep[k]) localStorage.removeItem(k);
+      });
+      Object.keys(sessionStorage).forEach(function(k){
+        if(k && k.indexOf('pns_')===0) sessionStorage.removeItem(k);
+      });
+      var clean = window.location.pathname;
+      window.location.replace(clean);
+    }
+  }catch(e){}
+})();
+// ─────────────────────────────────────────────────────────────────────────
+const RAW = {"groups":[],"members":[],"dates":["Session 1","Session 2","Session 3","Session 4","Session 5"]};
 ;
 
 const FACILITATORS = [];
@@ -4005,11 +4033,261 @@ let _cloudInitPromise = null;
 // ── ROLE SYSTEM (PIN-protected) ──────────────────────────────────────────
 const ADMIN_PIN_DEFAULT = '108108';
 const ROLE_LABELS = { admin: 'Admin', facilitator: 'Facilitator', sadhak: 'Sadhak', guest: 'Guest' };
+const ACCESS_PERMISSION_CONFIG = {
+  roleSummaries: {
+    admin: 'Full control: Users & Access, Programs, Registration, and role updates across scope.',
+    facilitator: 'Assigned Program/Group scope only. Registration hidden. Overview + delivery tabs visible.',
+    sadhak: 'Program participant visibility only. No user management or registration controls.',
+    guest: 'Restricted/guest access only.'
+  },
+  tabs: [
+    {
+      id: 'overview',
+      label: 'Overview',
+      details: {
+        admin: 'Full view (all assigned scope), all KPI cards and charts.',
+        facilitator: 'Full view for assigned Program + Group scope, no manual filters required.',
+        sadhak: 'Read-only view for assigned scope.',
+        guest: 'Limited/summary-only view as assigned.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'data-entry',
+      label: 'Registrations',
+      details: {
+        admin: 'Create/update members, facilitators, groups, import/export CSV.',
+        facilitator: 'No access (tab hidden + blocked).',
+        sadhak: 'No access.',
+        guest: 'No access.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: false }, sadhak: { view: false }, guest: { view: false }
+      }
+    },
+    {
+      id: 'groups',
+      label: 'Groups',
+      details: {
+        admin: 'Full group management and edits.',
+        facilitator: 'View/update within assigned groups only.',
+        sadhak: 'View-only for assigned groups.',
+        guest: 'Restricted view only.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'members',
+      label: 'Members',
+      details: {
+        admin: 'Full member list and edits across scope.',
+        facilitator: 'View/edit only assigned group members.',
+        sadhak: 'View-only (no edits).',
+        guest: 'Restricted/minimal view.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'attendance',
+      label: 'Attendance',
+      details: {
+        admin: 'Full attendance controls for all groups in scope.',
+        facilitator: 'Mark/view attendance for assigned groups only.',
+        sadhak: 'View-only attendance.',
+        guest: 'No attendance editing.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'recordings',
+      label: 'Recordings',
+      details: {
+        admin: 'View + Add/Edit/Delete recordings.',
+        facilitator: 'View recordings only; cannot add/edit/delete.',
+        sadhak: 'View-only recordings.',
+        guest: 'View-only (limited by assignment).'
+      },
+      actions: {
+        admin: { view: true, add: true, edit: true, delete: true },
+        facilitator: { view: true, add: false, edit: false, delete: false },
+        sadhak: { view: true, add: false, edit: false, delete: false },
+        guest: { view: true, add: false, edit: false, delete: false }
+      }
+    },
+    {
+      id: 'resources',
+      label: 'Workflow & FAQ',
+      details: {
+        admin: 'Full edit/manage content.',
+        facilitator: 'Read/use content; edits restricted where admin-only.',
+        sadhak: 'Read-only.',
+        guest: 'Read-only (limited).'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'gurudev',
+      label: 'Ask Gurudev',
+      details: {
+        admin: 'Full moderation and actions.',
+        facilitator: 'Operational access within assigned scope.',
+        sadhak: 'Submit/view own relevant items.',
+        guest: 'Minimal/limited actions.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'changes',
+      label: 'Group Changes',
+      details: {
+        admin: 'Full moderation and actions.',
+        facilitator: 'Operational access within assigned scope.',
+        sadhak: 'Submit/view own relevant items.',
+        guest: 'Minimal/limited actions.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: true }, sadhak: { view: true }, guest: { view: true }
+      }
+    },
+    {
+      id: 'admin',
+      label: 'Admin',
+      details: {
+        admin: 'Full Users & Access, role, permission and account controls.',
+        facilitator: 'No access.',
+        sadhak: 'No access.',
+        guest: 'No access.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: false }, sadhak: { view: false }, guest: { view: false }
+      }
+    },
+    {
+      id: 'programs',
+      label: 'Programs',
+      details: {
+        admin: 'Create/activate/archive/switch programs.',
+        facilitator: 'No access (program assigned by admin).',
+        sadhak: 'No access.',
+        guest: 'No access.'
+      },
+      actions: {
+        admin: { view: true }, facilitator: { view: false }, sadhak: { view: false }, guest: { view: false }
+      }
+    }
+  ]
+};
+const ACCESS_TAB_BY_ID = ACCESS_PERMISSION_CONFIG.tabs.reduce((acc, tab) => {
+  acc[tab.id] = tab;
+  return acc;
+}, {});
+
+function hasTabAction(tabId, action, roleName = currentRole) {
+  const tab = ACCESS_TAB_BY_ID[tabId];
+  if (!tab) return true;
+  return !!tab?.actions?.[roleName]?.[action];
+}
+
+function getTabAccessDeniedMessage(tabId, action = 'view') {
+  const tab = ACCESS_TAB_BY_ID[tabId];
+  const roleLabel = ROLE_LABELS[currentRole] || 'User';
+  const tabLabel = tab?.label || tabId;
+  if (action === 'view') {
+    return `Access denied: ${roleLabel} does not have access to the ${tabLabel} tab.`;
+  }
+  return `Access denied: ${roleLabel} cannot ${action} in ${tabLabel}.`;
+}
+
 let currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
 let assignedProgramIds = null; // null means unrestricted (admin or signed-out local mode)
+let assignedProgramRoles = {};
+let assignedGroupNames = null;
+let scopedGroupsCache = null;
+
+function normalizeGroupNameForScope(name){
+  return String(name || '').trim().toLowerCase();
+}
+
+function splitGroupNames(value){
+  return String(value || '')
+    .split(',')
+    .map(v => v.trim())
+    .filter(Boolean);
+}
+
+function deriveAssignedGroupsFromProfile(){
+  scopedGroupsCache = null;
+  if(currentRole !== 'facilitator'){
+    assignedGroupNames = null;
+    return;
+  }
+  const email = String(_cloudSession?.email || '').trim().toLowerCase();
+  if(!email){
+    assignedGroupNames = [];
+    return;
+  }
+  const groups = new Set();
+  (FACILITATORS || []).forEach(f => {
+    const fEmail = String(f?.email || '').trim().toLowerCase();
+    if(!fEmail || fEmail !== email) return;
+    (Array.isArray(f.group_names) ? f.group_names : []).forEach(g => groups.add(String(g || '').trim()));
+    splitGroupNames(f.group_name).forEach(g => groups.add(g));
+    splitGroupNames(f.groups).forEach(g => groups.add(g));
+  });
+  if(!groups.size){
+    (members || []).forEach(m => {
+      const mEmail = String(m?.email || '').trim().toLowerCase();
+      if(!mEmail || mEmail !== email) return;
+      splitGroupNames(m.group).forEach(g => groups.add(g));
+      splitGroupNames(m.fac_group).forEach(g => groups.add(g));
+      splitGroupNames(m.facilitators).forEach(g => groups.add(g));
+    });
+  }
+  assignedGroupNames = Array.from(groups).filter(Boolean);
+}
+
+function isGroupAllowedForCurrentUser(groupName){
+  if(currentRole !== 'facilitator' || !Array.isArray(assignedGroupNames)) return true;
+  if(!assignedGroupNames.length) return false;
+  const groupNorm = normalizeGroupNameForScope(groupName);
+  if(!groupNorm) return false;
+  return assignedGroupNames.some(allowed => {
+    const allowNorm = normalizeGroupNameForScope(allowed);
+    if(!allowNorm) return false;
+    if(allowNorm === groupNorm) return true;
+    const shortAllow = allowNorm.includes(' - ') ? allowNorm.split(' - ').slice(-1)[0].trim() : allowNorm;
+    const shortGroup = groupNorm.includes(' - ') ? groupNorm.split(' - ').slice(-1)[0].trim() : groupNorm;
+    return shortAllow && shortAllow === shortGroup;
+  });
+}
+
+function getScopedMembers(){
+  if(currentRole !== 'facilitator' || !Array.isArray(assignedGroupNames)) return members;
+  return (members || []).filter(m => isGroupAllowedForCurrentUser(m.group || m.fac_group || ''));
+}
+
+function getScopedGroups(){
+  if(currentRole !== 'facilitator' || !Array.isArray(assignedGroupNames)) return GROUPS;
+  if(scopedGroupsCache) return scopedGroupsCache;
+  scopedGroupsCache = (GROUPS || []).filter(g => isGroupAllowedForCurrentUser(g.group || ''));
+  return scopedGroupsCache;
+}
 
 function applyRole() {
   const isAdmin = currentRole === 'admin';
+  const canViewRegistrations = hasTabAction('data-entry', 'view', currentRole);
   localStorage.setItem('pns_current_role', currentRole);
   document.body.classList.toggle('admin-mode', isAdmin);
   const rd = document.getElementById('role-display');
@@ -4020,6 +4298,9 @@ function applyRole() {
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
   const progBtn = document.getElementById('programs-nav-btn');
   if (progBtn) progBtn.style.display = isAdmin ? 'flex' : 'none';
+  const regBtn = document.getElementById('registrations-nav-btn');
+  if (regBtn) regBtn.style.display = canViewRegistrations ? 'flex' : 'none';
+  if (!canViewRegistrations && document.getElementById('s-data-entry')?.classList.contains('active')) showSection('overview');
   if (!isAdmin && document.getElementById('s-admin')?.classList.contains('active')) showSection('overview');
   if (!isAdmin && document.getElementById('s-programs')?.classList.contains('active')) showSection('overview');
   updateBadges();
@@ -4633,8 +4914,46 @@ function saveFacilitatorForm() {
   renderDataEntryGroupsDisplay();
   initGroups();
 
+  // Auto-sync facilitator as a member with Facilitator role for program access
+  (function syncFacilitatorAsMember() {
+    let ei = -1;
+    if (newFac.email) ei = members.findIndex(m => m.email && m.email.toLowerCase() === newFac.email.toLowerCase());
+    if (ei < 0) ei = members.findIndex(m => m.name && m.name.toLowerCase() === name.toLowerCase());
+    if (ei >= 0) {
+      // Upgrade existing member's role to Facilitator
+      members[ei].role = 'Facilitator';
+      members[ei].fac_group = newFac.group_name || '';
+      if (!members[ei].group || members[ei].group === 'Unassigned') {
+        members[ei].group = facilitatorGroups[0] || members[ei].group || 'Unassigned';
+      }
+    } else if (newFac.name) {
+      // Add as new member with Facilitator role
+      members.push({
+        idx: members.length,
+        name: newFac.name,
+        email: newFac.email || '',
+        mobile: newFac.mobile || '',
+        role: 'Facilitator',
+        city: newFac.city || '',
+        region: newFac.region || 'INDIA',
+        language: newFac.language || 'Hindi',
+        country: newFac.country || '',
+        group: facilitatorGroups[0] || 'Unassigned',
+        fac_group: newFac.group_name || '',
+        wa: '',
+        init: 'Yes',
+        culmination: '',
+        att: new Array(DATES.length).fill(-1),
+        created_at: new Date().toISOString()
+      });
+    }
+    localStorage.setItem('pns_live_members', JSON.stringify(members));
+    renderMembersDisplay();
+    renderOverview();
+  })();
+
   clearFacilitatorForm();
-  showToast(`✓ Facilitator "${name}" added`);
+  showToast(`✓ Facilitator "${name}" added & synced to Members list`);
 }
 
 function clearMemberForm() {
@@ -5034,8 +5353,8 @@ function exportAllMembers() {
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────
 function showSection(id) {
-  if ((id === 'programs' || id === 'admin') && currentRole !== 'admin') {
-    alert('Admin access required.');
+  if (!hasTabAction(id, 'view')) {
+    alert(getTabAccessDeniedMessage(id, 'view'));
     return;
   }
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -5107,9 +5426,11 @@ function getCloudUsersWithoutGroupForAlerts() {
 
 // ── OVERVIEW ──────────────────────────────────────────────────────────────
 function renderOverview() {
+  const scopedMembers = getScopedMembers();
+  const scopedGroups = getScopedGroups();
   // Show total members (including facilitators)
-  const total = members.length; // All members
-  const sadhaks = members.filter(m => (m.role||'Sadhak') !== 'Facilitator');
+  const total = scopedMembers.length; // All members
+  const sadhaks = scopedMembers.filter(m => (m.role||'Sadhak') !== 'Facilitator');
   const india = sadhaks.filter(m => m.region === 'INDIA').length;
   const nonIndia = sadhaks.length - india;
   const hindi = sadhaks.filter(m => m.language === 'Hindi').length;
@@ -5119,7 +5440,7 @@ function renderOverview() {
   const culminated = sadhaks.filter(m => m.culmination === 'Yes' || m.culmination === 'Yes ').length;
   const sessionTotals = DATES.map((_, si) => sadhaks.filter(m => m.att[si] === 1).length);
   const totalPresences = sessionTotals.reduce((a, b) => a + b, 0);
-  const totalSlots = members.filter(m => m.att.some(a => a >= 0)).length * DATES.length;
+  const totalSlots = scopedMembers.filter(m => m.att.some(a => a >= 0)).length * DATES.length;
   const avgRate = totalSlots > 0 ? Math.round(totalPresences / totalSlots * 100) : 0;
 
   const totalFacs = FACILITATORS.length > 0
@@ -5128,7 +5449,7 @@ function renderOverview() {
   const totalSadhaks = total; // Show all members
   document.getElementById('overview-stats').innerHTML = `
     <div class="stat-card s-purple"><div class="val">${totalSadhaks}</div><div class="lbl">Total Sadhaks</div><div class="sub">${india} India · ${nonIndia} Non-India</div></div>
-    <div class="stat-card s-saffron"><div class="val">${[...new Set(members.filter(m=>(m.role||'Sadhak')!=='Facilitator'&&m.group&&m.group!=='Unassigned').map(m=>m.group))].length}</div><div class="lbl">Active Groups</div><div class="sub">${FACILITATORS.length || members.filter(m=>(m.role||'Sadhak')==='Facilitator').length} facilitators</div></div>
+    <div class="stat-card s-saffron"><div class="val">${[...new Set(scopedMembers.filter(m=>(m.role||'Sadhak')!=='Facilitator'&&m.group&&m.group!=='Unassigned').map(m=>m.group))].length}</div><div class="lbl">Active Groups</div><div class="sub">${FACILITATORS.length || scopedMembers.filter(m=>(m.role||'Sadhak')==='Facilitator').length} facilitators</div></div>
     <div class="stat-card s-bilva"><div class="val">${avgRate}%</div><div class="lbl">Avg Attendance</div><div class="sub">Across all sessions</div></div>
     <div class="stat-card s-trishul"><div class="val">${waAdded}</div><div class="lbl">WhatsApp Added</div><div class="sub">${Math.round(waAdded/sadhaks.length*100)}% of total</div></div>
     <div class="stat-card s-purple"><div class="val">${initiated}</div><div class="lbl">Initiated</div><div class="sub">${Math.round(initiated/sadhaks.length*100)}% of total</div></div>
@@ -5151,8 +5472,8 @@ function renderOverview() {
     }
   });
 
-  const barsHTML = GROUPS.map(g => {
-    const gmems = members.filter(m => m.group === g.group);
+  const barsHTML = scopedGroups.map(g => {
+    const gmems = scopedMembers.filter(m => m.group === g.group);
     const n = gmems.length; if (!n) return '';
     const totalPres = gmems.reduce((s, m) => s + m.att.filter(a => a === 1).length, 0);
     const totalPoss = gmems.reduce((s, m) => s + m.att.filter(a => a >= 0).length, 0);
@@ -5192,20 +5513,20 @@ function renderOverview() {
     pBar('Initiation Done', initiated, total, '') +
     pBar('Culmination Done', culminated, total, 'bilva');
 
-  const lowAtt = GROUPS.filter(g => {
-    const gmems = members.filter(m => m.group === g.group);
+  const lowAtt = scopedGroups.filter(g => {
+    const gmems = scopedMembers.filter(m => m.group === g.group);
     const n = gmems.length; if (!n) return false;
     const lastPres = gmems.filter(m => m.att[4] === 1).length;
     return (lastPres / n) < 0.4;
   });
-  const notWa = members.filter(m => m.wa !== 'Yes').length;
-  const noInit = members.filter(m => m.init !== 'Yes').length;
+  const notWa = scopedMembers.filter(m => m.wa !== 'Yes').length;
+  const noInit = scopedMembers.filter(m => m.init !== 'Yes').length;
   const pendingT = transferLog.filter(t => t.status === 'Pending').length;
   const unassignedCloudUsers = getCloudUsersWithoutGroupForAlerts();
 
   // Build group-wise pending items map
   const pendingByGroupMap = new Map();
-  members
+  scopedMembers
     .filter(m => (m.role || 'Sadhak') !== 'Facilitator')
     .forEach(m => {
       const waPending = m.wa !== 'Yes';
@@ -5722,6 +6043,131 @@ function renderAdminUsersAccess() {
     localStorage.setItem('pns_admin_user_category_filter', 'All');
   }
 
+  const roleRows = ['admin', 'facilitator', 'sadhak', 'guest'].map(roleName => {
+    const count = (adminUsersState.users || []).filter(user => (user.role || 'guest') === roleName).length;
+    const assignments = (adminUsersState.users || [])
+      .filter(user => (user.role || 'guest') === roleName)
+      .reduce((sum, user) => sum + ((user.assignments || []).length), 0);
+    const permissionText = ACCESS_PERMISSION_CONFIG.roleSummaries[roleName] || 'Restricted access.';
+    return { roleName, count, assignments, permissionText };
+  });
+  const totalAssignments = roleRows.reduce((sum, row) => sum + row.assignments, 0);
+  const unassignedUsers = (adminUsersState.users || []).filter(user => !(user.assignments || []).length).length;
+  const tabPermissionRows = ACCESS_PERMISSION_CONFIG.tabs.map(tab => ({
+    tab: tab.label,
+    admin: tab.details.admin,
+    facilitator: tab.details.facilitator,
+    sadhak: tab.details.sadhak,
+    guest: tab.details.guest
+  }));
+  const selectedRoleForAccess = selected?.role || 'guest';
+  const selectedAssignments = Array.isArray(selected?.assignments) ? selected.assignments : [];
+  const selectedAccessRows = ACCESS_PERMISSION_CONFIG.tabs.map(tab => {
+    const perms = tab.actions[selectedRoleForAccess] || {};
+    const actionList = ['add', 'edit', 'delete'].map(action => perms[action] ? action : null).filter(Boolean);
+    const actionsText = actionList.length ? actionList.join(', ') : 'none';
+    return {
+      tab: tab.label,
+      view: perms.view ? 'Yes' : 'No',
+      actions: actionsText,
+      restriction: tab.details[selectedRoleForAccess] || 'Restricted access.'
+    };
+  });
+  const selectedPermissionsHtml = selected ? `
+    <div style="margin:14px 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:#fff">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <div style="font-weight:700;color:var(--text-main)">Effective Permissions: ${escapeAdminHtml(selected.profile?.full_name || selected.email || 'Selected User')}</div>
+        <div style="font-size:11px;color:var(--text-soft)">Role: ${escapeAdminHtml(selectedRoleForAccess)}${selectedAssignments.length ? ` · Program assignments: ${selectedAssignments.length}` : ''}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-soft);margin-bottom:8px">
+        ${selectedAssignments.length
+          ? selectedAssignments.map(item => `${escapeAdminHtml(item.program_id)} (${escapeAdminHtml(item.role)})`).join(' · ')
+          : 'No program assignments for this user.'}
+      </div>
+      <div style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:920px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Tab</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">View</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Allowed Actions</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Restriction Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${selectedAccessRows.map(row => `<tr>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light);font-weight:700">${escapeAdminHtml(row.tab)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.view)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.actions)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.restriction)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`
+    : `<div style="margin:14px 0 14px;padding:12px;border:1px dashed var(--border-med);border-radius:12px;background:#fff;font-size:12px;color:var(--text-soft)">Select a user from the left panel to view effective permissions by tab and action.</div>`;
+  const tabPermissionsHtml = `
+    <div style="margin:0 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:#fff">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <div style="font-weight:700;color:var(--text-main)">Tab-wise Access Level Details</div>
+        <div style="font-size:11px;color:var(--text-soft)">Use this matrix to review exact view/edit restrictions by role</div>
+      </div>
+      <div style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:920px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Tab</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Admin</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Facilitator</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Sadhak</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Guest</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tabPermissionRows.map(row => `<tr>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light);font-weight:700">${escapeAdminHtml(row.tab)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.admin)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.facilitator)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.sadhak)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.guest)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+  const accessLevelsHtml = `
+    <div style="margin:0 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:linear-gradient(180deg,#fcfbff,#f5f2ff)">
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <div style="font-weight:700;color:var(--text-main)">Access Levels Overview</div>
+        <div style="font-size:11px;color:var(--text-soft)">Auto-updated with role/permission changes</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <span class="badge badge-approved">Users ${(adminUsersState.users || []).length}</span>
+        <span class="badge badge-pending">Assignments ${totalAssignments}</span>
+        <span class="badge badge-na">Unassigned ${unassignedUsers}</span>
+      </div>
+      <div style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff">
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Role</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Users</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Program Access Entries</th>
+              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Access Level Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${roleRows.map(row => `<tr>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light);font-weight:700;text-transform:capitalize">${escapeAdminHtml(row.roleName)}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${row.count}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${row.assignments}</td>
+              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.permissionText)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
   const rightPanelHtml = isBulkMode ? `
     <div style="background:#fff;border:1px solid var(--border-light);border-radius:12px;padding:16px">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:12px">
@@ -5837,6 +6283,9 @@ function renderAdminUsersAccess() {
         </div>
         <div>${rightPanelHtml}</div>
       </div>
+      ${selectedPermissionsHtml}
+      ${accessLevelsHtml}
+      ${tabPermissionsHtml}
     </div>`;
 
   applyAdminProgramAccessCategoryFilter();
@@ -6137,6 +6586,33 @@ function initGurudev() {
   if (sel) {
     sel.innerHTML = '<option value="">Select group…</option>';
     GROUPS.forEach(g => sel.innerHTML += `<option value="${g.group}">${g.group}</option>`);
+  }
+  const facilitatorOptions = document.getElementById('gq-facilitator-options');
+  const sadhakOptions = document.getElementById('gq-sadhak-options');
+  if (facilitatorOptions || sadhakOptions) {
+    const facilitatorNames = new Set();
+    const sadhakNames = new Set();
+    (FACILITATORS || []).forEach(f => {
+      const name = String(f?.name || f?.full_name || '').trim();
+      if (name) facilitatorNames.add(name);
+    });
+    (members || []).forEach(m => {
+      const memberName = String(m?.name || '').trim();
+      if (!memberName) return;
+      const role = String(m?.role || '').trim().toLowerCase();
+      if (role === 'facilitator') facilitatorNames.add(memberName);
+      sadhakNames.add(memberName);
+    });
+    (guruQuestions || []).forEach(q => {
+      const fname = String(q?.facilitator || '').trim();
+      const sname = String(q?.sadhak || '').trim();
+      if (fname) facilitatorNames.add(fname);
+      if (sname) sadhakNames.add(sname);
+    });
+    const facList = Array.from(facilitatorNames).sort((a, b) => a.localeCompare(b));
+    const sadhakList = Array.from(sadhakNames).sort((a, b) => a.localeCompare(b));
+    if (facilitatorOptions) facilitatorOptions.innerHTML = facList.map(name => `<option value="${escapeAdminHtml(name)}"></option>`).join('');
+    if (sadhakOptions) sadhakOptions.innerHTML = sadhakList.map(name => `<option value="${escapeAdminHtml(name)}"></option>`).join('');
   }
   filterGQTab('all', document.querySelector('#gq-filter-tabs .tab-pill'));
 }
@@ -7063,12 +7539,14 @@ function renderFacilitatorOverview() {
 
 // ── GROUPS (patched for culmination) ──────────────────────────────────────
 function initGroups() {
+  deriveAssignedGroupsFromProfile();
   ensureProgramGroupsFromMembers();
   const picker = document.getElementById('group-picker');
   picker.innerHTML = '<option value="">— Select a Group —</option>';
-  GROUPS.forEach((g, i) => { picker.innerHTML += `<option value="${i}">${g.group}</option>`; });
+  const viewGroups = getScopedGroups();
+  viewGroups.forEach((g, i) => { picker.innerHTML += `<option value="${i}">${g.group}</option>`; });
   const attSel = document.getElementById('att-group-sel');
-  if (attSel) { attSel.innerHTML = ''; GROUPS.forEach((g, i) => attSel.innerHTML += `<option value="${i}">${g.group}</option>`); }
+  if (attSel) { attSel.innerHTML = ''; viewGroups.forEach((g, i) => attSel.innerHTML += `<option value="${i}">${g.group}</option>`); }
 }
 
 function normalizeGroupKey(name){
@@ -7135,8 +7613,10 @@ function ensureProgramGroupsFromMembers(){
 function renderGroupDetail() {
   const idx = document.getElementById('group-picker').value;
   if (idx === '') { document.getElementById('group-detail-panel').innerHTML = '<div class="empty-state">Select a group above</div>'; return; }
-  const g = GROUPS[idx];
-  const gmems = members.filter(m => memberBelongsToGroup(m, g));
+  const viewGroups = getScopedGroups();
+  const g = viewGroups[idx];
+  if(!g){ document.getElementById('group-detail-panel').innerHTML = '<div class="empty-state">No assigned group available.</div>'; return; }
+  const gmems = getScopedMembers().filter(m => memberBelongsToGroup(m, g));
   const n = gmems.length;
   const waAdded = gmems.filter(m => m.wa === 'Yes').length;
   const initiated = gmems.filter(m => m.init === 'Yes').length;
@@ -7218,9 +7698,10 @@ const PAGE_SIZE = 25;
 let filteredMembers = [];
 
 function initMembers() {
+  deriveAssignedGroupsFromProfile();
   const sel = document.getElementById('filter-group');
   sel.innerHTML = '<option value="">All Groups</option>';
-  GROUPS.forEach(g => {
+  getScopedGroups().forEach(g => {
     sel.innerHTML += `<option value="${g.group}">${g.group}</option>`;
   });
   filterMembers();
@@ -7235,7 +7716,8 @@ function filterMembers() {
   const roleF = document.getElementById('filter-role')?.value || '';
   const countryF = document.getElementById('filter-country')?.value || '';
 
-  filteredMembers = members.filter(m => {
+  const sourceMembers = getScopedMembers();
+  filteredMembers = sourceMembers.filter(m => {
     if (q && !m.name.toLowerCase().includes(q) && !m.email.toLowerCase().includes(q) && !m.mobile.includes(q)) return false;
     if (region && m.region !== region) return false;
     if (lang && m.language !== lang) return false;
@@ -7327,17 +7809,19 @@ function exportCSV() {
 
 // ── ATTENDANCE ────────────────────────────────────────────────────────
 function initAttendance() {
+  deriveAssignedGroupsFromProfile();
   ensureProgramGroupsFromMembers();
   // Rebuild session selector from live DATES every time tab opens
   const sel = document.getElementById('att-session-sel');
   if (sel) sel.innerHTML = DATES.map((d, i) => `<option value="${i}">${d}</option>`).join('');
   const tabs = document.getElementById('att-group-tabs');
-  if (!GROUPS.length) {
+  const viewGroups = getScopedGroups();
+  if (!viewGroups.length) {
     tabs.innerHTML = '';
     document.getElementById('attendance-view').innerHTML = '<div class="empty-state">No groups available for this program</div>';
     return;
   }
-  tabs.innerHTML = GROUPS.map((g, i) => {
+  tabs.innerHTML = viewGroups.map((g, i) => {
     const shortName = g.facilitator + ' ' + (g.language === 'Hindi' ? 'H' : 'E') + (i+1);
     return `<button class="tab-pill ${i===0?'active':''}" onclick="showAttGroup(${i}, this)">${g.group.split(' - ').slice(-1)[0]||'G'+(i+1)}</button>`;
   }).join('');
@@ -7347,8 +7831,10 @@ function initAttendance() {
 function showAttGroup(idx, btn) {
   document.querySelectorAll('#att-group-tabs .tab-pill').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  const g = GROUPS[idx];
-  const gmems = members.filter(m => memberBelongsToGroup(m, g));
+  const viewGroups = getScopedGroups();
+  const g = viewGroups[idx];
+  if(!g){ document.getElementById('attendance-view').innerHTML = '<div class="empty-state">No assigned group available.</div>'; return; }
+  const gmems = getScopedMembers().filter(m => memberBelongsToGroup(m, g));
 
   const sessionSummary = DATES.map((d, si) => {
     const present = gmems.filter(m => m.att[si] === 1).length;
@@ -7592,6 +8078,8 @@ function filterRecCat(cat, btn) {
 function renderRecordings() {
   const langF = document.getElementById('rec-lang-filter').value;
   const scopedRecordings = getScopedProgramItems(recordings);
+  const canEditRecordings = hasTabAction('recordings', 'edit');
+  const canDeleteRecordings = hasTabAction('recordings', 'delete');
   let list = scopedRecordings.filter(r => {
     if (recCatFilter !== 'all' && r.cat !== recCatFilter) return false;
     if (langF && r.lang !== langF && r.lang !== 'Both') return false;
@@ -7620,8 +8108,8 @@ function renderRecordings() {
     const sessBadge = r.session ? `<span class="badge badge-na">${r.session}</span>` : '';
     const shownCount = r.shownLog ? r.shownLog.length : 0;
     const lastShown = shownCount > 0 ? r.shownLog[r.shownLog.length-1] : null;
-    const ytBtn = r.yt ? `<a href="${r.yt}" target="_blank" class="btn btn-sm" style="background:#ff0000;border-color:#ff0000;text-decoration:none;display:inline-block">&#9654; YouTube</a>` : `<button class="btn btn-sm btn-outline" onclick="${currentRole==='admin'?`openEditRec(${r.id})`:`alert('Admin access required.')`}" style="opacity:${currentRole==='admin'?'.6':'.3'};cursor:${currentRole==='admin'?'pointer':'not-allowed'}" title="${currentRole==='admin'?'Add YouTube link':'Admin only'}">+ YouTube</button>`;
-    const driveBtn = r.drive ? `<a href="${r.drive}" target="_blank" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-block">&#8659; Drive</a>` : `<button class="btn btn-sm btn-outline" onclick="${currentRole==='admin'?`openEditRec(${r.id})`:`alert('Admin access required.')`}" style="opacity:${currentRole==='admin'?'.6':'.3'};cursor:${currentRole==='admin'?'pointer':'not-allowed'}" title="${currentRole==='admin'?'Add Drive link':'Admin only'}">+ Drive</button>`;
+    const ytBtn = r.yt ? `<a href="${r.yt}" target="_blank" class="btn btn-sm" style="background:#ff0000;border-color:#ff0000;text-decoration:none;display:inline-block">&#9654; YouTube</a>` : `<button class="btn btn-sm btn-outline" onclick="${canEditRecordings?`openEditRec(${r.id})`:`alert('${getTabAccessDeniedMessage('recordings', 'edit')}')`}" style="opacity:${canEditRecordings?'.6':'.3'};cursor:${canEditRecordings?'pointer':'not-allowed'}" title="${canEditRecordings?'Add YouTube link':'Restricted by access level'}">+ YouTube</button>`;
+    const driveBtn = r.drive ? `<a href="${r.drive}" target="_blank" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-block">&#8659; Drive</a>` : `<button class="btn btn-sm btn-outline" onclick="${canEditRecordings?`openEditRec(${r.id})`:`alert('${getTabAccessDeniedMessage('recordings', 'edit')}')`}" style="opacity:${canEditRecordings?'.6':'.3'};cursor:${canEditRecordings?'pointer':'not-allowed'}" title="${canEditRecordings?'Add Drive link':'Restricted by access level'}">+ Drive</button>`;
     const shownBadge = shownCount > 0 ? `<span style="font-size:11px;color:#28a745;font-weight:600">&#10003; Shown ${shownCount}x</span>` : `<span style="font-size:11px;color:#aaa">Not yet shown</span>`;
     const shownDetail = lastShown ? `<div style="font-size:11px;color:#888;margin-top:4px">Last: ${lastShown.session} · ${lastShown.group} · by ${lastShown.facilitator}</div>` : '';
 
@@ -7645,8 +8133,8 @@ function renderRecordings() {
       <div style="border-top:1px solid #f0f0f0;padding-top:8px;display:flex;align-items:center;justify-content:space-between">
         <div>${shownBadge}${shownDetail}</div>
         <div style="display:flex;gap:6px">
-          <button class="btn btn-outline btn-sm" onclick="${currentRole==='admin'?`openEditRec(${r.id})`:`alert('Admin access required.')`}" style="${currentRole==='admin'?'':`opacity:.4;cursor:not-allowed`}" title="${currentRole==='admin'?'Edit recording':'Admin only'}">✎ Edit</button>
-          <button class="btn btn-sm btn-danger" onclick="${currentRole==='admin'?`deleteRec(${r.id})`:`alert('Admin access required.')`}" style="${currentRole==='admin'?'':`opacity:.4;cursor:not-allowed;background:#eee;border-color:#ddd;color:#999`}" title="${currentRole==='admin'?'Delete recording':'Admin only'}">✕ Del</button>
+          <button class="btn btn-outline btn-sm" onclick="${canEditRecordings?`openEditRec(${r.id})`:`alert('${getTabAccessDeniedMessage('recordings', 'edit')}')`}" style="${canEditRecordings?'':`opacity:.4;cursor:not-allowed`}" title="${canEditRecordings?'Edit recording':'Restricted by access level'}">✎ Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="${canDeleteRecordings?`deleteRec(${r.id})`:`alert('${getTabAccessDeniedMessage('recordings', 'delete')}')`}" style="${canDeleteRecordings?'':`opacity:.4;cursor:not-allowed;background:#eee;border-color:#ddd;color:#999`}" title="${canDeleteRecordings?'Delete recording':'Restricted by access level'}">✕ Del</button>
         </div>
       </div>
     </div>`;
@@ -7654,6 +8142,10 @@ function renderRecordings() {
 }
 
 function openAddRecModal() {
+  if (!hasTabAction('recordings', 'add')) {
+    alert(getTabAccessDeniedMessage('recordings', 'add'));
+    return;
+  }
   document.getElementById('rec-modal-title').textContent = 'Add Recording';
   document.getElementById('rec-edit-id').value = '';
   document.getElementById('rec-title').value = '';
@@ -7675,6 +8167,10 @@ function openAddRecModal() {
 }
 
 function openEditRec(id) {
+  if (!hasTabAction('recordings', 'edit')) {
+    alert(getTabAccessDeniedMessage('recordings', 'edit'));
+    return;
+  }
   const r = recordings.find(r => r.id === id);
   if (!r) return;
   document.getElementById('rec-modal-title').textContent = 'Edit Recording';
@@ -7698,6 +8194,10 @@ function openEditRec(id) {
 }
 
 function saveRecording() {
+  if (!hasTabAction('recordings', 'add') && !hasTabAction('recordings', 'edit')) {
+    alert(getTabAccessDeniedMessage('recordings', 'edit'));
+    return;
+  }
   const title = document.getElementById('rec-title').value.trim();
   if (!title) { alert('Title is required'); return; }
   const editId = document.getElementById('rec-edit-id').value;
@@ -7728,6 +8228,10 @@ function saveRecording() {
 }
 
 function deleteRec(id) {
+  if (!hasTabAction('recordings', 'delete')) {
+    alert(getTabAccessDeniedMessage('recordings', 'delete'));
+    return;
+  }
   if (!confirm('Delete this recording entry?')) return;
   recordings = recordings.filter(r => r.id !== id);
   saveRecordings();
@@ -8973,6 +9477,7 @@ function exportRecordingsData(){const recs=JSON.parse(localStorage.getItem('pns_
   renderBackupTimestamps();}
 function _csvDL(csv,name){const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=name+'_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
 function _parseCSV(file,cb){const rd=new FileReader();rd.onload=e=>{try{const pl=line=>{const res=[];let cur='',inQ=false;for(const ch of line){if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){res.push(cur.replace(/^"|"$/g,'').trim());cur='';}else cur+=ch;}res.push(cur.replace(/^"|"$/g,'').trim());return res;};const lines=e.target.result.trim().split(/\r?\n/);if(lines.length<2){alert('File is empty.');return;}const hdrs=pl(lines[0]).map(h=>h.toLowerCase());const rows=[];for(let i=1;i<lines.length;i++){if(lines[i].trim())rows.push(pl(lines[i]));}cb(hdrs,rows);}catch(err){alert('Could not read file: '+err.message);}};rd.readAsText(file);}
+function importMembersCSV(file){ importMembersData(file); }
 function importMembersData(file){if(!file)return;if(!confirm('Import Members CSV?\n\n• UPDATE existing (by Email then Name)\n• ADD new members\n\nAttendance % auto-calculated.'))return;_parseCSV(file,(hdrs,rows)=>{const col=(...ns)=>{for(const n of ns){const i=hdrs.findIndex(h=>h===n||h.includes(n));if(i>=0)return i;}return -1;};const nI=col('name'),eI=col('email'),mI=col('mobile'),rI=col('region'),lI=col('language'),gI=col('group'),fI=col('facilitator_group','fac_group'),wI=col('whatsapp'),iI=col('initiated','initiation'),cI=col('culmination','culminated'),roI=col('role'),coI=col('country');const sI=DATES.map((_,i)=>hdrs.findIndex(h=>h.startsWith('session_'+(i+1)+'_')||h==='session_'+(i+1)));if(nI<0){alert('No Name column.\nImport a Members CSV.');return;}let updated=0,added=0;rows.forEach(cols=>{const name=(cols[nI]||'').trim();if(!name)return;const email=(eI>=0?cols[eI]:'').trim();const att=DATES.map((_,i)=>{const si=sI[i];if(si<0||si>=cols.length)return -1;const v=(cols[si]||'').trim();return v==='Present'?1:v==='Absent'?0:-1;});const d={name,email,mobile:mI>=0?(cols[mI]||'').trim():'',role:roI>=0?(cols[roI]||'Sadhak').trim():'Sadhak',country:coI>=0?(cols[coI]||'').trim():'',region:rI>=0?(cols[rI]||'INDIA').trim():'INDIA',language:lI>=0?(cols[lI]||'Hindi').trim():'Hindi',group:gI>=0?(cols[gI]||'Unassigned').trim():'Unassigned',fac_group:fI>=0?(cols[fI]||'').trim():'',wa:wI>=0?(cols[wI]||'').trim():'',init:iI>=0?(cols[iI]||'').trim():'',culmination:cI>=0?(cols[cI]||'').trim():'',att};let ei=-1;if(email)ei=members.findIndex(m=>m.email&&m.email.toLowerCase()===email.toLowerCase());if(ei<0)ei=members.findIndex(m=>m.name&&m.name.toLowerCase()===name.toLowerCase());if(ei>=0){const m=members[ei];['name','email','mobile','role','country','region','language','group','fac_group','wa','init','culmination'].forEach(k=>{if(d[k])m[k]=d[k];});att.forEach((v,i)=>{if(v!==-1)m.att[i]=v;});updated++;}else{members.push({idx:members.length,...d});added++;}});if(!updated&&!added){alert('No data imported.');return;}members.forEach((m,i)=>m.idx=i);localStorage.setItem('pns_live_members',JSON.stringify(members));const gMap={};members.filter(m=>(m.role||'Sadhak')!=='Facilitator').forEach(m=>{if(m.group&&m.group!=='Unassigned'){if(!gMap[m.group]){const eg=GROUPS.find(g=>g.group===m.group);gMap[m.group]={group:m.group,facilitator:eg?eg.facilitator:(m.fac_group||''),region:m.region,language:m.language,total:0,wa_added:0,initiation:0,culmination:0,sessions:new Array(DATES.length).fill(0),meet_link:eg?(eg.meet_link||''):''};}gMap[m.group].total++;}});GROUPS.forEach(g=>{if(!gMap[g.group])gMap[g.group]=g;else gMap[g.group].meet_link=g.meet_link||'';});const ng=Object.values(gMap);GROUPS.length=0;ng.forEach(g=>GROUPS.push(g));localStorage.setItem('pns_live_groups',JSON.stringify(GROUPS));localStorage.setItem('pns_last_csv_import',new Date().toISOString());const tp=members.reduce((s,m)=>s+m.att.filter(a=>a===1).length,0),ts=members.reduce((s,m)=>s+m.att.filter(a=>a>=0).length,0);filterMembers();renderOverview();if(document.getElementById('s-groups')?.classList.contains('active'))initGroups();if(document.getElementById('s-attendance')?.classList.contains('active'))initAttendance();if(typeof renderBackupTimestamps==='function')renderBackupTimestamps();alert('✓ Members Import Complete!\n\n• '+updated+' updated\n• '+added+' added\n\nOverall Attendance: '+(ts>0?Math.round(tp/ts*100):0)+'%');localStorage.setItem('pns_ts_import_members',new Date().toISOString());renderBackupTimestamps();
   
   // IMPORTANT: Save imported data to active program storage
@@ -9146,6 +9651,7 @@ function clearCloudSession({ expired = false } = {}){
   unlockRoleDropdown();
   updateCloudAuthUI(null);
   updateCloudSyncStatus(expired ? 'Cloud sync: Session expired' : 'Cloud sync: Signed out', false);
+  renderDbSyncHealth();
 }
 
 function persistCloudSession(){
@@ -9171,12 +9677,19 @@ function applyCloudUserContext(infoData, sessionData){
   setRole(infoData.role);
   lockRoleDropdown(infoData.role);
   assignedProgramIds = (infoData.role === 'admin') ? null : (infoData.programIds || []);
+  assignedProgramRoles = Object.fromEntries((infoData.assignments || []).map(item => [item.program_id, item.role]));
   updateCloudAuthUI({ email: infoData.email });
   const scopeTxt = infoData.role === 'admin'
     ? 'all programs'
     : (infoData.programIds.length ? infoData.programIds.length + ' program(s)' : 'no program assigned');
   updateCloudSyncStatus('Cloud sync: Signed in as ' + infoData.email + ' | ' + scopeTxt, true);
+  renderDbSyncHealth();
   if(infoData.role !== 'admin') enforceProgramScope();
+  deriveAssignedGroupsFromProfile();
+  setTimeout(() => {
+    if (ACTIVE_PROGRAM_ID) hydrateProgramStateFromDb(ACTIVE_PROGRAM_ID, { refreshUi: true, silent: true });
+  }, 180);
+  setTimeout(syncAllLocalStateToDb, 120);
 }
 
 function isCloudAuthError(status, message){
@@ -9313,6 +9826,7 @@ function enforceProgramScope(){
 
   if(typeof renderProgramsList === 'function') renderProgramsList();
   if(typeof updateProgPill === 'function') updateProgPill();
+  deriveAssignedGroupsFromProfile();
   if(typeof renderOverview === 'function') renderOverview();
 }
 
@@ -9373,6 +9887,7 @@ function updateCloudAuthUI(user){
 async function refreshCloudSyncStatus(){
   await initCloudSync();
   updateCloudSyncStatus(_cloudSession ? ('Cloud sync: Signed in as ' + _cloudSession.email) : 'Cloud sync: Ready for sign in', !!_cloudSession);
+  renderDbSyncHealth();
 }
 
 function setCloudSnapshotListStatus(msg, ok){
@@ -9429,6 +9944,40 @@ async function loadCloudSnapshotList(){
   }catch(e){
     setCloudSnapshotListStatus('Snapshot list failed: ' + (e.message || 'Unknown error'), false);
     renderCloudSnapshotList([]);
+  }
+}
+
+function resetLocalDashboardCache(){
+  if(currentRole !== 'admin'){
+    alert('Local cache reset is available for admin role only.');
+    return;
+  }
+  const warning = 'Reset local browser cache for this dashboard?\n\nThis clears local saved data and cached program state in this browser only.\nCloud snapshots in Supabase are NOT deleted.\n\nUse this when one browser shows stale or incorrect data.';
+  if(!confirm(warning)) return;
+  const prevSuspend = suspendAutoSave;
+  suspendAutoSave = true;
+  try {
+    if(typeof saveTimeout !== 'undefined') clearTimeout(saveTimeout);
+    if(typeof cloudSaveTimeout !== 'undefined') clearTimeout(cloudSaveTimeout);
+    const keepKeys = new Set(['pns_cloud_session', 'pns_current_role', 'pns_dark_mode', 'pns_dark_preset']);
+    Object.keys(localStorage).forEach(key => {
+      if(key && key.indexOf('pns_') === 0 && !keepKeys.has(key)){
+        localStorage.removeItem(key);
+      }
+    });
+    Object.keys(sessionStorage).forEach(key => {
+      if(key && key.indexOf('pns_') === 0){
+        sessionStorage.removeItem(key);
+      }
+    });
+    updateCloudSyncStatus('Cloud sync: Local browser cache reset complete', true);
+    setCloudSnapshotListStatus('Local cache reset complete. Reloading…', true);
+    alert('Local dashboard cache cleared for this browser. The page will now reload.');
+    location.reload();
+  } catch(e){
+    alert('Local cache reset failed: ' + (e.message || 'Unknown error'));
+  } finally {
+    suspendAutoSave = prevSuspend;
   }
 }
 
@@ -9570,6 +10119,11 @@ async function cloudBackupNow(opts = {}){
 
 function restoreBackupObject(b){
   if(!b || !b._version) throw new Error('Not a valid PNS backup object.');
+  const prevSuspend = suspendAutoSave;
+  suspendAutoSave = true;
+  try {
+    if(typeof saveTimeout !== 'undefined') clearTimeout(saveTimeout);
+    if(typeof cloudSaveTimeout !== 'undefined') clearTimeout(cloudSaveTimeout);
   const normalizedPrograms = Array.isArray(b.all_programs) ? b.all_programs.filter(item => item && item.id) : [];
   if(normalizedPrograms.length) localStorage.setItem('pns_all_programs',JSON.stringify(normalizedPrograms));
   if(b.active_program_id) localStorage.setItem('pns_active_program_id',b.active_program_id);
@@ -9683,6 +10237,16 @@ function restoreBackupObject(b){
   localStorage.setItem('pns_project_loaded','1');
   if(b._project)localStorage.setItem('pns_project_name',b._project);
   localStorage.setItem('pns_last_restore',new Date().toISOString());
+  ACTIVE_PROGRAM_ID = localStorage.getItem('pns_active_program_id') || ACTIVE_PROGRAM_ID;
+  try {
+    DATES = JSON.parse(localStorage.getItem('pns_live_dates') || '[]');
+    GROUPS = JSON.parse(localStorage.getItem('pns_live_groups') || '[]');
+    members = JSON.parse(localStorage.getItem('pns_live_members') || '[]');
+    FACILITATORS = JSON.parse(localStorage.getItem('pns_live_facilitators') || '[]');
+  } catch(_e){}
+  } finally {
+    suspendAutoSave = prevSuspend;
+  }
 }
 
 async function tryColdStartCloudRestore(){
@@ -10344,6 +10908,9 @@ function switchToProgram(id){
   renderProgramsList();
   updateProgPill();
   renderOverview();
+  setTimeout(() => {
+    hydrateProgramStateFromDb(id, { refreshUi: true, silent: true });
+  }, 60);
   
   showToast('✓ Program switched! ' + (selectedProg?.name || 'Program'));
 }
@@ -10591,12 +11158,224 @@ function scheduleRealtimeCloudSync(reason){
   }, 1400);
 }
 
+const DB_STATE_GLOBAL_PROGRAM_ID = '__global__';
+const DB_STATE_SYNC_EXCLUDED_KEYS = new Set([
+  CLOUD_SESSION_STORAGE_KEY,
+  'pns_current_role',
+  'pns_dark_mode',
+  'pns_dark_preset',
+]);
+const DB_STATE_PROGRAM_SCOPED_KEYS = new Set([
+  'pns_live_members',
+  'pns_live_groups',
+  'pns_live_dates',
+  'pns_live_facilitators',
+  'pns_recordings',
+  'pns_guru_q',
+  'pns_transfers',
+  'pns_notes',
+]);
+let dbStateSyncTimeout;
+let dbStateSyncInFlight = false;
+let dbStateSyncQueued = false;
+const dbStatePendingMap = new Map();
+let dbStateLastWriteAt = null;
+let dbStateLastError = '';
+
+function renderDbSyncHealth(){
+  const el = document.getElementById('db-sync-health');
+  if(!el) return;
+  const queueSize = dbStatePendingMap.size;
+  const signedIn = !!(_cloudSession && _cloudSession.access_token);
+  const writeText = dbStateLastWriteAt ? new Date(dbStateLastWriteAt).toLocaleTimeString() : 'Never';
+  const errorText = dbStateLastError ? dbStateLastError : 'None';
+  const mode = signedIn ? 'Active' : 'Signed out';
+  el.textContent = `DB Sync ${mode} | Queue: ${queueSize} | Last Write: ${writeText} | Last Error: ${errorText}`;
+  el.style.color = dbStateLastError ? 'var(--saffron)' : 'var(--text-soft)';
+}
+
+function inferStateProgramIdFromKey(key){
+  if(!key) return null;
+  if(key.startsWith('pns_prog_data_')) return key.slice('pns_prog_data_'.length) || ACTIVE_PROGRAM_ID || null;
+  if(key.startsWith('pns_prog_faqs_')) return key.slice('pns_prog_faqs_'.length) || ACTIVE_PROGRAM_ID || null;
+  if(key.startsWith('pns_prog_guidelines_')) return key.slice('pns_prog_guidelines_'.length) || ACTIVE_PROGRAM_ID || null;
+  if(key.startsWith('pns_prog_workflow_')) return key.slice('pns_prog_workflow_'.length) || ACTIVE_PROGRAM_ID || null;
+  if(key.startsWith('pns_prog_checklist_items_')) return key.slice('pns_prog_checklist_items_'.length) || ACTIVE_PROGRAM_ID || null;
+  if(key.startsWith('pns_checklist_')) return key.slice('pns_checklist_'.length) || ACTIVE_PROGRAM_ID || null;
+  if(DB_STATE_PROGRAM_SCOPED_KEYS.has(key)) return ACTIVE_PROGRAM_ID || null;
+  return DB_STATE_GLOBAL_PROGRAM_ID;
+}
+
+function parseStateValueForDb(value){
+  if(value === undefined || value === null) return null;
+  if(typeof value !== 'string') return value;
+  try{
+    return JSON.parse(value);
+  }catch(_e){
+    return value;
+  }
+}
+
+function queueDbStateSync(key, value){
+  if(!key || !String(key).startsWith('pns_')) return;
+  if(DB_STATE_SYNC_EXCLUDED_KEYS.has(key)) return;
+  if(!_cloudSession || !_cloudSession.access_token) return;
+
+  const programId = inferStateProgramIdFromKey(key);
+  if(!programId) return;
+  const entryKey = programId + '::' + key;
+  dbStatePendingMap.set(entryKey, {
+    program_id: programId,
+    state_key: key,
+    state_value: parseStateValueForDb(value),
+  });
+  renderDbSyncHealth();
+  scheduleDbStateSync();
+}
+
+function scheduleDbStateSync(){
+  clearTimeout(dbStateSyncTimeout);
+  dbStateSyncTimeout = setTimeout(flushDbStateSync, 900);
+}
+
+async function flushDbStateSync(){
+  if(dbStateSyncInFlight) {
+    dbStateSyncQueued = true;
+    return;
+  }
+  if(!_cloudSession || !_cloudSession.access_token || !dbStatePendingMap.size) return;
+  dbStateSyncInFlight = true;
+  const entries = Array.from(dbStatePendingMap.values()).slice(0, 250);
+  entries.forEach(entry => dbStatePendingMap.delete(entry.program_id + '::' + entry.state_key));
+  try{
+    const r = await fetch('/api/state', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + _cloudSession.access_token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ entries }),
+    });
+    await handleCloudApiResponse(r, 'DB state sync failed', { promptOnAuthError: false });
+    dbStateLastError = '';
+    dbStateLastWriteAt = Date.now();
+  }catch(e){
+    entries.forEach(entry => dbStatePendingMap.set(entry.program_id + '::' + entry.state_key, entry));
+    dbStateLastError = String(e?.message || 'Unknown error');
+    updateCloudSyncStatus('Cloud sync state queue pending: ' + (e?.message || 'Unknown error'), false);
+  }finally{
+    dbStateSyncInFlight = false;
+    renderDbSyncHealth();
+    if(dbStateSyncQueued || dbStatePendingMap.size){
+      dbStateSyncQueued = false;
+      scheduleDbStateSync();
+    }
+  }
+}
+
+function syncAllLocalStateToDb(){
+  if(!_cloudSession || !_cloudSession.access_token) return;
+  const keys = Object.keys(localStorage || {});
+  keys.forEach(key => {
+    if(!key || !key.startsWith('pns_') || DB_STATE_SYNC_EXCLUDED_KEYS.has(key)) return;
+    queueDbStateSync(key, localStorage.getItem(key));
+  });
+  renderDbSyncHealth();
+}
+
+async function retryDbStateSyncNow(){
+  if(!_cloudSession || !_cloudSession.access_token){
+    showToast('Sign in to cloud before retrying DB sync.');
+    return;
+  }
+  clearTimeout(dbStateSyncTimeout);
+  if(!dbStatePendingMap.size){
+    renderDbSyncHealth();
+    showToast('DB sync queue is already empty.');
+    return;
+  }
+  await flushDbStateSync();
+}
+
+function stringifyStateValueForLocalStorage(value){
+  if(typeof value === 'string') return value;
+  try{
+    return JSON.stringify(value === undefined ? null : value);
+  }catch(_e){
+    return String(value ?? '');
+  }
+}
+
+function refreshActiveSectionAfterStateHydration(){
+  const activeSection = document.querySelector('.section.active');
+  if (!activeSection) return;
+  const sectionId = activeSection.id;
+  if (sectionId === 's-members') initMembers();
+  if (sectionId === 's-recordings') initRecordings();
+  if (sectionId === 's-gurudev') initGurudev();
+  if (sectionId === 's-changes') initChanges();
+  if (sectionId === 's-groups') initGroups();
+  if (sectionId === 's-overview') renderOverview();
+  if (sectionId === 's-data-entry') initDataEntry();
+  if (sectionId === 's-resources') initResources();
+}
+
+async function hydrateProgramStateFromDb(programId, opts = {}){
+  const pid = String(programId || '').trim();
+  const silent = !!opts.silent;
+  const refreshUi = !!opts.refreshUi;
+  if(!pid || !_cloudSession || !_cloudSession.access_token) return false;
+  try{
+    const qs = '?program_id=' + encodeURIComponent(pid) + '&include_global=1';
+    const r = await fetch('/api/state' + qs, {
+      headers: { Authorization: 'Bearer ' + _cloudSession.access_token }
+    });
+    const data = await handleCloudApiResponse(r, 'Could not load DB state.', { promptOnAuthError: false });
+    const rows = Array.isArray(data.rows) ? data.rows : [];
+    if(!rows.length) return false;
+
+    const prevSuspend = suspendAutoSave;
+    suspendAutoSave = true;
+    try{
+      rows.forEach(row => {
+        const key = String(row?.state_key || '').trim();
+        if(!key || !key.startsWith('pns_')) return;
+        localStorage.setItem(key, stringifyStateValueForLocalStorage(row?.state_value));
+      });
+      if((ALL_PROGRAMS || []).some(p => p && p.id === pid)) {
+        loadProgramData(pid);
+      }
+    } finally {
+      suspendAutoSave = prevSuspend;
+    }
+
+    recordings = JSON.parse(localStorage.getItem('pns_recordings') || '[]');
+    guruQuestions = JSON.parse(localStorage.getItem('pns_guru_q') || '[]');
+    transferLog = JSON.parse(localStorage.getItem('pns_transfers') || '[]');
+    notesLog = JSON.parse(localStorage.getItem('pns_notes') || '[]');
+
+    if(refreshUi) {
+      refreshActiveSectionAfterStateHydration();
+      renderProgramsList();
+      updateProgPill();
+      renderOverview();
+    }
+
+    if(!silent) showToast('☁ Latest DB state loaded');
+    return true;
+  }catch(e){
+    if(!silent) showToast('DB state load skipped: ' + (e?.message || 'Unknown error'));
+    return false;
+  }
+}
+
 // Override key save functions to auto-save program data
 const originalSetItem = localStorage.setItem;
 let saveTimeout;
 let suspendAutoSave = false;
 localStorage.setItem = function(key, value) {
   originalSetItem.call(this, key, value);
+  if(!suspendAutoSave) queueDbStateSync(key, value);
   
   // Auto-save program data when these keys are modified
   const shouldTrack = (

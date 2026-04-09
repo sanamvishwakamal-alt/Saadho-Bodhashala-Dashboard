@@ -3,15 +3,17 @@
 This project is now prepared for:
 - GitHub source control
 - Vercel deployment
-- Supabase cloud snapshot sync
+- Supabase cloud snapshot + realtime state sync
 
 ## 1) Supabase Setup
 
 1. Create a new Supabase project.
 2. Open SQL Editor in Supabase.
-3. Run the SQL in:
-   - `supabase/sql/001_dashboard_snapshots.sql`
-4. Copy these values from Project Settings -> API:
+3. Run one-shot setup SQL:
+   - `supabase/sql/000_run_all_setup.sql`
+4. If your project is already on an older schema, run incremental migration:
+   - `supabase/sql/007_realtime_state_store.sql`
+5. Copy these values from Project Settings -> API:
    - Project URL
    - Anon public key
 
@@ -45,12 +47,13 @@ Notes:
 ## 4) Verify in Production
 
 1. Open deployed dashboard.
-2. Go to Admin -> Settings & Backup.
-3. Click:
-   - `Save Snapshot to Supabase`
-4. Confirm message shows cloud snapshot saved.
-5. Optionally test:
-   - `Restore Latest Snapshot`
+2. Go to Admin -> Settings & Backup and sign in to cloud.
+3. Confirm `DB Sync` status changes from waiting/offline to active/synced.
+4. Change a few fields (for example attendance or notifications).
+5. Confirm DB sync status shows a recent successful write.
+6. Click `Retry Now` and verify no pending queue remains.
+7. Switch program and verify state hydrates from DB.
+8. Optionally test snapshot backup/restore as before.
 
 ## 5) Local Environment (Optional)
 
@@ -62,8 +65,8 @@ vercel dev
 
 ## Security Note
 
-Current SQL policies allow anon read/write to `dashboard_snapshots` for quick launch.
-For stricter security, add Supabase Auth and replace policies with user-scoped rules.
+Current setup is auth-first with Supabase RLS policies for role and program scope.
+Keep `SUPABASE_SERVICE_ROLE_KEY` server-side only (API routes) and never expose it in frontend code.
 
 ---
 
