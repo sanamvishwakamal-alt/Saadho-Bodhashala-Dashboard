@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,7 @@
 <title>Saadho Bodhashala Dashboard | Sri Anish</title>
 <style>
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
 :root {
   --saffron:     #E8873A;
@@ -192,25 +193,31 @@ body.dark-mode .theme-toggle {
 *{box-sizing:border-box;margin:0;padding:0}
 
 body {
-  font-family:'Nunito',sans-serif;
-  background: #F7F3FF;
+  font-family:'Plus Jakarta Sans', 'DM Sans', sans-serif;
+  background: #F2EEFF;
+  background-image: radial-gradient(ellipse 80% 60% at 70% -5%, rgba(122,85,192,0.07), transparent 55%),
+                    radial-gradient(ellipse 50% 40% at 5% 90%, rgba(232,135,58,0.05), transparent 50%);
   color: var(--text-main);
-  font-size:14px;
-  min-height:100vh;
+  font-size: 13.5px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ── TOPBAR ── */
 .topbar {
-  background: linear-gradient(135deg, var(--shiva-deep) 0%, var(--shiva-mid) 100%);
-  border-bottom: 1px solid rgba(184,147,74,0.4);
-  padding: 0 20px;
+  background: linear-gradient(135deg, var(--shiva-deep) 0%, #250d52 60%, var(--shiva-mid) 100%);
+  border-bottom: 1px solid rgba(184,147,74,0.35);
+  box-shadow: 0 2px 20px rgba(26,10,46,0.4);
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 60px;
+  height: 64px;
 }
 
 .topbar-brand {
@@ -220,35 +227,38 @@ body {
 }
 
 .om-symbol {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   background: linear-gradient(135deg, var(--saffron) 0%, var(--trishul) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Crimson Pro', serif;
-  font-size: 22px;
+  font-size: 23px;
   color: #fff;
   font-weight: 600;
   flex-shrink: 0;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 0 3px rgba(232,135,58,0.2), 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .brand-text h1 {
   font-family: 'Cinzel', serif;
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 600;
   color: #fff;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 .brand-text p {
   font-size: 10px;
-  color: var(--trishul);
+  color: rgba(232,171,98,0.9);
   font-family: 'Crimson Pro', serif;
   font-style: italic;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  margin-top: 1px;
 }
 
 /* ── PROGRAM BANNER ── */
@@ -263,7 +273,7 @@ body {
   justify-content: center;
   gap: 12px;
   position: sticky;
-  top: 60px;
+  top: 64px;
   z-index: 98;
   transition: all 0.3s ease;
   animation: bannerSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -353,7 +363,7 @@ body.dark-mode .program-banner-text {
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 10px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   outline: none;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
 }
@@ -516,15 +526,16 @@ body.dark-mode .dark-preset-select option {
 
 /* ── NAV ── */
 .nav-wrap {
-  background: rgba(46,23,96,0.95);
-  border-bottom: 1px solid rgba(184,147,74,0.2);
-  padding: 0 20px;
+  background: linear-gradient(180deg, rgba(36,16,80,0.98) 0%, rgba(28,12,64,0.97) 100%);
+  border-bottom: 1px solid rgba(184,147,74,0.22);
+  box-shadow: 0 2px 10px rgba(10,4,25,0.25);
+  padding: 0 24px;
   display: flex;
   gap: 2px;
   overflow-x: auto;
   scrollbar-width: none;
   position: sticky;
-  top: 60px;
+  top: 64px;
   z-index: 99;
 }
 .nav-wrap::-webkit-scrollbar { display: none; }
@@ -533,21 +544,21 @@ body.dark-mode .dark-preset-select option {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 16px;
+  padding: 11px 15px;
   background: transparent;
   border: none;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.48);
   cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  font-size: 12px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.25px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
   white-space: nowrap;
   position: relative;
 }
-.nav-btn:hover { color: rgba(255,255,255,0.85); }
+.nav-btn:hover { color: rgba(255,255,255,0.82); }
 .nav-btn.active {
   color: var(--saffron);
   border-bottom-color: var(--saffron);
@@ -572,8 +583,8 @@ body.dark-mode .dark-preset-select option {
 
 /* ── CONTENT ── */
 .content {
-  padding: 20px;
-  max-width: 1400px;
+  padding: 22px 24px;
+  max-width: 1420px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -584,24 +595,26 @@ body.dark-mode .dark-preset-select option {
 
 /* ── CARDS ── */
 .card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  margin-bottom: 16px;
-  box-shadow: var(--shadow);
+  background: rgba(255,255,255,0.97);
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid rgba(122,85,192,0.11);
+  margin-bottom: 18px;
+  box-shadow: 0 1px 3px rgba(26,10,46,0.04), 0 4px 16px rgba(26,10,46,0.06);
+  transition: box-shadow 0.2s;
 }
+.card:hover { box-shadow: 0 2px 6px rgba(26,10,46,0.06), 0 8px 24px rgba(26,10,46,0.09); }
 
 .card-header {
   font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--shiva-soft);
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(122,85,192,0.1);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -609,28 +622,30 @@ body.dark-mode .dark-preset-select option {
 .card-header .ch-icon { color: var(--saffron); }
 
 .card-divine {
-  background: linear-gradient(135deg, rgba(74,43,138,0.05) 0%, rgba(232,135,58,0.04) 100%);
-  border-color: rgba(184,147,74,0.25);
+  background: linear-gradient(140deg, rgba(255,255,255,0.98) 0%, rgba(250,245,255,0.95) 100%);
+  border-color: rgba(184,147,74,0.22);
 }
 
 /* ── STAT CARDS ── */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(136px,1fr));
+  gap: 14px;
+  margin-bottom: 22px;
 }
 
 .stat-card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
+  background: rgba(255,255,255,0.97);
+  border-radius: 14px;
+  padding: 18px 16px;
+  border: 1px solid rgba(122,85,192,0.1);
+  box-shadow: 0 2px 8px rgba(26,10,46,0.05), 0 1px 2px rgba(26,10,46,0.04);
   text-align: center;
   position: relative;
   overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,10,46,0.1); }
 
 .stat-card::before {
   content: '';
@@ -652,40 +667,43 @@ body.dark-mode .dark-preset-select option {
   margin-bottom: 4px;
 }
 .stat-card .lbl {
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--text-mute);
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.8px;
   font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
-.stat-card .sub { font-size: 11px; color: var(--text-soft); margin-top: 3px; }
+.stat-card .sub { font-size: 11px; color: var(--text-soft); margin-top: 4px; }
 
 /* ── TABLE ── */
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 th {
-  background: linear-gradient(90deg, rgba(74,43,138,0.08), rgba(74,43,138,0.04));
+  background: linear-gradient(90deg, rgba(74,43,138,0.07), rgba(74,43,138,0.03));
   color: var(--shiva-soft);
-  padding: 9px 10px;
+  padding: 10px 12px;
   text-align: left;
   font-weight: 700;
-  border-bottom: 1px solid var(--border-med);
-  font-size: 11px;
+  border-bottom: 1.5px solid rgba(122,85,192,0.18);
+  font-size: 10.5px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.6px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
-td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; color: var(--text-main); background: #fff; }
-tr:hover td { background: rgba(74,43,138,0.04); }
+td { padding: 9px 12px; border-bottom: 1px solid rgba(122,85,192,0.08); vertical-align: middle; color: var(--text-main); background: rgba(255,255,255,0.9); font-size: 12.5px; }
+tr:hover td { background: rgba(74,43,138,0.035); }
 tr.total-row.grand-total td, tr.total-row.grand-total:hover td { background: var(--shiva-mid) !important; color: #fff !important; }
 tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moon-dk) !important; color: var(--shiva-mid) !important; }
 
 /* ── BADGES ── */
 .badge {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 2.5px 9px;
+  border-radius: 20px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.3px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .badge-present  { background: #d4f0dc; color: #0a5e2a; }
 .badge-absent   { background: #fde8e8; color: #8b1a1a; }
@@ -703,26 +721,26 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 
 /* ── BUTTONS ── */
 .btn {
-  padding: 7px 16px;
-  border-radius: 8px;
+  padding: 7.5px 18px;
+  border-radius: 9px;
   border: 1px solid var(--shiva-mid);
   background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft));
   color: #fff;
   cursor: pointer;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  transition: all 0.2s;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all 0.18s ease;
 }
-.btn:hover { background: linear-gradient(135deg, var(--shiva-soft), var(--shiva-mist)); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(74,43,138,0.3); }
+.btn:hover { background: linear-gradient(135deg, var(--shiva-soft), var(--shiva-mist)); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,43,138,0.28); }
 .btn-outline {
-  background: #fff;
-  border: 1px solid var(--shiva-soft);
+  background: rgba(255,255,255,0.95);
+  border: 1.5px solid rgba(74,43,138,0.35);
   color: var(--shiva-soft);
 }
-.btn-outline:hover { background: rgba(74,43,138,0.06); transform: none; box-shadow: none; }
-.btn-sm { padding: 4px 10px; font-size: 11px; }
+.btn-outline:hover { background: rgba(74,43,138,0.05); transform: none; box-shadow: none; }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
 .btn-saffron { background: linear-gradient(135deg, var(--saffron-dk), var(--saffron)); border-color: var(--saffron-dk); }
 .btn-saffron:hover { background: linear-gradient(135deg, var(--saffron), #f09a50); }
 .btn-danger { background: linear-gradient(135deg, #a32020, var(--rudra)); border-color: #a32020; }
@@ -731,18 +749,18 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 .btn-success:hover { background: linear-gradient(135deg, #27a75a, #40c070); }
 
 /* ── FORMS ── */
-.form-row { margin-bottom: 12px; }
-.form-row label { display: block; font-size: 11px; font-weight: 700; color: var(--text-soft); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+.form-row { margin-bottom: 14px; }
+.form-row label { display: block; font-size: 10.5px; font-weight: 700; color: var(--text-soft); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.6px; font-family: 'Plus Jakarta Sans', sans-serif; }
 .form-row input, .form-row select, .form-row textarea {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--border-med);
-  border-radius: 8px;
-  font-family: 'Nunito', sans-serif;
+  padding: 9px 13px;
+  border: 1.5px solid rgba(122,85,192,0.22);
+  border-radius: 9px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 13px;
-  background: #fff;
+  background: rgba(255,255,255,0.98);
   color: var(--text-main);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
   outline: none;
@@ -753,38 +771,39 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 .search-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
 .search-row input, .search-row select {
   padding: 7px 12px;
-  border: 1px solid var(--border-med);
-  border-radius: 8px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 12px;
-  background: #fff;
+  border: 1.5px solid rgba(122,85,192,0.2);
+  border-radius: 9px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12.5px;
+  background: rgba(255,255,255,0.98);
   color: var(--text-main);
 }
 .search-row input { flex: 1; min-width: 160px; }
 
 /* ── LAYOUT ── */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
 @media(max-width:700px) { .two-col,.three-col { grid-template-columns: 1fr; } }
 
 /* ── BAR ── */
-.bar-wrap { background: var(--ash); border-radius: 4px; overflow: hidden; height: 7px; margin-top: 4px; }
-.bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--shiva-soft), var(--shiva-mist)); transition: width 0.4s; }
+.bar-wrap { background: rgba(122,85,192,0.1); border-radius: 6px; overflow: hidden; height: 7px; margin-top: 5px; }
+.bar-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--shiva-soft), var(--shiva-mist)); transition: width 0.5s ease; }
 .bar-fill.saffron { background: linear-gradient(90deg, var(--saffron-dk), var(--saffron)); }
 .bar-fill.bilva { background: linear-gradient(90deg, var(--bilva), #a8c870); }
 
 /* ── SESSION DOTS ── */
 .session-dot {
-  width: 24px; height: 24px; border-radius: 50%;
+  width: 26px; height: 26px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 10px; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 .dot-present { background: #27a75a; color: #fff; }
-.dot-present:hover { background: #1a8a46; }
+.dot-present:hover { background: #1a8a46; transform: scale(1.1); }
 .dot-absent { background: var(--rudra); color: #fff; }
-.dot-absent:hover { background: #a32020; }
+.dot-absent:hover { background: #a32020; transform: scale(1.1); }
 .dot-na { background: var(--ash); color: var(--text-mute); }
-.dot-na:hover { background: var(--ash-dk); }
+.dot-na:hover { background: var(--ash-dk); transform: scale(1.1); }
 
 /* ── MINI DOTS ── */
 .mini-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
@@ -796,50 +815,78 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 /* ── MODALS ── */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(26,10,46,0.75);
+  background: rgba(26,10,46,0.7);
   z-index: 200; align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
 }
 .modal-overlay.open { display: flex; }
 .modal {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
+  background: rgba(255,255,255,0.99);
+  border-radius: 18px;
+  padding: 26px;
   width: 90%; max-width: 540px;
   max-height: 90vh; overflow-y: auto;
-  border: 1px solid var(--border-med);
-  box-shadow: 0 20px 60px rgba(26,10,46,0.4);
+  border: 1px solid rgba(122,85,192,0.18);
+  box-shadow: 0 24px 72px rgba(26,10,46,0.35), 0 4px 16px rgba(26,10,46,0.1);
 }
 .modal h2 {
   font-family: 'Cinzel', serif;
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 600;
   color: var(--shiva-mid);
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(122,85,192,0.12);
+  letter-spacing: 0.3px;
 }
-.modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
 
 /* ── TAB PILLS ── */
-.tab-pills { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.tab-pills { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
 .tab-pill {
-  padding: 6px 16px; border-radius: 20px;
-  border: 1px solid var(--border-med);
-  background: #fff; cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  font-size: 12px; font-weight: 600;
-  color: var(--text-soft); transition: all 0.2s;
+  padding: 6.5px 16px; border-radius: 20px;
+  border: 1.5px solid rgba(122,85,192,0.22);
+  background: rgba(255,255,255,0.9); cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.5px; font-weight: 600;
+  color: var(--text-soft); transition: all 0.18s ease;
 }
-.tab-pill.active { background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft)); color: #fff; border-color: transparent; }
-.tab-pill:hover:not(.active) { background: rgba(74,43,138,0.06); }
+.tab-pill.active { background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft)); color: #fff; border-color: transparent; box-shadow: 0 3px 10px rgba(74,43,138,0.25); }
+.tab-pill:hover:not(.active) { background: rgba(74,43,138,0.06); border-color: rgba(122,85,192,0.35); }
+
+/* ── ADMIN TAB GROUPING ── */
+#admin-tabs {
+  margin-bottom: 10px;
+}
+
+#admin-tabs > .tab-pill[data-admin-tab="admin"] {
+  font-weight: 700;
+  padding-inline: 18px;
+}
+
+#admin-admin.admin-group-wrap {
+  padding: 10px 12px;
+  margin: 2px 0 16px;
+  border: 1px solid var(--border-med);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(74,43,138,0.06), rgba(74,43,138,0.02));
+}
+
+#admin-admin-tabs.admin-subtabs {
+  margin: 0;
+  gap: 8px;
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill {
+  background: rgba(255,255,255,0.92);
+}
 
 /* ── PAGINATION ── */
 .pagination { display: flex; align-items: center; gap: 6px; margin-top: 12px; justify-content: center; }
 .pagination button {
   padding: 4px 10px; border: 1px solid var(--border-med);
   border-radius: 6px; background: #fff; cursor: pointer;
-  font-family: 'Nunito', sans-serif; font-size: 11px; color: var(--text-soft);
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; color: var(--text-soft);
 }
 .pagination button:hover { background: rgba(74,43,138,0.06); }
 .pagination .cur { background: var(--shiva-mid); color: #fff; border-color: var(--shiva-mid); }
@@ -875,26 +922,28 @@ canvas { width: 100% !important; }
 
 /* ── GROUP CARDS ── */
 .group-select {
-  padding: 8px 14px;
-  border: 1px solid var(--border-med);
-  border-radius: 8px;
-  font-family: 'Nunito', sans-serif;
+  padding: 9px 14px;
+  border: 1.5px solid rgba(122,85,192,0.22);
+  border-radius: 9px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 13px;
-  background: #fff;
+  background: rgba(255,255,255,0.98);
   color: var(--text-main);
   min-width: 260px;
 }
 
 /* ── TASK/NOTIFICATION CARD ── */
 .task-card {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.97);
+  border-radius: 12px;
+  padding: 13px 15px;
+  border: 1px solid rgba(122,85,192,0.1);
   margin-bottom: 10px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 1px 4px rgba(26,10,46,0.05);
   position: relative;
+  transition: box-shadow 0.2s, transform 0.15s;
 }
+.task-card:hover { box-shadow: 0 4px 16px rgba(26,10,46,0.09); transform: translateX(2px); }
 .task-card .tc-header {
   display: flex;
   align-items: flex-start;
@@ -903,11 +952,11 @@ canvas { width: 100% !important; }
   margin-bottom: 6px;
 }
 .task-card .tc-title { font-weight: 700; font-size: 13px; color: var(--text-main); }
-.task-card .tc-meta { font-size: 11px; color: var(--text-mute); margin-top: 2px; }
-.task-card .tc-body { font-size: 12px; color: var(--text-soft); line-height: 1.6; margin: 6px 0; }
+.task-card .tc-meta { font-size: 10.5px; color: var(--text-mute); margin-top: 2px; }
+.task-card .tc-body { font-size: 12px; color: var(--text-soft); line-height: 1.65; margin: 6px 0; }
 .task-card.urgent { border-left: 3px solid var(--saffron); }
 .task-card.pending { border-left: 3px solid var(--shiva-mist); }
-.task-card.done { border-left: 3px solid var(--bilva); opacity: 0.85; }
+.task-card.done { border-left: 3px solid var(--bilva); opacity: 0.82; }
 
 /* ── LEGEND ── */
 .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--text-soft); align-items: center; margin-bottom: 10px; }
@@ -926,53 +975,54 @@ canvas { width: 100% !important; }
 }
 
 /* ── RECORDING CARDS ── */
-.rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; }
+.rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
 .rec-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  padding: 15px;
+  background: rgba(255,255,255,0.97);
+  border-radius: 14px;
+  border: 1px solid rgba(122,85,192,0.1);
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  box-shadow: var(--shadow);
-  transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(26,10,46,0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
 }
-.rec-card:hover { box-shadow: 0 4px 20px rgba(74,43,138,0.15); }
+.rec-card:hover { box-shadow: 0 6px 22px rgba(74,43,138,0.12); transform: translateY(-2px); }
 .rec-cat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
 
 /* ── ADMIN PANEL ── */
 .admin-panel-banner {
-  background: linear-gradient(135deg, rgba(74,43,138,0.08), rgba(232,135,58,0.05));
-  border: 1px solid rgba(184,147,74,0.3);
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(74,43,138,0.07), rgba(232,135,58,0.04));
+  border: 1px solid rgba(184,147,74,0.28);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 .admin-panel-banner .apb-icon {
-  width: 42px; height: 42px;
+  width: 44px; height: 44px;
   background: linear-gradient(135deg, var(--saffron-dk), var(--saffron));
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(232,135,58,0.3);
 }
-.admin-panel-banner h3 { font-family: 'Cinzel', serif; font-size: 14px; color: var(--shiva-mid); }
-.admin-panel-banner p { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+.admin-panel-banner h3 { font-family: 'Cinzel', serif; font-size: 13.5px; color: var(--shiva-mid); font-weight: 600; }
+.admin-panel-banner p { font-size: 11px; color: var(--text-soft); margin-top: 3px; }
 
 /* ── GURU DEV QUESTIONS ── */
 .question-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.97);
+  border-radius: 13px;
+  border: 1px solid rgba(122,85,192,0.1);
   overflow: hidden;
   margin-bottom: 12px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 8px rgba(26,10,46,0.05);
 }
 .qc-header {
-  padding: 12px 14px;
+  padding: 13px 15px;
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -988,20 +1038,20 @@ canvas { width: 100% !important; }
   font-size: 11px; font-weight: 700;
   flex-shrink: 0;
 }
-.qc-body-text { font-size: 13px; color: var(--text-main); font-weight: 600; flex: 1; line-height: 1.4; }
+.qc-body-text { font-size: 13px; color: var(--text-main); font-weight: 600; flex: 1; line-height: 1.45; }
 .qc-meta { font-size: 10px; color: var(--text-mute); margin-top: 3px; }
 .qc-detail {
   display: none;
-  padding: 12px 14px 14px 14px;
-  border-top: 1px solid var(--border);
+  padding: 13px 15px 15px 15px;
+  border-top: 1px solid rgba(122,85,192,0.08);
   background: rgba(74,43,138,0.02);
 }
 .qc-detail.open { display: block; }
 .qc-answer {
   background: linear-gradient(135deg, rgba(122,158,78,0.08), rgba(122,158,78,0.04));
   border: 1px solid rgba(122,158,78,0.2);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border-radius: 10px;
+  padding: 10px 13px;
   margin-top: 8px;
   font-size: 12px;
   color: var(--text-main);
@@ -1068,10 +1118,10 @@ canvas { width: 100% !important; }
   justify-content: space-between;
   gap: 12px;
   position: sticky;
-  top: 60px;
+  top: 64px;
   z-index: 98;
   font-size: 12px;
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .edit-mode-bar.visible { display: flex; }
 .edit-mode-bar .em-left { display:flex;align-items:center;gap:8px;font-weight:700;color:#a0560a; }
@@ -1109,7 +1159,7 @@ body.edit-mode [data-editable]:focus {
   padding: 4px 11px; border-radius: 20px;
   border: 1px solid rgba(232,135,58,0.45);
   background: transparent; color: rgba(255,255,255,0.7);
-  font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700;
   cursor: pointer; transition: all 0.2s; letter-spacing: 0.3px;
 }
 .btn-edit-toggle:hover { background: rgba(232,135,58,0.15); color: #fff; }
@@ -1117,20 +1167,20 @@ body.edit-mode [data-editable]:focus {
 
 /* Programs section */
 .prog-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 20px;
+  background: rgba(255,255,255,0.97);
+  border: 1px solid rgba(122,85,192,0.11);
+  border-radius: 14px;
+  padding: 17px 20px;
   margin-bottom: 10px;
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap;
-  box-shadow: var(--shadow);
-  transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(26,10,46,0.05);
+  transition: box-shadow 0.2s, transform 0.15s;
 }
-.prog-card:hover { box-shadow: 0 4px 20px rgba(74,43,138,0.15); }
-.prog-card.active-prog { border: 2px solid var(--saffron); }
+.prog-card:hover { box-shadow: 0 6px 22px rgba(74,43,138,0.12); transform: translateY(-1px); }
+.prog-card.active-prog { border: 2px solid var(--saffron); background: linear-gradient(140deg, rgba(255,248,240,0.98), rgba(255,255,255,0.97)); }
 .prog-card-name { font-family:'Cinzel',serif; font-size:15px; font-weight:600; color:var(--shiva-mid); }
-.prog-status { font-size:10px; padding:3px 10px; border-radius:20px; font-weight:700; flex-shrink:0; }
+.prog-status { font-size:10px; padding:3.5px 11px; border-radius:20px; font-weight:700; flex-shrink:0; font-family:'Plus Jakarta Sans',sans-serif; letter-spacing:0.3px; }
 .prog-status.active { background:#E1F5EE; color:#0F6E56; }
 .prog-status.archived { background:#F1EFE8; color:#5F5E5A; }
 
@@ -1169,6 +1219,24 @@ body.edit-mode [data-editable]:focus {
 }
 
 @media (max-width: 768px) {
+  #admin-admin.admin-group-wrap {
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+
+  #admin-admin-tabs.admin-subtabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  #admin-admin-tabs.admin-subtabs .tab-pill {
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+
   .topbar {
     flex-direction: column;
     gap: 10px;
@@ -2455,7 +2523,7 @@ body.dark-mode .filter-option {
   border-radius: 8px;
   background: var(--white);
   color: var(--text-main);
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 13px;
   transition: all 0.2s ease;
 }
@@ -2697,6 +2765,108 @@ body.dark-mode .filter-dropdown {
   transition: width 0.3s ease;
 }
 
+/* ── POLISH & FINESSE ── */
+
+/* Form inputs - global focus state upgrade */
+.form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+  outline: none;
+  border-color: var(--shiva-mist);
+  box-shadow: 0 0 0 3px rgba(122,85,192,0.1);
+}
+
+/* Section headings */
+h2, h3 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.3px;
+}
+
+/* Section titles - used throughout */
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--shiva-mid);
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* Scrollbar refinement */
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: rgba(122,85,192,0.06); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(122,85,192,0.25); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(122,85,192,0.4); }
+
+/* Select inputs native arrow refinement */
+select { cursor: pointer; }
+
+/* Role badge typography */
+.role-badge {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.4px;
+}
+
+/* Dark mode body background override */
+body.dark-mode {
+  background: radial-gradient(1200px 700px at 20% -10%, rgba(var(--dm-accent-rgb),0.07), transparent 60%), 
+              linear-gradient(160deg, var(--dm-bg) 0%, var(--dm-bg-alt) 100%);
+  color: var(--dm-text);
+  background-image: none;
+}
+
+/* Program banner text */
+.program-banner-text {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--shiva-deep);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* Dark mode program banner */
+body.dark-mode .program-banner-text { color: var(--dm-text); }
+
+/* Topbar nav top correction after height change */
+body.edit-mode .nav-wrap { top: 108px; }
+.nav-wrap { top: 64px; }
+
+/* Empty state refinement */
+.empty-state {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--text-mute);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* Card divider refinement */
+.divider { height: 1px; background: rgba(122,85,192,0.1); margin: 16px 0; }
+
+/* FAQ items */
+.faq-item { border: 1px solid rgba(122,85,192,0.1); border-radius: 12px; margin-bottom: 8px; overflow: hidden; background: rgba(255,255,255,0.97); box-shadow: 0 1px 4px rgba(26,10,46,0.04); }
+.faq-q { padding: 13px 15px; font-size: 13px; font-weight: 600; }
+.faq-a { font-size: 12.5px; line-height: 1.75; }
+
+/* Checklist items */
+.checklist-item { border-radius: 9px; border: 1px solid rgba(122,85,192,0.12); background: rgba(255,255,255,0.97); padding: 9px 11px; }
+
+/* Pagination */
+.pagination button {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-radius: 8px;
+  font-size: 11.5px;
+  transition: all 0.15s;
+}
+.pagination .cur { background: var(--shiva-mid); color: #fff; border-color: var(--shiva-mid); box-shadow: 0 2px 6px rgba(74,43,138,0.25); }
+
+/* Alert box */
+.alert-box { border-radius: 12px; padding: 13px 16px; }
+
+/* Progress row text */
+.progress-label { font-size: 12.5px; }
+.progress-val { font-size: 12.5px; }
+
 </style>
 </head>
 <body>
@@ -2715,13 +2885,13 @@ body.dark-mode .filter-dropdown {
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div><label style="display:block;font-size:11px;font-weight:700;color:#5A4A7A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px">Project / Batch Name</label>
-          <input id="setup-project-name" type="text" placeholder="e.g. PNS Mahashivratri 2026" style="width:100%;padding:8px 12px;border:1px solid rgba(122,85,192,0.25);border-radius:8px;font-size:13px;font-family:'Nunito',sans-serif;background:#fff;color:#1A0A2E;box-sizing:border-box"></div>
+          <input id="setup-project-name" type="text" placeholder="e.g. PNS Mahashivratri 2026" style="width:100%;padding:8px 12px;border:1px solid rgba(122,85,192,0.25);border-radius:8px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1A0A2E;box-sizing:border-box"></div>
         <div><label style="display:block;font-size:11px;font-weight:700;color:#5A4A7A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px">Start Date</label>
-          <input id="setup-start-date" type="date" style="width:100%;padding:8px 12px;border:1px solid rgba(122,85,192,0.25);border-radius:8px;font-size:13px;font-family:'Nunito',sans-serif;background:#fff;color:#1A0A2E;box-sizing:border-box"></div>
+          <input id="setup-start-date" type="date" style="width:100%;padding:8px 12px;border:1px solid rgba(122,85,192,0.25);border-radius:8px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1A0A2E;box-sizing:border-box"></div>
       </div>
       <div style="margin-top:12px">
         <label style="display:block;font-size:11px;font-weight:700;color:#5A4A7A;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px">Session Dates <span style="font-weight:400;text-transform:none;font-style:italic;color:#9A8ABB">(one per line)</span></label>
-        <textarea id="setup-sessions" placeholder="5 Jan&#10;12 Jan&#10;19 Jan&#10;26 Jan&#10;2 Feb" style="width:100%;padding:8px 12px;border:1px solid rgba(122,85,192,0.25);border-radius:8px;font-size:13px;font-family:'Nunito',sans-serif;height:90px;resize:vertical;background:#fff;color:#1A0A2E;box-sizing:border-box"></textarea>
+        <textarea id="setup-sessions" placeholder="5 Jan&#10;12 Jan&#10;19 Jan&#10;26 Jan&#10;2 Feb" style="width:100%;padding:8px 12px;border:1px solid rgba(122,85,192,0.25);border-radius:8px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;height:90px;resize:vertical;background:#fff;color:#1A0A2E;box-sizing:border-box"></textarea>
       </div>
     </div>
     <!-- Step 2: Load Data -->
@@ -2730,8 +2900,8 @@ body.dark-mode .filter-dropdown {
         <span style="background:linear-gradient(135deg,#2E1760,#4A2B8A);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px">2</span> Load Sadhak Data
       </div>
       <div style="display:flex;gap:8px;margin-bottom:14px">
-        <button id="tab-upload-btn" onclick="switchLoadTab('upload',this)" style="padding:6px 16px;border-radius:20px;border:none;background:linear-gradient(135deg,#2E1760,#4A2B8A);color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Upload CSV</button>
-        <button id="tab-blank-btn" onclick="switchLoadTab('blank',this)" style="padding:6px 16px;border-radius:20px;border:1px solid rgba(122,85,192,0.25);background:#fff;color:#5A4A7A;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Start Blank</button>
+        <button id="tab-upload-btn" onclick="switchLoadTab('upload',this)" style="padding:6px 16px;border-radius:20px;border:none;background:linear-gradient(135deg,#2E1760,#4A2B8A);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Upload CSV</button>
+        <button id="tab-blank-btn" onclick="switchLoadTab('blank',this)" style="padding:6px 16px;border-radius:20px;border:1px solid rgba(122,85,192,0.25);background:#fff;color:#5A4A7A;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Start Blank</button>
       </div>
       <div id="load-tab-upload">
         <p style="font-size:12px;color:#5A4A7A;margin-bottom:12px;line-height:1.6">Upload your registration CSV. Required columns: <code style="background:rgba(74,43,138,0.08);padding:2px 6px;border-radius:4px;font-size:11px">Name, Role, City, Region, Language, Country, Facilitators, Group Name</code></p>
@@ -2773,6 +2943,13 @@ body.dark-mode .filter-dropdown {
       <span id="prog-pill-name" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Programs</span>
       <span style="opacity:.6">&#9662;</span>
     </div>
+    <div id="topbar-db-sync" style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:18px;background:rgba(255,255,255,0.09);border:1px solid rgba(184,147,74,0.28);color:#fff;max-width:340px">
+      <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+        <span id="topbar-db-sync-state" style="font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">DB Sync: Waiting for sign-in</span>
+        <span id="topbar-db-sync-time" style="font-size:10px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Last sync: Never</span>
+      </div>
+      <button id="topbar-sync-now-btn" class="btn-edit-toggle" onclick="manualDbStateSyncNow()" style="font-size:10px;padding:5px 10px;min-width:84px">Sync Now</button>
+    </div>
     <div class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</div>
     <select id="dark-preset-select" class="dark-preset-select" onchange="setDarkModePreset(this.value)" title="Dark theme preset">
       <option value="blue">Soothing Blue</option>
@@ -2802,9 +2979,9 @@ body.dark-mode .filter-dropdown {
     &#10002; Edit Mode — click any highlighted text to edit directly
   </div>
   <div class="em-right">
-    <button onclick="discardEdits()" style="padding:4px 12px;border-radius:6px;border:1px solid rgba(74,43,138,0.3);background:#fff;color:var(--shiva-soft);font-family:Nunito,sans-serif;font-size:11px;font-weight:700;cursor:pointer">&#10005; Discard</button>
-    <button onclick="saveAllEdits()" style="padding:4px 12px;border-radius:6px;border:none;background:linear-gradient(135deg,var(--saffron-dk),var(--saffron));color:#fff;font-family:Nunito,sans-serif;font-size:11px;font-weight:700;cursor:pointer">&#10003; Save Changes</button>
-    <button onclick="toggleEditMode()" style="padding:4px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:var(--shiva-mid);font-family:Nunito,sans-serif;font-size:11px;font-weight:700;cursor:pointer">Exit Edit</button>
+    <button onclick="discardEdits()" style="padding:4px 12px;border-radius:6px;border:1px solid rgba(74,43,138,0.3);background:#fff;color:var(--shiva-soft);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">&#10005; Discard</button>
+    <button onclick="saveAllEdits()" style="padding:4px 12px;border-radius:6px;border:none;background:linear-gradient(135deg,var(--saffron-dk),var(--saffron));color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">&#10003; Save Changes</button>
+    <button onclick="toggleEditMode()" style="padding:4px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:var(--shiva-mid);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer">Exit Edit</button>
   </div>
 </div>
 
@@ -2818,7 +2995,7 @@ body.dark-mode .filter-dropdown {
   <button class="nav-btn" onclick="showSection('recordings')"><span class="nav-icon">▷</span> Recordings</button>
   <button class="nav-btn" onclick="showSection('resources')"><span class="nav-icon">◉</span> Workflow & FAQ</button>
   <button class="nav-btn admin-only" onclick="showSection('admin')">
-    <span class="nav-icon">⚙</span> Admin
+    <span class="nav-icon">⚙</span> Action Center
     <span class="nav-badge" id="admin-badge">0</span>
   </button>
   <button class="nav-btn" onclick="showSection('gurudev')">
@@ -2938,102 +3115,6 @@ body.dark-mode .filter-dropdown {
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country *</label>
           <select id="m-country" onchange="syncMemberCountryCode(); syncMemberRegionWithCountry()" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Country</option>
-            <option value="India">India</option>
-            <option value="USA">USA</option>
-            <option value="Canada">Canada</option>
-            <option value="United Kingdom">United Kingdom</option>
-            <option value="Australia">Australia</option>
-            <option value="UAE">UAE</option>
-            <option value="Germany">Germany</option>
-            <option value="Sweden">Sweden</option>
-            <option value="Switzerland">Switzerland</option>
-            <option value="Spain">Spain</option>
-            <option value="Argentina">Argentina</option>
-            <option value="Cambodia">Cambodia</option>
-            <option value="Japan">Japan</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region *</label>
-          <select id="m-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Region</option>
-            <option value="INDIA">India</option>
-            <option value="NON INDIA">Non India</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">City *</label>
-          <select id="m-city" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select City</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role *</label>
-          <select id="m-role" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Role</option>
-            <option value="Admin">Admin</option>
-            <option value="Facilitator">Facilitator</option>
-            <option value="Sadhak">Sadhak</option>
-            <option value="Guest">Guest</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language *</label>
-          <select id="m-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Language</option>
-            <option value="English">English</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Any">Any</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Facilitator(s) *</label>
-          <select id="m-facilitators" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Facilitator</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Name *</label>
-          <select id="m-group" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Group</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered Through *</label>
-          <input type="text" id="m-reg-through" placeholder="Facebook, WhatsApp, Referral" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered By *</label>
-          <input type="text" id="m-reg-by" placeholder="Admin name or ID" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">WhatsApp Group Status *</label>
-          <select id="m-wa-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Status</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Initiation Status *</label>
-          <select id="m-init-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Status</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Culmination Status *</label>
-          <select id="m-culm-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Status</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
         <div style="grid-column:1/-1">
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Notes</label>
           <textarea id="m-notes" placeholder="Additional notes or comments" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;min-height:60px;font-family:inherit;resize:vertical;"></textarea>
@@ -3298,17 +3379,22 @@ body.dark-mode .filter-dropdown {
   <div class="admin-panel-banner">
     <div class="apb-icon">⚙</div>
     <div>
-      <h3>Admin Control Panel</h3>
+      <h3>Action Center</h3>
       <p>Review transfer requests, manage approvals, monitor all facilitator tasks and Gurudev questions.</p>
     </div>
   </div>
   <div class="tab-pills" id="admin-tabs">
-    <button class="tab-pill" onclick="showAdminTab('users',this)">Users &amp; Access</button>
+    <button class="tab-pill" data-admin-tab="admin" onclick="showAdminTab('admin',this)">Admin</button>
     <button class="tab-pill active" onclick="showAdminTab('transfers',this)">Transfer Requests <span id="transfer-count-badge" class="nav-badge" style="display:inline-block;background:var(--rudra)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('tasks',this)">All Tasks</button>
     <button class="tab-pill" onclick="showAdminTab('guru-q',this)">Gurudev Questions <span id="guru-count-badge" class="nav-badge" style="display:inline-block;background:var(--shiva-soft)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('notes',this)">Special Notes</button>
-    <button class="tab-pill" onclick="showAdminTab('settings',this)">⚙ Settings & Backup</button>
+  </div>
+  <div id="admin-admin" class="admin-group-wrap" style="display:none">
+    <div class="tab-pills admin-subtabs" id="admin-admin-tabs">
+      <button class="tab-pill active" data-admin-subtab="users" onclick="showAdminSubTab('users',this)">Users &amp; Access</button>
+      <button class="tab-pill" data-admin-subtab="settings" onclick="showAdminSubTab('settings',this)">⚙ Settings &amp; Backup</button>
+    </div>
   </div>
   <div id="admin-users" style="display:none"></div>
   <div id="admin-transfers"></div>
@@ -3333,7 +3419,7 @@ body.dark-mode .filter-dropdown {
           <div id="cloud-sync-status" style="font-size:11px;color:var(--text-mute);margin:-2px 0 6px 2px">Cloud sync: Not configured</div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-4px 0 4px 2px">
             <div id="db-sync-health" style="font-size:11px;color:var(--text-soft);padding:6px 8px;border:1px solid var(--border-light);border-radius:8px;background:rgba(255,255,255,0.7);flex:1;min-width:280px">DB Sync: Waiting for sign-in</div>
-            <button class="btn btn-outline btn-sm" onclick="retryDbStateSyncNow()" style="font-size:11px">⟳ Retry Now</button>
+            <button id="db-sync-manual-btn" class="btn btn-outline btn-sm" onclick="manualDbStateSyncNow()" style="font-size:11px">⟳ Sync Now</button>
           </div>
           <div id="ts-last-backup" style="font-size:11px;color:var(--text-mute);margin:-4px 0 4px 2px">Last backup: Never</div>
           <div style="margin:6px 0 4px;border-top:1px dashed var(--border);padding-top:10px">
@@ -3360,24 +3446,12 @@ body.dark-mode .filter-dropdown {
       <div class="card" style="margin-bottom:0">
         <div class="card-header"><span class="ch-icon">&#128272;</span> Role &amp; Access</div>
         <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">
-          Use the role dropdown in the top-right corner to switch between <b>Admin, Facilitator, Sadhak,</b> and <b>Guest</b>. Admin mode unlocks transfer approvals, member management, backup tools, and the Programs tab.
+          Use the role dropdown in the top-right corner to switch between <b>Admin, Facilitator, Sadhak,</b> and <b>Guest</b>. The matrix below covers all navigation tabs and shows exact access depth for each role.
         </p>
         <div style="background:rgba(74,43,138,0.05);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px">
-          <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:10px">Access Levels</div>
-          <table style="width:100%;border-collapse:collapse">
-            <tr>
-              <th style="text-align:left;font-size:10px;color:var(--text-mute);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Feature</th>
-              <th style="text-align:center;font-size:10px;color:var(--shiva-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Admin</th>
-              <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Facilitator</th>
-            </tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">View all groups &amp; members</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#9989;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Mark attendance</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#9989;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Add / import members</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Approve transfers</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Record Gurudev answers</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Backup &amp; restore</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Programs &amp; multi-program</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-          </table>
+          <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:8px">Role Access Details</div>
+          <div style="font-size:11px;color:var(--text-soft);line-height:1.7">Open <b>Action Center → Users &amp; Access</b> to view the live tab-wise access matrix.</div>
+          <div style="font-size:11px;color:var(--text-mute);line-height:1.7;margin-top:6px">That matrix is auto-generated from the current role and permission configuration.</div>
         </div>
         <div style="margin-top:14px;background:rgba(74,43,138,0.04);border:1px solid rgba(122,85,192,0.15);border-radius:10px;padding:14px 16px">
           <div style="font-size:11px;font-weight:700;color:var(--shiva-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">&#128190; What's included in Full Backup (.json)</div>
@@ -4210,6 +4284,75 @@ function getTabAccessDeniedMessage(tabId, action = 'view') {
   return `Access denied: ${roleLabel} cannot ${action} in ${tabLabel}.`;
 }
 
+function getAccessLevelLabel(tab, roleName){
+  const perms = tab?.actions?.[roleName] || {};
+  if(!perms.view) return 'None';
+  if(roleName === 'admin') return 'Full';
+  const canManage = !!(perms.add || perms.edit || perms.delete);
+  if(canManage) return 'Manage';
+  if(roleName === 'facilitator') return 'Scoped';
+  return 'View';
+}
+
+function getAccessLevelBadge(tab, roleName){
+  const label = getAccessLevelLabel(tab, roleName);
+  const styles = {
+    Full:   'background:rgba(76,175,80,.16);border:1px solid rgba(76,175,80,.38);color:#1f6d31;',
+    Manage: 'background:rgba(3,169,244,.14);border:1px solid rgba(3,169,244,.35);color:#0b5f84;',
+    Scoped: 'background:rgba(255,152,0,.15);border:1px solid rgba(255,152,0,.35);color:#8a5200;',
+    View:   'background:rgba(123,85,192,.12);border:1px solid rgba(123,85,192,.35);color:#4a2b8a;',
+    None:   'background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.32);color:#a33330;'
+  };
+  const style = styles[label] || styles.View;
+  return `<span style="display:inline-block;min-width:58px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.2px;${style}">${label}</span>`;
+}
+
+function renderRoleAccessMatrix(){
+  const mount = document.getElementById('role-access-matrix-table');
+  if(!mount) return;
+  const tabs = Array.isArray(ACCESS_PERMISSION_CONFIG?.tabs) ? ACCESS_PERMISSION_CONFIG.tabs : [];
+  if(!tabs.length){
+    mount.textContent = 'Access matrix unavailable.';
+    return;
+  }
+  const rowsHtml = tabs.map(tab => `
+    <tr>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);font-size:11px;font-weight:700;color:var(--text-main)">${tab.label}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'admin')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'facilitator')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'sadhak')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'guest')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);font-size:11px;color:var(--text-soft)">
+        <div><b>Admin:</b> ${tab?.details?.admin || '-'}</div>
+        <div><b>Facilitator:</b> ${tab?.details?.facilitator || '-'}</div>
+        <div><b>Sadhak:</b> ${tab?.details?.sadhak || '-'}</div>
+        <div><b>Guest:</b> ${tab?.details?.guest || '-'}</div>
+      </td>
+    </tr>
+  `).join('');
+  mount.innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 8px 2px;font-size:10px;color:var(--text-mute)">
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(76,175,80,.16);border:1px solid rgba(76,175,80,.38);color:#1f6d31;font-weight:700">Full</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(3,169,244,.14);border:1px solid rgba(3,169,244,.35);color:#0b5f84;font-weight:700">Manage</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(255,152,0,.15);border:1px solid rgba(255,152,0,.35);color:#8a5200;font-weight:700">Scoped</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(123,85,192,.12);border:1px solid rgba(123,85,192,.35);color:#4a2b8a;font-weight:700">View</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.32);color:#a33330;font-weight:700">None</span>
+    </div>
+    <table style="width:100%;border-collapse:collapse;min-width:980px">
+      <thead>
+        <tr>
+          <th style="text-align:left;font-size:10px;color:var(--text-mute);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Tab / Area</th>
+          <th style="text-align:center;font-size:10px;color:var(--shiva-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Admin</th>
+          <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Facilitator</th>
+          <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Sadhak</th>
+          <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Guest</th>
+          <th style="text-align:left;font-size:10px;color:var(--text-mute);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Detailed Notes</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>`;
+}
+
 let currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
 let assignedProgramIds = null; // null means unrestricted (admin or signed-out local mode)
 let assignedProgramRoles = {};
@@ -4305,6 +4448,7 @@ function applyRole() {
   if (!isAdmin && document.getElementById('s-programs')?.classList.contains('active')) showSection('overview');
   updateBadges();
   if (typeof updateProgPill === 'function') updateProgPill();
+  renderRoleAccessMatrix();
 }
 function setRole(role) {
   currentRole = ROLE_LABELS[role] ? role : 'facilitator';
@@ -5371,7 +5515,7 @@ function showSection(id) {
   if (id === 'attendance') initAttendance();
   if (id === 'recordings') initRecordings();
   if (id === 'resources')  initResources();
-  if (id === 'admin')      initAdmin();
+  if (id === 'adminmain')  { showAdminMainTab('users'); }
   if (id === 'gurudev')    initGurudev();
   if (id === 'changes')    initChanges();
   if (id === 'analytics')  initAnalytics();
@@ -5386,6 +5530,17 @@ function showSection(id) {
   if (id === 'alerts')      initAlerts();
   if (id === 'exports')     initExports();
   if (id === 'programs')   renderProgramsList();
+}
+
+function showAdminMainTab(tab, btn) {
+  ['users','settings'].forEach(t => {
+    const el = document.getElementById('adminmain-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#adminmain-tabs .tab-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (tab === 'users') loadAdminUsersAccess && loadAdminUsersAccess();
+  if (tab === 'settings') renderAutoBackupSettings && renderAutoBackupSettings();
 }
 
 function updateBadges() {
@@ -5604,13 +5759,44 @@ function initAdmin() {
   renderBackupTimestamps();
 }
 function showAdminTab(tab, btn) {
-  ['users','transfers','tasks','guru-q','notes','settings'].forEach(t => {
+  const normalizedTab = tab === 'admin' ? 'users' : tab;
+  const adminGroupOpen = normalizedTab === 'users' || normalizedTab === 'settings';
+  ['admin','users','transfers','tasks','guru-q','notes','settings'].forEach(t => {
     const el = document.getElementById('admin-' + t);
-    if (el) el.style.display = t === tab ? 'block' : 'none';
+    if (!el) return;
+    if (t === 'admin') {
+      el.style.display = adminGroupOpen ? 'block' : 'none';
+      return;
+    }
+    if (t === 'users' || t === 'settings') {
+      el.style.display = adminGroupOpen && t === normalizedTab ? 'block' : 'none';
+      return;
+    }
+    el.style.display = t === normalizedTab ? 'block' : 'none';
   });
-  document.querySelectorAll('#admin-tabs .tab-pill').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  if (tab === 'users') loadAdminUsersAccess();
+  document.querySelectorAll('#admin-tabs > .tab-pill').forEach(b => b.classList.remove('active'));
+  const topTab = adminGroupOpen ? 'admin' : normalizedTab;
+  const topBtn = btn && btn.closest('#admin-tabs')
+    ? btn
+    : document.querySelector(`#admin-tabs > .tab-pill[data-admin-tab="${topTab}"]`);
+  if (topBtn) topBtn.classList.add('active');
+
+  const subTabs = document.getElementById('admin-admin-tabs');
+  if (subTabs) {
+    subTabs.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+    if (adminGroupOpen) {
+      const subBtn = btn && btn.closest('#admin-admin-tabs')
+        ? btn
+        : subTabs.querySelector(`.tab-pill[data-admin-subtab="${normalizedTab}"]`);
+      if (subBtn) subBtn.classList.add('active');
+    }
+  }
+
+  if (normalizedTab === 'users') loadAdminUsersAccess();
+}
+
+function showAdminSubTab(tab, btn) {
+  showAdminTab(tab, btn);
 }
 
 const adminUsersState = {
@@ -6102,31 +6288,10 @@ function renderAdminUsersAccess() {
   const tabPermissionsHtml = `
     <div style="margin:0 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:#fff">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
-        <div style="font-weight:700;color:var(--text-main)">Tab-wise Access Level Details</div>
-        <div style="font-size:11px;color:var(--text-soft)">Use this matrix to review exact view/edit restrictions by role</div>
+        <div style="font-weight:700;color:var(--text-main)">Detailed Tab Access Matrix</div>
+        <div style="font-size:11px;color:var(--text-soft)">Auto-updated with role/permission changes</div>
       </div>
-      <div style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff">
-        <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:920px">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Tab</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Admin</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Facilitator</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Sadhak</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Guest</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tabPermissionRows.map(row => `<tr>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light);font-weight:700">${escapeAdminHtml(row.tab)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.admin)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.facilitator)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.sadhak)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.guest)}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
+      <div id="role-access-matrix-table" style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff;padding:8px">Loading access matrix…</div>
     </div>`;
   const accessLevelsHtml = `
     <div style="margin:0 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:linear-gradient(180deg,#fcfbff,#f5f2ff)">
@@ -6281,6 +6446,7 @@ function renderAdminUsersAccess() {
       ${tabPermissionsHtml}
     </div>`;
 
+  renderRoleAccessMatrix();
   applyAdminProgramAccessCategoryFilter();
 }
 
@@ -6429,7 +6595,7 @@ function renderAdminTransfers() {
           <label style="display:block;font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">
             Move to Group ${needsGroup ? '<span style="color:var(--rudra)">*</span>' : ''}
           </label>
-          <select id="transfer-group-${e.id}" style="width:100%;padding:7px 10px;border:1px solid var(--border-med);border-radius:8px;font-family:Nunito,sans-serif;font-size:12px;color:var(--text-main)">
+          <select id="transfer-group-${e.id}" style="width:100%;padding:7px 10px;border:1px solid var(--border-med);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--text-main)">
             <option value="">— Select target group —</option>
             ${groupOpts}
           </select>
@@ -9415,7 +9581,7 @@ function deleteFAQ(idx){if(!confirm('Delete this FAQ? This cannot be undone.'))r
 function openAddGuidelineModal(idx){const gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();const g=idx!==undefined?gls[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(g?'Edit':'Add')+' Guideline</h2><div class="form-row"><label>Language</label><select id="gl-e-lang"><option value="en" '+((!g||(g.lang||"en")==="en")?'selected':'')+'>English</option><option value="hi" '+(g&&(g.lang||"en")==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Title *</label><input type="text" id="gl-e-title" value="'+(g?g.title.replace(/"/g,"&quot;"):'')+'" placeholder="Title…"></div><div class="form-row"><label>Content *</label><textarea id="gl-e-body" style="height:140px">'+(g?g.body:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveGuidelineEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
 function saveGuidelineEdit(idx){const title=document.getElementById('gl-e-title').value.trim(),body=document.getElementById('gl-e-body').value.trim(),lang=document.getElementById('gl-e-lang').value||'en';if(!title||!body){alert('Title and content required.');return;}let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();if(idx>=0)gls[idx]={...gls[idx],title,body,lang};else gls.push({title,body,lang});localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());saveCurrentProgramData();renderGuidelines();}
 function deleteGuideline(idx){if(!confirm('Delete this guideline? This cannot be undone.'))return;let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();gls.splice(idx,1);localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));saveCurrentProgramData();renderGuidelines();}
-function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:Nunito,sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
+function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
 
 // ── MEET LINK ─────────────────────────────────────────────────────────────
 function editMeetLink(groupIdx) {
@@ -9439,7 +9605,7 @@ function editMeetLink(groupIdx) {
         <label style="display:block;font-size:11px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Session Link</label>
         <input type="url" id="meet-link-input" value="${g.meet_link||''}"
           placeholder="https://meet.google.com/xxx-xxxx-xxx"
-          style="width:100%;padding:10px 14px;border:1px solid var(--border-med);border-radius:8px;font-size:14px;font-family:'Nunito',sans-serif;outline:none;box-sizing:border-box;color:var(--text-main)">
+          style="width:100%;padding:10px 14px;border:1px solid var(--border-med);border-radius:8px;font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;box-sizing:border-box;color:var(--text-main)">
       </div>
       ${g.meet_link ? `
         <div style="background:rgba(74,43,138,0.05);border-radius:8px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:10px">
@@ -9448,7 +9614,7 @@ function editMeetLink(groupIdx) {
           <a href="${g.meet_link}" target="_blank" class="btn btn-saffron btn-sm" style="text-decoration:none;flex-shrink:0">🎥 Join</a>
         </div>` : ''}
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
-        ${g.meet_link ? `<button onclick="saveMeetLink(${groupIdx}, '')" style="padding:8px 14px;border-radius:8px;border:1px solid rgba(192,57,43,0.3);background:#fff;color:var(--rudra);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:auto">✕ Remove</button>` : ''}
+        ${g.meet_link ? `<button onclick="saveMeetLink(${groupIdx}, '')" style="padding:8px 14px;border-radius:8px;border:1px solid rgba(192,57,43,0.3);background:#fff;color:var(--rudra);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-right:auto">✕ Remove</button>` : ''}
         <button onclick="document.getElementById('meet-link-overlay').remove()" class="btn btn-outline" style="padding:8px 18px">Cancel</button>
         <button onclick="saveMeetLink(${groupIdx}, document.getElementById('meet-link-input').value.trim())" class="btn btn-saffron" style="padding:8px 18px">💾 Save Link</button>
       </div>
@@ -9545,7 +9711,10 @@ async function handleCloudApiResponse(response, fallbackMessage, options = {}){
         showLoginModal();
       }
     }
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = response.status;
+    error.payload = data;
+    throw error;
   }
   return data;
 }
@@ -9910,7 +10079,7 @@ function updateCloudSyncStatus(msg, ok){
   const el = document.getElementById('cloud-sync-status');
   if(!el) return;
   el.textContent = msg;
-  el.style.color = ok ? 'var(--bilva)' : 'var(--text-mute)';
+  el.style.color = ok ? 'var(--bilva)' : 'var(--saffron)';
 }
 
 async function cloudBackupNow(opts = {}){
@@ -10134,7 +10303,7 @@ function showColdStartRecoveryBanner(){
   const banner = document.createElement('div');
   banner.id = 'cold-start-banner';
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#7b1c2e;color:#fff;padding:12px 20px;' +
-    'display:flex;align-items:center;gap:12px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
+    'display:flex;align-items:center;gap:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
   banner.innerHTML =
     '<span style="flex:1">⚠ Your local data was cleared. Sign in to Cloud Sync to restore your programs and members.</span>' +
     '<button onclick="document.getElementById(\'cold-start-banner\').remove();showLoginModal();" ' +
@@ -10887,18 +11056,121 @@ let dbStateSyncInFlight = false;
 let dbStateSyncQueued = false;
 const dbStatePendingMap = new Map();
 let dbStateLastWriteAt = null;
+let dbStateLastSyncAt = null;
 let dbStateLastError = '';
+let dbStateManualSyncInFlight = false;
+let dbStateLastAttemptAt = null;
+let dbStateLastResult = 'Idle';
+let dbStateLastStatusCode = null;
+let dbStateLastRequestLabel = 'None';
+let dbStateLastWriteAttemptAt = null;
+let dbStateLastWriteResult = 'Never attempted';
+let dbStateLastWriteStatusCode = null;
+let dbStateLastRefreshAt = null;
+let dbStateLastRefreshResult = 'Never attempted';
+let dbStateLastRefreshStatusCode = null;
+
+function formatDbSyncTimestamp(ts){
+  if(!ts) return 'Never';
+  const date = new Date(ts);
+  if(Number.isNaN(date.getTime())) return 'Never';
+  return date.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+
+function buildDbSyncResultText(){
+  const statusText = dbStateLastStatusCode ? ` (${dbStateLastStatusCode})` : '';
+  return `${dbStateLastResult || 'Idle'}${statusText}`;
+}
+
+function buildDbSyncOperationText(result, statusCode){
+  const statusText = statusCode ? ` (${statusCode})` : '';
+  return `${result || 'Idle'}${statusText}`;
+}
+
+async function fetchDbStateWithTimeout(url, options = {}, timeoutMs = 15000){
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+  try{
+    return await fetch(url, {
+      ...options,
+      signal: controller ? controller.signal : options.signal,
+    });
+  }catch(e){
+    if(e && e.name === 'AbortError'){
+      const timeoutError = new Error(`Request timed out after ${Math.round(timeoutMs / 1000)}s`);
+      timeoutError.status = 0;
+      timeoutError.code = 'timeout';
+      throw timeoutError;
+    }
+    throw e;
+  }finally{
+    if(timeoutId) clearTimeout(timeoutId);
+  }
+}
 
 function renderDbSyncHealth(){
   const el = document.getElementById('db-sync-health');
-  if(!el) return;
   const queueSize = dbStatePendingMap.size;
   const signedIn = !!(_cloudSession && _cloudSession.access_token);
-  const writeText = dbStateLastWriteAt ? new Date(dbStateLastWriteAt).toLocaleTimeString() : 'Never';
+  const recentWriteMs = dbStateLastWriteAt ? (Date.now() - dbStateLastWriteAt) : Number.POSITIVE_INFINITY;
+  const queueLikelyDraining = queueSize > 0 && queueSize <= 2 && recentWriteMs < 15000 && !dbStateLastError;
+  const writeText = formatDbSyncTimestamp(dbStateLastWriteAt);
+  const syncText = formatDbSyncTimestamp(dbStateLastSyncAt || dbStateLastRefreshAt || dbStateLastWriteAt);
+  const attemptText = formatDbSyncTimestamp(dbStateLastAttemptAt);
+  const resultText = buildDbSyncResultText();
+  const requestText = dbStateLastRequestLabel || 'None';
+  const writeAttemptText = formatDbSyncTimestamp(dbStateLastWriteAttemptAt);
+  const writeResultText = buildDbSyncOperationText(dbStateLastWriteResult, dbStateLastWriteStatusCode);
+  const refreshResultText = buildDbSyncOperationText(dbStateLastRefreshResult, dbStateLastRefreshStatusCode);
   const errorText = dbStateLastError ? dbStateLastError : 'None';
-  const mode = signedIn ? 'Active' : 'Signed out';
-  el.textContent = `DB Sync ${mode} | Queue: ${queueSize} | Last Write: ${writeText} | Last Error: ${errorText}`;
-  el.style.color = dbStateLastError ? 'var(--saffron)' : 'var(--text-soft)';
+  const mode = !signedIn
+    ? 'Waiting for sign-in'
+    : (dbStateManualSyncInFlight || dbStateSyncInFlight)
+      ? 'Syncing'
+      : dbStateLastError
+        ? 'Needs attention'
+        : queueLikelyDraining
+          ? 'Syncing recent changes'
+          : queueSize
+            ? 'Pending changes'
+          : 'Synced';
+  const tone = dbStateLastError
+    ? 'var(--saffron)'
+    : (!signedIn
+      ? 'var(--text-soft)'
+      : (dbStateManualSyncInFlight || dbStateSyncInFlight || queueLikelyDraining)
+        ? 'var(--shiva-mid)'
+        : 'var(--bilva)');
+  if(el){
+    const summaryText = `DB Sync ${mode} | Last Refresh: ${syncText} | Last Write: ${writeText}`;
+    const diagnosticsText = `${summaryText} | Last Attempt: ${attemptText} | Write Attempt: ${writeAttemptText} | Last Request: ${requestText} | Last Result: ${resultText} | Write Result: ${writeResultText} | Refresh Result: ${refreshResultText} | Last Error: ${errorText}`;
+    el.textContent = dbStateLastError ? diagnosticsText : summaryText;
+    el.style.color = tone;
+  }
+
+  const topbarStateEl = document.getElementById('topbar-db-sync-state');
+  const topbarTimeEl = document.getElementById('topbar-db-sync-time');
+  const topbarSyncBtn = document.getElementById('topbar-sync-now-btn');
+  const panelSyncBtn = document.getElementById('db-sync-manual-btn');
+  if(topbarStateEl) topbarStateEl.textContent = `DB Sync: ${mode}`;
+  if(topbarTimeEl){
+    const topbarHealthyText = `Refresh: ${syncText}`;
+    const topbarErrorText = `Write ${writeResultText} | Refresh ${refreshResultText} | Error: ${errorText}`;
+    topbarTimeEl.textContent = dbStateLastError ? topbarErrorText : topbarHealthyText;
+  }
+  [topbarSyncBtn, panelSyncBtn].forEach(btn => {
+    if(!btn) return;
+    btn.textContent = dbStateManualSyncInFlight || dbStateSyncInFlight ? 'Syncing...' : '⟳ Sync Now';
+    btn.disabled = !signedIn || dbStateManualSyncInFlight || dbStateSyncInFlight;
+    btn.style.opacity = btn.disabled ? '0.65' : '1';
+    btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+  });
 }
 
 function inferStateProgramIdFromKey(key){
@@ -10930,6 +11202,7 @@ function queueDbStateSync(key, value){
 
   const programId = inferStateProgramIdFromKey(key);
   if(!programId) return;
+  if(programId === DB_STATE_GLOBAL_PROGRAM_ID && currentRole !== 'admin') return;
   const entryKey = programId + '::' + key;
   dbStatePendingMap.set(entryKey, {
     program_id: programId,
@@ -10948,14 +11221,24 @@ function scheduleDbStateSync(){
 async function flushDbStateSync(){
   if(dbStateSyncInFlight) {
     dbStateSyncQueued = true;
-    return;
+    return false;
   }
-  if(!_cloudSession || !_cloudSession.access_token || !dbStatePendingMap.size) return;
+  if(!_cloudSession || !_cloudSession.access_token) return false;
+  if(!dbStatePendingMap.size) return true;
   dbStateSyncInFlight = true;
+  let ok = false;
   const entries = Array.from(dbStatePendingMap.values()).slice(0, 250);
   entries.forEach(entry => dbStatePendingMap.delete(entry.program_id + '::' + entry.state_key));
   try{
-    const r = await fetch('/api/state', {
+    dbStateLastAttemptAt = Date.now();
+    dbStateLastWriteAttemptAt = dbStateLastAttemptAt;
+    dbStateLastRequestLabel = 'POST /api/state';
+    dbStateLastResult = `Writing ${entries.length} change${entries.length === 1 ? '' : 's'}`;
+    dbStateLastStatusCode = null;
+    dbStateLastWriteResult = dbStateLastResult;
+    dbStateLastWriteStatusCode = null;
+    renderDbSyncHealth();
+    const r = await fetchDbStateWithTimeout('/api/state', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + _cloudSession.access_token,
@@ -10963,12 +11246,22 @@ async function flushDbStateSync(){
       },
       body: JSON.stringify({ entries }),
     });
-    await handleCloudApiResponse(r, 'DB state sync failed', { promptOnAuthError: false });
+    dbStateLastStatusCode = r.status || 200;
+    dbStateLastWriteStatusCode = dbStateLastStatusCode;
+    const responseData = await handleCloudApiResponse(r, 'DB state sync failed', { promptOnAuthError: false });
     dbStateLastError = '';
     dbStateLastWriteAt = Date.now();
+    dbStateLastSyncAt = dbStateLastWriteAt;
+    dbStateLastResult = `Write OK: ${responseData?.count || entries.length} saved`;
+    dbStateLastWriteResult = dbStateLastResult;
+    ok = true;
   }catch(e){
     entries.forEach(entry => dbStatePendingMap.set(entry.program_id + '::' + entry.state_key, entry));
+    dbStateLastStatusCode = Number.isFinite(e?.status) ? e.status : (e?.code === 'timeout' ? 'timeout' : null);
+    dbStateLastWriteStatusCode = dbStateLastStatusCode;
     dbStateLastError = String(e?.message || 'Unknown error');
+    dbStateLastResult = e?.code === 'timeout' ? 'Write timed out' : 'Write failed';
+    dbStateLastWriteResult = dbStateLastResult;
     updateCloudSyncStatus('Cloud sync state queue pending: ' + (e?.message || 'Unknown error'), false);
   }finally{
     dbStateSyncInFlight = false;
@@ -10978,6 +11271,7 @@ async function flushDbStateSync(){
       scheduleDbStateSync();
     }
   }
+  return ok;
 }
 
 function syncAllLocalStateToDb(){
@@ -10990,18 +11284,49 @@ function syncAllLocalStateToDb(){
   renderDbSyncHealth();
 }
 
-async function retryDbStateSyncNow(){
+async function manualDbStateSyncNow(){
   if(!_cloudSession || !_cloudSession.access_token){
-    showToast('Sign in to cloud before retrying DB sync.');
+    showToast('Sign in to cloud before syncing with DB.');
     return;
   }
+  if(dbStateManualSyncInFlight || dbStateSyncInFlight) return;
   clearTimeout(dbStateSyncTimeout);
-  if(!dbStatePendingMap.size){
+  dbStateManualSyncInFlight = true;
+  dbStateLastAttemptAt = Date.now();
+  dbStateLastResult = 'Manual sync started';
+  dbStateLastStatusCode = null;
+  renderDbSyncHealth();
+  try{
+    const writeOk = await flushDbStateSync();
+    let refreshOk = true;
+    if(ACTIVE_PROGRAM_ID){
+      refreshOk = await hydrateProgramStateFromDb(ACTIVE_PROGRAM_ID, { refreshUi: true, silent: true });
+    } else {
+      dbStateLastSyncAt = Date.now();
+    }
+    if(!writeOk || !refreshOk){
+      const syncError = new Error(dbStateLastError || 'DB sync could not be confirmed.');
+      syncError.status = dbStateLastStatusCode;
+      throw syncError;
+    }
+    dbStateLastError = '';
+    dbStateLastResult = 'Manual sync OK';
     renderDbSyncHealth();
-    showToast('DB sync queue is already empty.');
-    return;
+    showToast('DB sync completed.');
+  }catch(e){
+    dbStateLastStatusCode = Number.isFinite(e?.status) ? e.status : (e?.code === 'timeout' ? 'timeout' : null);
+    dbStateLastError = String(e?.message || 'Unknown error');
+    dbStateLastResult = e?.code === 'timeout' ? 'Manual sync timed out' : 'Manual sync failed';
+    renderDbSyncHealth();
+    showToast('DB sync failed: ' + (e?.message || 'Unknown error'));
+  }finally{
+    dbStateManualSyncInFlight = false;
+    renderDbSyncHealth();
   }
-  await flushDbStateSync();
+}
+
+async function retryDbStateSyncNow(){
+  await manualDbStateSyncNow();
 }
 
 function stringifyStateValueForLocalStorage(value){
@@ -11034,12 +11359,33 @@ async function hydrateProgramStateFromDb(programId, opts = {}){
   if(!pid || !_cloudSession || !_cloudSession.access_token) return false;
   try{
     const qs = '?program_id=' + encodeURIComponent(pid) + '&include_global=1';
-    const r = await fetch('/api/state' + qs, {
+    dbStateLastAttemptAt = Date.now();
+    dbStateLastRefreshAt = dbStateLastAttemptAt;
+    dbStateLastRequestLabel = 'GET /api/state?program_id=' + pid + '&include_global=1';
+    dbStateLastResult = 'Refreshing from DB';
+    dbStateLastStatusCode = null;
+    dbStateLastRefreshResult = dbStateLastResult;
+    dbStateLastRefreshStatusCode = null;
+    renderDbSyncHealth();
+    const r = await fetchDbStateWithTimeout('/api/state' + qs, {
       headers: { Authorization: 'Bearer ' + _cloudSession.access_token }
     });
+    dbStateLastStatusCode = r.status || 200;
+    dbStateLastRefreshStatusCode = dbStateLastStatusCode;
     const data = await handleCloudApiResponse(r, 'Could not load DB state.', { promptOnAuthError: false });
     const rows = Array.isArray(data.rows) ? data.rows : [];
-    if(!rows.length) return false;
+    dbStateLastError = '';
+    dbStateLastSyncAt = rows.reduce((latest, row) => {
+      const ts = Date.parse(row?.updated_at || '');
+      if(Number.isNaN(ts)) return latest;
+      return Math.max(latest, ts);
+    }, 0) || Date.now();
+    if(!rows.length) {
+      dbStateLastResult = 'Refresh OK: no rows found';
+      dbStateLastRefreshResult = dbStateLastResult;
+      renderDbSyncHealth();
+      return true;
+    }
 
     const prevSuspend = suspendAutoSave;
     suspendAutoSave = true;
@@ -11069,16 +11415,28 @@ async function hydrateProgramStateFromDb(programId, opts = {}){
     }
 
     if(!silent) showToast('☁ Latest DB state loaded');
+    dbStateLastResult = `Refresh OK: ${rows.length} row${rows.length === 1 ? '' : 's'} loaded`;
+    dbStateLastRefreshResult = dbStateLastResult;
+    renderDbSyncHealth();
     return true;
   }catch(e){
     if(!silent) showToast('DB state load skipped: ' + (e?.message || 'Unknown error'));
+    dbStateLastStatusCode = Number.isFinite(e?.status) ? e.status : (e?.code === 'timeout' ? 'timeout' : null);
+    dbStateLastRefreshStatusCode = dbStateLastStatusCode;
+    dbStateLastError = String(e?.message || 'Unknown error');
+    dbStateLastResult = e?.code === 'timeout' ? 'Refresh timed out' : 'Refresh failed';
+    dbStateLastRefreshResult = dbStateLastResult;
+    renderDbSyncHealth();
     return false;
   }
 }
 
 localStorage.setItem = function(key, value) {
+  const prevValue = localStorage.getItem(key);
+  const nextValue = String(value);
+  const valueChanged = prevValue !== nextValue;
   originalSetItem.call(this, key, value);
-  if(!suspendAutoSave) queueDbStateSync(key, value);
+  if(!suspendAutoSave && valueChanged) queueDbStateSync(key, value);
 
   // Auto-save program data when these keys are modified
   const shouldTrack = (
@@ -11090,7 +11448,7 @@ localStorage.setItem = function(key, value) {
     || key.startsWith('pns_prog_workflow_')
     || key.startsWith('pns_prog_checklist_items_')
   );
-  if(!suspendAutoSave && shouldTrack && ACTIVE_PROGRAM_ID) {
+  if(!suspendAutoSave && valueChanged && shouldTrack && ACTIVE_PROGRAM_ID) {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
       saveCurrentProgramData();
