@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saadho Bodhashala Dashboard | Sri Anish</title>
-
 <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
@@ -194,32 +192,6 @@ body.dark-mode .theme-toggle {
 *{box-sizing:border-box;margin:0;padding:0}
 
 body {
-<<<<<<< HEAD
-  font-family: 'Nunito', sans-serif;
-  background: #F7F3FF;
-  color: var(--text-main);
-  font-size: 14px;
-  min-height: 100vh;
-}
-
-h1, h2, h3, .brand-text h1, .card-header, .viz-title, .program-banner-text, .program-banner-devanagari {
-  font-family: 'Cinzel', serif;
-}
-
-.brand-text p, .program-banner-devanagari {
-  font-family: 'Crimson Pro', serif;
-}
-
-/* Fix topbar spacing */
-.topbar {
-  margin-top: 0;
-  padding-top: 12px;
-  padding-bottom: 8px;
-}
-
-.content {
-  margin-top: 0;
-=======
   font-family:'Plus Jakarta Sans', 'DM Sans', sans-serif;
   background: #F2EEFF;
   background-image: radial-gradient(ellipse 80% 60% at 70% -5%, rgba(122,85,192,0.07), transparent 55%),
@@ -230,7 +202,6 @@ h1, h2, h3, .brand-text h1, .card-header, .viz-title, .program-banner-text, .pro
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
->>>>>>> 5d3a31a296ac8b205a22c88d7ac0667b6b3ffa5f
 }
 
 /* ── TOPBAR ── */
@@ -909,33 +880,6 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
   background: rgba(255,255,255,0.92);
 }
 
-/* ── ADMIN TAB GROUPING ── */
-#admin-tabs {
-  margin-bottom: 10px;
-}
-
-#admin-tabs > .tab-pill[data-admin-tab="admin"] {
-  font-weight: 700;
-  padding-inline: 18px;
-}
-
-#admin-admin.admin-group-wrap {
-  padding: 10px 12px;
-  margin: 2px 0 16px;
-  border: 1px solid var(--border-med);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(74,43,138,0.06), rgba(74,43,138,0.02));
-}
-
-#admin-admin-tabs.admin-subtabs {
-  margin: 0;
-  gap: 8px;
-}
-
-#admin-admin-tabs.admin-subtabs .tab-pill {
-  background: rgba(255,255,255,0.92);
-}
-
 /* ── PAGINATION ── */
 .pagination { display: flex; align-items: center; gap: 6px; margin-top: 12px; justify-content: center; }
 .pagination button {
@@ -1185,7 +1129,7 @@ canvas { width: 100% !important; }
 .edit-mode-bar .em-right { display:flex;gap:8px;align-items:center; }
 
 /* Edit-mode nav shift */
-body.edit-mode .nav-wrap { top: 102px; }
+body.edit-mode .nav-wrap { top: 108px; }
 
 /* Editable fields */
 body.edit-mode [data-editable] {
@@ -1535,7 +1479,8 @@ body.edit-mode [data-editable]:focus {
     font-size: 10px !important;
     padding: 4px 8px !important;
   }
-  
+}
+
 @media (max-width: 480px) {
   .topbar {
     padding: 8px;
@@ -2883,7 +2828,6 @@ body.dark-mode .program-banner-text { color: var(--dm-text); }
 
 /* Topbar nav top correction after height change */
 body.edit-mode .nav-wrap { top: 108px; }
-.nav-wrap { top: 64px; }
 
 /* Empty state refinement */
 .empty-state {
@@ -2923,90 +2867,6 @@ body.edit-mode .nav-wrap { top: 108px; }
 .progress-val { font-size: 12.5px; }
 
 </style>
-
-/* --- OVERRIDE STYLES FOR SAMPLE LOOK & FEEL --- */
-.topbar {
-  background: linear-gradient(135deg, var(--shiva-deep) 0%, #250d52 60%, var(--shiva-mid) 100%);
-  border-bottom: 1px solid rgba(184,147,74,0.35);
-  box-shadow: 0 2px 20px rgba(26,10,46,0.4);
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  height: 64px;
-}
-.card {
-  background: rgba(255,255,255,0.97);
-  border-radius: 14px;
-  padding: 18px 20px;
-  border: 1px solid rgba(122,85,192,0.11);
-  margin-bottom: 18px;
-  box-shadow: 0 1px 3px rgba(26,10,46,0.04), 0 4px 16px rgba(26,10,46,0.06);
-  transition: box-shadow 0.2s;
-}
-.card:hover { box-shadow: 0 2px 6px rgba(26,10,46,0.06), 0 8px 24px rgba(26,10,46,0.09); }
-.nav-wrap {
-  background: linear-gradient(180deg, rgba(36,16,80,0.98) 0%, rgba(28,12,64,0.97) 100%);
-  border-bottom: 1px solid rgba(184,147,74,0.22);
-  box-shadow: 0 2px 10px rgba(10,4,25,0.25);
-  padding: 0 24px;
-  display: flex;
-  gap: 2px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  position: sticky;
-  top: 64px;
-  z-index: 99;
-}
-.nav-wrap::-webkit-scrollbar { display: none; }
-.nav-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 11px 15px;
-  background: transparent;
-  border: none;
-  color: rgba(255,255,255,0.48);
-  cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.25px;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  white-space: nowrap;
-  position: relative;
-}
-.nav-btn:hover { color: rgba(255,255,255,0.82); }
-.nav-btn.active { color: var(--saffron); border-bottom-color: var(--saffron); }
-.stat-card {
-  background: rgba(255,255,255,0.97);
-  border-radius: 14px;
-  padding: 18px 16px;
-  border: 1px solid rgba(122,85,192,0.1);
-  box-shadow: 0 2px 8px rgba(26,10,46,0.05), 0 1px 2px rgba(26,10,46,0.04);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,10,46,0.1); }
-th {
-  background: linear-gradient(90deg, rgba(74,43,138,0.07), rgba(74,43,138,0.03));
-  color: var(--shiva-soft);
-  padding: 10px 12px;
-  text-align: left;
-  font-weight: 700;
-  border-bottom: 1.5px solid rgba(122,85,192,0.18);
-  font-size: 10.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-}
-td { padding: 9px 12px; border-bottom: 1px solid rgba(122,85,192,0.08); vertical-align: middle; color: var(--text-main); background: rgba(255,255,255,0.9); font-size: 12.5px; }
 </head>
 <body>
 <!-- TOPBAR --><!-- SETUP SCREEN -->
@@ -9720,7 +9580,7 @@ function deleteFAQ(idx){if(!confirm('Delete this FAQ? This cannot be undone.'))r
 function openAddGuidelineModal(idx){const gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();const g=idx!==undefined?gls[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(g?'Edit':'Add')+' Guideline</h2><div class="form-row"><label>Language</label><select id="gl-e-lang"><option value="en" '+((!g||(g.lang||"en")==="en")?'selected':'')+'>English</option><option value="hi" '+(g&&(g.lang||"en")==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Title *</label><input type="text" id="gl-e-title" value="'+(g?g.title.replace(/"/g,"&quot;"):'')+'" placeholder="Title…"></div><div class="form-row"><label>Content *</label><textarea id="gl-e-body" style="height:140px">'+(g?g.body:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveGuidelineEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
 function saveGuidelineEdit(idx){const title=document.getElementById('gl-e-title').value.trim(),body=document.getElementById('gl-e-body').value.trim(),lang=document.getElementById('gl-e-lang').value||'en';if(!title||!body){alert('Title and content required.');return;}let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();if(idx>=0)gls[idx]={...gls[idx],title,body,lang};else gls.push({title,body,lang});localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());saveCurrentProgramData();renderGuidelines();}
 function deleteGuideline(idx){if(!confirm('Delete this guideline? This cannot be undone.'))return;let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();gls.splice(idx,1);localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));saveCurrentProgramData();renderGuidelines();}
-function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
+function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:"Plus Jakarta Sans",sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
 
 // ── MEET LINK ─────────────────────────────────────────────────────────────
 function editMeetLink(groupIdx) {
@@ -10442,7 +10302,7 @@ function showColdStartRecoveryBanner(){
   const banner = document.createElement('div');
   banner.id = 'cold-start-banner';
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#7b1c2e;color:#fff;padding:12px 20px;' +
-    'display:flex;align-items:center;gap:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
+    'display:flex;align-items:center;gap:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
   banner.innerHTML =
     '<span style="flex:1">⚠ Your local data was cleared. Sign in to Cloud Sync to restore your programs and members.</span>' +
     '<button onclick="document.getElementById(\'cold-start-banner\').remove();showLoginModal();" ' +

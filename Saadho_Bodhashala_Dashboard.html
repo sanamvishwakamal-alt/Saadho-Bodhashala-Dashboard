@@ -1,15 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saadho Bodhashala Dashboard | Sri Anish</title>
-*{box-sizing:border-box;margin:0;padding:0}
-/* ── TOPBAR ── */
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 
 :root {
   --saffron:     #E8873A;
@@ -62,16 +59,11 @@ body.dark-mode {
 body.dark-mode[data-dark-preset="blue"] {
   --dm-bg: #0D1420;
   --dm-bg-alt: #111B2A;
-    font-family:'Plus Jakarta Sans', 'DM Sans', sans-serif;
-    background: #F2EEFF;
-    background-image: radial-gradient(ellipse 80% 60% at 70% -5%, rgba(122,85,192,0.07), transparent 55%),
-                      radial-gradient(ellipse 50% 40% at 5% 90%, rgba(232,135,58,0.05), transparent 50%);
-    color: var(--text-main);
-    font-size: 13.5px;
-    line-height: 1.6;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  --dm-surface: #152235;
+  --dm-card: #1B2A40;
+  --dm-elev: #223552;
+  --dm-text: #E6EEF8;
+  --dm-text-soft: #B7C6DA;
   --dm-text-mute: #8FA4C0;
   --dm-border: rgba(143,164,192,0.28);
   --dm-glow: rgba(122,158,78,0.14);
@@ -109,13 +101,6 @@ body.dark-mode[data-dark-preset="dusk"] {
   --dm-accent-text: #ffd7b3;
 }
 
-/* ...existing code... */
-</style>
-</style>
-</style>
-</style>
-</style>
-=======
 body.dark-mode .card,
 body.dark-mode .topbar,
 body.dark-mode .nav-wrap {
@@ -277,7 +262,6 @@ body {
 
 /* ── PROGRAM BANNER ── */
 .program-banner {
->>>>>>> 5d3a31a296ac8b205a22c88d7ac0667b6b3ffa5f
   background: linear-gradient(135deg, rgba(232, 135, 58, 0.12) 0%, rgba(122, 158, 78, 0.08) 50%, rgba(122, 85, 192, 0.08) 100%);
   border-bottom: 3px solid;
   border-image: linear-gradient(90deg, var(--saffron), var(--bilva)) 1;
@@ -598,36 +582,18 @@ body.dark-mode .dark-preset-select option {
 
 /* ── CONTENT ── */
 .content {
-<<<<<<< HEAD
-  padding: 10px 16px;
-  color: rgba(255,255,255,0.55);
-  font-family: 'Nunito', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-=======
   padding: 22px 24px;
   max-width: 1420px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
 }
->>>>>>> 5d3a31a296ac8b205a22c88d7ac0667b6b3ffa5f
 
 .section { display: none; }
 .section.active { display: block; }
 
 /* ── CARDS ── */
 .card {
-<<<<<<< HEAD
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-=======
   background: rgba(255,255,255,0.97);
   border-radius: 14px;
   padding: 18px 20px;
@@ -638,7 +604,6 @@ body.dark-mode .dark-preset-select option {
 }
 .card:hover { box-shadow: 0 2px 6px rgba(26,10,46,0.06), 0 8px 24px rgba(26,10,46,0.09); }
 
->>>>>>> 5d3a31a296ac8b205a22c88d7ac0667b6b3ffa5f
 .card-header {
   font-family: 'Cinzel', serif;
   font-size: 11.5px;
@@ -669,19 +634,11 @@ body.dark-mode .dark-preset-select option {
 }
 
 .stat-card {
-<<<<<<< HEAD
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 22px 24px;
-  max-width: 1420px;
-  box-shadow: var(--shadow);
-=======
   background: rgba(255,255,255,0.97);
   border-radius: 14px;
   padding: 18px 16px;
   border: 1px solid rgba(122,85,192,0.1);
   box-shadow: 0 2px 8px rgba(26,10,46,0.05), 0 1px 2px rgba(26,10,46,0.04);
->>>>>>> 5d3a31a296ac8b205a22c88d7ac0667b6b3ffa5f
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -895,33 +852,6 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 }
 .tab-pill.active { background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft)); color: #fff; border-color: transparent; box-shadow: 0 3px 10px rgba(74,43,138,0.25); }
 .tab-pill:hover:not(.active) { background: rgba(74,43,138,0.06); border-color: rgba(122,85,192,0.35); }
-
-/* ── ADMIN TAB GROUPING ── */
-#admin-tabs {
-  margin-bottom: 10px;
-}
-
-#admin-tabs > .tab-pill[data-admin-tab="admin"] {
-  font-weight: 700;
-  padding-inline: 18px;
-}
-
-#admin-admin.admin-group-wrap {
-  padding: 10px 12px;
-  margin: 2px 0 16px;
-  border: 1px solid var(--border-med);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(74,43,138,0.06), rgba(74,43,138,0.02));
-}
-
-#admin-admin-tabs.admin-subtabs {
-  margin: 0;
-  gap: 8px;
-}
-
-#admin-admin-tabs.admin-subtabs .tab-pill {
-  background: rgba(255,255,255,0.92);
-}
 
 /* ── ADMIN TAB GROUPING ── */
 #admin-tabs {
@@ -1199,7 +1129,7 @@ canvas { width: 100% !important; }
 .edit-mode-bar .em-right { display:flex;gap:8px;align-items:center; }
 
 /* Edit-mode nav shift */
-body.edit-mode .nav-wrap { top: 102px; }
+body.edit-mode .nav-wrap { top: 108px; }
 
 /* Editable fields */
 body.edit-mode [data-editable] {
@@ -1549,7 +1479,8 @@ body.edit-mode [data-editable]:focus {
     font-size: 10px !important;
     padding: 4px 8px !important;
   }
-  
+}
+
 @media (max-width: 480px) {
   .topbar {
     padding: 8px;
@@ -2131,10 +2062,10 @@ body.dark-mode .program-comparison-table td {
   position: relative;
   margin-bottom: 20px;
   padding: 12px;
-  background: rgba(255,255,255,0.97);
-  border-radius: 14px;
-  padding: 18px 20px;
-  border: 1px solid rgba(122,85,192,0.11);
+  background: var(--card-bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--saffron);
+}
 
 .timeline-item::before {
   content: '';
@@ -2897,7 +2828,6 @@ body.dark-mode .program-banner-text { color: var(--dm-text); }
 
 /* Topbar nav top correction after height change */
 body.edit-mode .nav-wrap { top: 108px; }
-.nav-wrap { top: 64px; }
 
 /* Empty state refinement */
 .empty-state {
@@ -9650,7 +9580,7 @@ function deleteFAQ(idx){if(!confirm('Delete this FAQ? This cannot be undone.'))r
 function openAddGuidelineModal(idx){const gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();const g=idx!==undefined?gls[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(g?'Edit':'Add')+' Guideline</h2><div class="form-row"><label>Language</label><select id="gl-e-lang"><option value="en" '+((!g||(g.lang||"en")==="en")?'selected':'')+'>English</option><option value="hi" '+(g&&(g.lang||"en")==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Title *</label><input type="text" id="gl-e-title" value="'+(g?g.title.replace(/"/g,"&quot;"):'')+'" placeholder="Title…"></div><div class="form-row"><label>Content *</label><textarea id="gl-e-body" style="height:140px">'+(g?g.body:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveGuidelineEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
 function saveGuidelineEdit(idx){const title=document.getElementById('gl-e-title').value.trim(),body=document.getElementById('gl-e-body').value.trim(),lang=document.getElementById('gl-e-lang').value||'en';if(!title||!body){alert('Title and content required.');return;}let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();if(idx>=0)gls[idx]={...gls[idx],title,body,lang};else gls.push({title,body,lang});localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());saveCurrentProgramData();renderGuidelines();}
 function deleteGuideline(idx){if(!confirm('Delete this guideline? This cannot be undone.'))return;let gls=JSON.parse(localStorage.getItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID)||'null')||getActiveGuidelines();gls.splice(idx,1);localStorage.setItem('pns_prog_guidelines_'+ACTIVE_PROGRAM_ID,JSON.stringify(gls));saveCurrentProgramData();renderGuidelines();}
-function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
+function showToast(msg){const t=document.createElement('div');t.style.cssText='position:fixed;bottom:24px;right:24px;background:var(--shiva-mid);color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-family:"Plus Jakarta Sans",sans-serif;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(26,10,46,0.3);opacity:0;transition:opacity .3s';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.style.opacity='1',50);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3500);}
 
 // ── MEET LINK ─────────────────────────────────────────────────────────────
 function editMeetLink(groupIdx) {
@@ -10372,7 +10302,7 @@ function showColdStartRecoveryBanner(){
   const banner = document.createElement('div');
   banner.id = 'cold-start-banner';
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#7b1c2e;color:#fff;padding:12px 20px;' +
-    'display:flex;align-items:center;gap:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
+    'display:flex;align-items:center;gap:12px;font-family:"Plus Jakarta Sans",sans-serif;font-size:13px;font-weight:600;box-shadow:0 2px 12px rgba(0,0,0,0.4);';
   banner.innerHTML =
     '<span style="flex:1">⚠ Your local data was cleared. Sign in to Cloud Sync to restore your programs and members.</span>' +
     '<button onclick="document.getElementById(\'cold-start-banner\').remove();showLoginModal();" ' +
