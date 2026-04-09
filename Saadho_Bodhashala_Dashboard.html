@@ -9396,14 +9396,9 @@ async function cloudBackupNow(opts = {}){
 
 function restoreBackupObject(b){
   if(!b || !b._version) throw new Error('Not a valid PNS backup object.');
-  if(b.all_programs) localStorage.setItem('pns_all_programs',JSON.stringify(b.all_programs));
-  if(b.active_program_id) {
-    localStorage.setItem('pns_active_program_id',b.active_program_id);
-  } else {
-    const existingActive = localStorage.getItem('pns_active_program_id');
-    const firstProgramId = Array.isArray(b.all_programs) && b.all_programs[0] ? b.all_programs[0].id : null;
-    if(!existingActive && firstProgramId) localStorage.setItem('pns_active_program_id', firstProgramId);
-  }
+  const normalizedPrograms = Array.isArray(b.all_programs) ? b.all_programs.filter(item => item && item.id) : [];
+  if(normalizedPrograms.length) localStorage.setItem('pns_all_programs',JSON.stringify(normalizedPrograms));
+  if(b.active_program_id) localStorage.setItem('pns_active_program_id',b.active_program_id);
   const restoredActiveProgramId = localStorage.getItem('pns_active_program_id') || ACTIVE_PROGRAM_ID || 'default';
 
   if(b.members)      localStorage.setItem('pns_live_members',JSON.stringify(b.members));
@@ -9469,6 +9464,41 @@ function restoreBackupObject(b){
   }
   if(b.auto_backup_config)localStorage.setItem('pns_auto_backup_config',JSON.stringify(b.auto_backup_config));
   if(b.editable_content) localStorage.setItem('pns_editable_content',JSON.stringify(b.editable_content));
+
+  // Ensure program catalog is aligned with restored program snapshot keys.
+  const restoredSnapshotMap = (b.program_snapshots && typeof b.program_snapshots === 'object') ? b.program_snapshots : {};
+  const restoredSnapshotIds = Object.keys(restoredSnapshotMap).filter(Boolean);
+  let restoredPrograms = Array.isArray(b.all_programs) ? b.all_programs.filter(item => item && item.id) : [];
+  if(restoredSnapshotIds.length){
+    const byId = new Map(restoredPrograms.map(item => [item.id, item]));
+    restoredSnapshotIds.forEach((pid, idx) => {
+      if(byId.has(pid)) return;
+      const snap = restoredSnapshotMap[pid] || {};
+      const snapDates = Array.isArray(snap.dates) ? snap.dates : [];
+      const snapMembers = Array.isArray(snap.members) ? snap.members : [];
+      byId.set(pid, {
+        id: pid,
+        name: snap.project_name || snap.project || (b._project ? (b._project + ' [' + (idx + 1) + ']') : ('Program ' + (idx + 1))),
+        category: 'General',
+        status: 'active',
+        created_at: new Date().toISOString(),
+        sessions: snapDates.map(d => ({ date: d, label: d, created_at: new Date().toISOString() })),
+        meta: {
+          member_count: snapMembers.filter(m => (m && (m.role || 'Sadhak') !== 'Facilitator')).length,
+          session_count: snapDates.length,
+        }
+      });
+    });
+    restoredPrograms = Array.from(byId.values());
+  }
+  if(restoredPrograms.length){
+    localStorage.setItem('pns_all_programs', JSON.stringify(restoredPrograms));
+    const currentActive = localStorage.getItem('pns_active_program_id');
+    const validActive = currentActive && restoredPrograms.some(item => item.id === currentActive) ? currentActive : null;
+    const requestedActive = b.active_program_id && restoredPrograms.some(item => item.id === b.active_program_id) ? b.active_program_id : null;
+    localStorage.setItem('pns_active_program_id', requestedActive || validActive || restoredPrograms[0].id);
+  }
+
   localStorage.setItem('pns_project_loaded','1');
   if(b._project)localStorage.setItem('pns_project_name',b._project);
   localStorage.setItem('pns_last_restore',new Date().toISOString());
