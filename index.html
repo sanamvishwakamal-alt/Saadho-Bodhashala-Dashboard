@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saadho Bodhashala Dashboard | Sri Anish</title>
+
 <style>
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;600;700&display=swap');
@@ -192,11 +193,30 @@ body.dark-mode .theme-toggle {
 *{box-sizing:border-box;margin:0;padding:0}
 
 body {
-  font-family:'Nunito',sans-serif;
+  font-family: 'Nunito', sans-serif;
   background: #F7F3FF;
   color: var(--text-main);
-  font-size:14px;
-  min-height:100vh;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+h1, h2, h3, .brand-text h1, .card-header, .viz-title, .program-banner-text, .program-banner-devanagari {
+  font-family: 'Cinzel', serif;
+}
+
+.brand-text p, .program-banner-devanagari {
+  font-family: 'Crimson Pro', serif;
+}
+
+/* Fix topbar spacing */
+.topbar {
+  margin-top: 0;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+
+.content {
+  margin-top: 0;
 }
 
 /* ── TOPBAR ── */
@@ -834,6 +854,33 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 .tab-pill.active { background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft)); color: #fff; border-color: transparent; }
 .tab-pill:hover:not(.active) { background: rgba(74,43,138,0.06); }
 
+/* ── ADMIN TAB GROUPING ── */
+#admin-tabs {
+  margin-bottom: 10px;
+}
+
+#admin-tabs > .tab-pill[data-admin-tab="admin"] {
+  font-weight: 700;
+  padding-inline: 18px;
+}
+
+#admin-admin.admin-group-wrap {
+  padding: 10px 12px;
+  margin: 2px 0 16px;
+  border: 1px solid var(--border-med);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(74,43,138,0.06), rgba(74,43,138,0.02));
+}
+
+#admin-admin-tabs.admin-subtabs {
+  margin: 0;
+  gap: 8px;
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill {
+  background: rgba(255,255,255,0.92);
+}
+
 /* ── PAGINATION ── */
 .pagination { display: flex; align-items: center; gap: 6px; margin-top: 12px; justify-content: center; }
 .pagination button {
@@ -1169,6 +1216,24 @@ body.edit-mode [data-editable]:focus {
 }
 
 @media (max-width: 768px) {
+  #admin-admin.admin-group-wrap {
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+
+  #admin-admin-tabs.admin-subtabs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  #admin-admin-tabs.admin-subtabs .tab-pill {
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+
   .topbar {
     flex-direction: column;
     gap: 10px;
@@ -2698,6 +2763,90 @@ body.dark-mode .filter-dropdown {
 }
 
 </style>
+
+/* --- OVERRIDE STYLES FOR SAMPLE LOOK & FEEL --- */
+.topbar {
+  background: linear-gradient(135deg, var(--shiva-deep) 0%, #250d52 60%, var(--shiva-mid) 100%);
+  border-bottom: 1px solid rgba(184,147,74,0.35);
+  box-shadow: 0 2px 20px rgba(26,10,46,0.4);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 64px;
+}
+.card {
+  background: rgba(255,255,255,0.97);
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid rgba(122,85,192,0.11);
+  margin-bottom: 18px;
+  box-shadow: 0 1px 3px rgba(26,10,46,0.04), 0 4px 16px rgba(26,10,46,0.06);
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 2px 6px rgba(26,10,46,0.06), 0 8px 24px rgba(26,10,46,0.09); }
+.nav-wrap {
+  background: linear-gradient(180deg, rgba(36,16,80,0.98) 0%, rgba(28,12,64,0.97) 100%);
+  border-bottom: 1px solid rgba(184,147,74,0.22);
+  box-shadow: 0 2px 10px rgba(10,4,25,0.25);
+  padding: 0 24px;
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 64px;
+  z-index: 99;
+}
+.nav-wrap::-webkit-scrollbar { display: none; }
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 15px;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.48);
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+.nav-btn:hover { color: rgba(255,255,255,0.82); }
+.nav-btn.active { color: var(--saffron); border-bottom-color: var(--saffron); }
+.stat-card {
+  background: rgba(255,255,255,0.97);
+  border-radius: 14px;
+  padding: 18px 16px;
+  border: 1px solid rgba(122,85,192,0.1);
+  box-shadow: 0 2px 8px rgba(26,10,46,0.05), 0 1px 2px rgba(26,10,46,0.04);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,10,46,0.1); }
+th {
+  background: linear-gradient(90deg, rgba(74,43,138,0.07), rgba(74,43,138,0.03));
+  color: var(--shiva-soft);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 1.5px solid rgba(122,85,192,0.18);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+td { padding: 9px 12px; border-bottom: 1px solid rgba(122,85,192,0.08); vertical-align: middle; color: var(--text-main); background: rgba(255,255,255,0.9); font-size: 12.5px; }
 </head>
 <body>
 <!-- TOPBAR --><!-- SETUP SCREEN -->
@@ -2773,6 +2922,13 @@ body.dark-mode .filter-dropdown {
       <span id="prog-pill-name" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Programs</span>
       <span style="opacity:.6">&#9662;</span>
     </div>
+    <div id="topbar-db-sync" style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:18px;background:rgba(255,255,255,0.09);border:1px solid rgba(184,147,74,0.28);color:#fff;max-width:340px">
+      <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
+        <span id="topbar-db-sync-state" style="font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">DB Sync: Waiting for sign-in</span>
+        <span id="topbar-db-sync-time" style="font-size:10px;color:rgba(255,255,255,0.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Last sync: Never</span>
+      </div>
+      <button id="topbar-sync-now-btn" class="btn-edit-toggle" onclick="manualDbStateSyncNow()" style="font-size:10px;padding:5px 10px;min-width:84px">Sync Now</button>
+    </div>
     <div class="theme-toggle" id="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</div>
     <select id="dark-preset-select" class="dark-preset-select" onchange="setDarkModePreset(this.value)" title="Dark theme preset">
       <option value="blue">Soothing Blue</option>
@@ -2818,7 +2974,7 @@ body.dark-mode .filter-dropdown {
   <button class="nav-btn" onclick="showSection('recordings')"><span class="nav-icon">▷</span> Recordings</button>
   <button class="nav-btn" onclick="showSection('resources')"><span class="nav-icon">◉</span> Workflow & FAQ</button>
   <button class="nav-btn admin-only" onclick="showSection('admin')">
-    <span class="nav-icon">⚙</span> Admin
+    <span class="nav-icon">⚙</span> Action Center
     <span class="nav-badge" id="admin-badge">0</span>
   </button>
   <button class="nav-btn" onclick="showSection('gurudev')">
@@ -2938,102 +3094,6 @@ body.dark-mode .filter-dropdown {
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country *</label>
           <select id="m-country" onchange="syncMemberCountryCode(); syncMemberRegionWithCountry()" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
             <option value="">Select Country</option>
-            <option value="India">India</option>
-            <option value="USA">USA</option>
-            <option value="Canada">Canada</option>
-            <option value="United Kingdom">United Kingdom</option>
-            <option value="Australia">Australia</option>
-            <option value="UAE">UAE</option>
-            <option value="Germany">Germany</option>
-            <option value="Sweden">Sweden</option>
-            <option value="Switzerland">Switzerland</option>
-            <option value="Spain">Spain</option>
-            <option value="Argentina">Argentina</option>
-            <option value="Cambodia">Cambodia</option>
-            <option value="Japan">Japan</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region *</label>
-          <select id="m-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Region</option>
-            <option value="INDIA">India</option>
-            <option value="NON INDIA">Non India</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">City *</label>
-          <select id="m-city" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select City</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role *</label>
-          <select id="m-role" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Role</option>
-            <option value="Admin">Admin</option>
-            <option value="Facilitator">Facilitator</option>
-            <option value="Sadhak">Sadhak</option>
-            <option value="Guest">Guest</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language *</label>
-          <select id="m-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Language</option>
-            <option value="English">English</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Any">Any</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Facilitator(s) *</label>
-          <select id="m-facilitators" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Facilitator</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Group Name *</label>
-          <select id="m-group" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Group</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered Through *</label>
-          <input type="text" id="m-reg-through" placeholder="Facebook, WhatsApp, Referral" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Registered By *</label>
-          <input type="text" id="m-reg-by" placeholder="Admin name or ID" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">WhatsApp Group Status *</label>
-          <select id="m-wa-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Status</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Initiation Status *</label>
-          <select id="m-init-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Status</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
-        <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Culmination Status *</label>
-          <select id="m-culm-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
-            <option value="">Select Status</option>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-            <option value="Pending">Pending</option>
-          </select>
-        </div>
         <div style="grid-column:1/-1">
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Notes</label>
           <textarea id="m-notes" placeholder="Additional notes or comments" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;min-height:60px;font-family:inherit;resize:vertical;"></textarea>
@@ -3298,17 +3358,22 @@ body.dark-mode .filter-dropdown {
   <div class="admin-panel-banner">
     <div class="apb-icon">⚙</div>
     <div>
-      <h3>Admin Control Panel</h3>
+      <h3>Action Center</h3>
       <p>Review transfer requests, manage approvals, monitor all facilitator tasks and Gurudev questions.</p>
     </div>
   </div>
   <div class="tab-pills" id="admin-tabs">
-    <button class="tab-pill" onclick="showAdminTab('users',this)">Users &amp; Access</button>
+    <button class="tab-pill" data-admin-tab="admin" onclick="showAdminTab('admin',this)">Admin</button>
     <button class="tab-pill active" onclick="showAdminTab('transfers',this)">Transfer Requests <span id="transfer-count-badge" class="nav-badge" style="display:inline-block;background:var(--rudra)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('tasks',this)">All Tasks</button>
     <button class="tab-pill" onclick="showAdminTab('guru-q',this)">Gurudev Questions <span id="guru-count-badge" class="nav-badge" style="display:inline-block;background:var(--shiva-soft)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('notes',this)">Special Notes</button>
-    <button class="tab-pill" onclick="showAdminTab('settings',this)">⚙ Settings & Backup</button>
+  </div>
+  <div id="admin-admin" class="admin-group-wrap" style="display:none">
+    <div class="tab-pills admin-subtabs" id="admin-admin-tabs">
+      <button class="tab-pill active" data-admin-subtab="users" onclick="showAdminSubTab('users',this)">Users &amp; Access</button>
+      <button class="tab-pill" data-admin-subtab="settings" onclick="showAdminSubTab('settings',this)">⚙ Settings &amp; Backup</button>
+    </div>
   </div>
   <div id="admin-users" style="display:none"></div>
   <div id="admin-transfers"></div>
@@ -3333,7 +3398,7 @@ body.dark-mode .filter-dropdown {
           <div id="cloud-sync-status" style="font-size:11px;color:var(--text-mute);margin:-2px 0 6px 2px">Cloud sync: Not configured</div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-4px 0 4px 2px">
             <div id="db-sync-health" style="font-size:11px;color:var(--text-soft);padding:6px 8px;border:1px solid var(--border-light);border-radius:8px;background:rgba(255,255,255,0.7);flex:1;min-width:280px">DB Sync: Waiting for sign-in</div>
-            <button class="btn btn-outline btn-sm" onclick="retryDbStateSyncNow()" style="font-size:11px">⟳ Retry Now</button>
+            <button id="db-sync-manual-btn" class="btn btn-outline btn-sm" onclick="manualDbStateSyncNow()" style="font-size:11px">⟳ Sync Now</button>
           </div>
           <div id="ts-last-backup" style="font-size:11px;color:var(--text-mute);margin:-4px 0 4px 2px">Last backup: Never</div>
           <div style="margin:6px 0 4px;border-top:1px dashed var(--border);padding-top:10px">
@@ -3360,24 +3425,12 @@ body.dark-mode .filter-dropdown {
       <div class="card" style="margin-bottom:0">
         <div class="card-header"><span class="ch-icon">&#128272;</span> Role &amp; Access</div>
         <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">
-          Use the role dropdown in the top-right corner to switch between <b>Admin, Facilitator, Sadhak,</b> and <b>Guest</b>. Admin mode unlocks transfer approvals, member management, backup tools, and the Programs tab.
+          Use the role dropdown in the top-right corner to switch between <b>Admin, Facilitator, Sadhak,</b> and <b>Guest</b>. The matrix below covers all navigation tabs and shows exact access depth for each role.
         </p>
         <div style="background:rgba(74,43,138,0.05);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px">
-          <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:10px">Access Levels</div>
-          <table style="width:100%;border-collapse:collapse">
-            <tr>
-              <th style="text-align:left;font-size:10px;color:var(--text-mute);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Feature</th>
-              <th style="text-align:center;font-size:10px;color:var(--shiva-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Admin</th>
-              <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Facilitator</th>
-            </tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">View all groups &amp; members</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#9989;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Mark attendance</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#9989;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Add / import members</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Approve transfers</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Record Gurudev answers</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Backup &amp; restore</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-            <tr><td style="padding:5px 6px;color:var(--text-soft);font-size:11px">Programs &amp; multi-program</td><td style="text-align:center;padding:5px 6px">&#9989;</td><td style="text-align:center;padding:5px 6px">&#10060;</td></tr>
-          </table>
+          <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:8px">Role Access Details</div>
+          <div style="font-size:11px;color:var(--text-soft);line-height:1.7">Open <b>Action Center → Users &amp; Access</b> to view the live tab-wise access matrix.</div>
+          <div style="font-size:11px;color:var(--text-mute);line-height:1.7;margin-top:6px">That matrix is auto-generated from the current role and permission configuration.</div>
         </div>
         <div style="margin-top:14px;background:rgba(74,43,138,0.04);border:1px solid rgba(122,85,192,0.15);border-radius:10px;padding:14px 16px">
           <div style="font-size:11px;font-weight:700;color:var(--shiva-mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">&#128190; What's included in Full Backup (.json)</div>
@@ -4210,6 +4263,75 @@ function getTabAccessDeniedMessage(tabId, action = 'view') {
   return `Access denied: ${roleLabel} cannot ${action} in ${tabLabel}.`;
 }
 
+function getAccessLevelLabel(tab, roleName){
+  const perms = tab?.actions?.[roleName] || {};
+  if(!perms.view) return 'None';
+  if(roleName === 'admin') return 'Full';
+  const canManage = !!(perms.add || perms.edit || perms.delete);
+  if(canManage) return 'Manage';
+  if(roleName === 'facilitator') return 'Scoped';
+  return 'View';
+}
+
+function getAccessLevelBadge(tab, roleName){
+  const label = getAccessLevelLabel(tab, roleName);
+  const styles = {
+    Full:   'background:rgba(76,175,80,.16);border:1px solid rgba(76,175,80,.38);color:#1f6d31;',
+    Manage: 'background:rgba(3,169,244,.14);border:1px solid rgba(3,169,244,.35);color:#0b5f84;',
+    Scoped: 'background:rgba(255,152,0,.15);border:1px solid rgba(255,152,0,.35);color:#8a5200;',
+    View:   'background:rgba(123,85,192,.12);border:1px solid rgba(123,85,192,.35);color:#4a2b8a;',
+    None:   'background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.32);color:#a33330;'
+  };
+  const style = styles[label] || styles.View;
+  return `<span style="display:inline-block;min-width:58px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.2px;${style}">${label}</span>`;
+}
+
+function renderRoleAccessMatrix(){
+  const mount = document.getElementById('role-access-matrix-table');
+  if(!mount) return;
+  const tabs = Array.isArray(ACCESS_PERMISSION_CONFIG?.tabs) ? ACCESS_PERMISSION_CONFIG.tabs : [];
+  if(!tabs.length){
+    mount.textContent = 'Access matrix unavailable.';
+    return;
+  }
+  const rowsHtml = tabs.map(tab => `
+    <tr>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);font-size:11px;font-weight:700;color:var(--text-main)">${tab.label}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'admin')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'facilitator')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'sadhak')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);text-align:center;font-size:11px">${getAccessLevelBadge(tab, 'guest')}</td>
+      <td style="padding:6px;border-bottom:1px solid var(--border-light);font-size:11px;color:var(--text-soft)">
+        <div><b>Admin:</b> ${tab?.details?.admin || '-'}</div>
+        <div><b>Facilitator:</b> ${tab?.details?.facilitator || '-'}</div>
+        <div><b>Sadhak:</b> ${tab?.details?.sadhak || '-'}</div>
+        <div><b>Guest:</b> ${tab?.details?.guest || '-'}</div>
+      </td>
+    </tr>
+  `).join('');
+  mount.innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 8px 2px;font-size:10px;color:var(--text-mute)">
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(76,175,80,.16);border:1px solid rgba(76,175,80,.38);color:#1f6d31;font-weight:700">Full</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(3,169,244,.14);border:1px solid rgba(3,169,244,.35);color:#0b5f84;font-weight:700">Manage</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(255,152,0,.15);border:1px solid rgba(255,152,0,.35);color:#8a5200;font-weight:700">Scoped</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(123,85,192,.12);border:1px solid rgba(123,85,192,.35);color:#4a2b8a;font-weight:700">View</span>
+      <span style="padding:2px 8px;border-radius:999px;background:rgba(229,57,53,.12);border:1px solid rgba(229,57,53,.32);color:#a33330;font-weight:700">None</span>
+    </div>
+    <table style="width:100%;border-collapse:collapse;min-width:980px">
+      <thead>
+        <tr>
+          <th style="text-align:left;font-size:10px;color:var(--text-mute);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Tab / Area</th>
+          <th style="text-align:center;font-size:10px;color:var(--shiva-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Admin</th>
+          <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Facilitator</th>
+          <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Sadhak</th>
+          <th style="text-align:center;font-size:10px;color:var(--text-soft);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Guest</th>
+          <th style="text-align:left;font-size:10px;color:var(--text-mute);padding:4px 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:transparent">Detailed Notes</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>`;
+}
+
 let currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
 let assignedProgramIds = null; // null means unrestricted (admin or signed-out local mode)
 let assignedProgramRoles = {};
@@ -4305,6 +4427,7 @@ function applyRole() {
   if (!isAdmin && document.getElementById('s-programs')?.classList.contains('active')) showSection('overview');
   updateBadges();
   if (typeof updateProgPill === 'function') updateProgPill();
+  renderRoleAccessMatrix();
 }
 function setRole(role) {
   currentRole = ROLE_LABELS[role] ? role : 'facilitator';
@@ -5371,7 +5494,7 @@ function showSection(id) {
   if (id === 'attendance') initAttendance();
   if (id === 'recordings') initRecordings();
   if (id === 'resources')  initResources();
-  if (id === 'admin')      initAdmin();
+  if (id === 'adminmain')  { showAdminMainTab('users'); }
   if (id === 'gurudev')    initGurudev();
   if (id === 'changes')    initChanges();
   if (id === 'analytics')  initAnalytics();
@@ -5386,6 +5509,17 @@ function showSection(id) {
   if (id === 'alerts')      initAlerts();
   if (id === 'exports')     initExports();
   if (id === 'programs')   renderProgramsList();
+}
+
+function showAdminMainTab(tab, btn) {
+  ['users','settings'].forEach(t => {
+    const el = document.getElementById('adminmain-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#adminmain-tabs .tab-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (tab === 'users') loadAdminUsersAccess && loadAdminUsersAccess();
+  if (tab === 'settings') renderAutoBackupSettings && renderAutoBackupSettings();
 }
 
 function updateBadges() {
@@ -5407,7 +5541,7 @@ function updateBadges() {
   if (gcb) { gcb.textContent = pendingGQ; gcb.style.display = pendingGQ > 0 ? 'inline-block' : 'none'; }
 }
 
-// ── CLOUD USERS WITHOUT GROUP (FOR ALERTS) ────────────────────────────────
+// ── CLOUD USERS WITHOUT GROUP (FOR ALERTS) ────────────────────────────────────────────────────────────
 function getCloudUsersWithoutGroupForAlerts() {
   try {
     if (!adminUsersState || !Array.isArray(adminUsersState.users)) return [];
@@ -5591,12 +5725,6 @@ function pBar(label, val, total, cls) {
   </div>`;
 }
 
-function getScopedProgramItems(list) {
-  const arr = Array.isArray(list) ? list : [];
-  if ((ALL_PROGRAMS || []).length <= 1) return arr;
-  return arr.filter(item => item && item.program_id === ACTIVE_PROGRAM_ID);
-}
-
 
 // ── ADMIN PANEL ───────────────────────────────────────────────────────────
 function initAdmin() {
@@ -5608,16 +5736,46 @@ function initAdmin() {
   updateBadges();
   setTimeout(() => { renderAutoBackupSettings(); if(typeof filterFAQ==='function') filterFAQ(); if(typeof renderGuidelines==='function') renderGuidelines(); }, 100);
   renderBackupTimestamps();
-  refreshCloudSyncStatus();
 }
 function showAdminTab(tab, btn) {
-  ['users','transfers','tasks','guru-q','notes','settings'].forEach(t => {
+  const normalizedTab = tab === 'admin' ? 'users' : tab;
+  const adminGroupOpen = normalizedTab === 'users' || normalizedTab === 'settings';
+  ['admin','users','transfers','tasks','guru-q','notes','settings'].forEach(t => {
     const el = document.getElementById('admin-' + t);
-    if (el) el.style.display = t === tab ? 'block' : 'none';
+    if (!el) return;
+    if (t === 'admin') {
+      el.style.display = adminGroupOpen ? 'block' : 'none';
+      return;
+    }
+    if (t === 'users' || t === 'settings') {
+      el.style.display = adminGroupOpen && t === normalizedTab ? 'block' : 'none';
+      return;
+    }
+    el.style.display = t === normalizedTab ? 'block' : 'none';
   });
-  document.querySelectorAll('#admin-tabs .tab-pill').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  if (tab === 'users') loadAdminUsersAccess();
+  document.querySelectorAll('#admin-tabs > .tab-pill').forEach(b => b.classList.remove('active'));
+  const topTab = adminGroupOpen ? 'admin' : normalizedTab;
+  const topBtn = btn && btn.closest('#admin-tabs')
+    ? btn
+    : document.querySelector(`#admin-tabs > .tab-pill[data-admin-tab="${topTab}"]`);
+  if (topBtn) topBtn.classList.add('active');
+
+  const subTabs = document.getElementById('admin-admin-tabs');
+  if (subTabs) {
+    subTabs.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+    if (adminGroupOpen) {
+      const subBtn = btn && btn.closest('#admin-admin-tabs')
+        ? btn
+        : subTabs.querySelector(`.tab-pill[data-admin-subtab="${normalizedTab}"]`);
+      if (subBtn) subBtn.classList.add('active');
+    }
+  }
+
+  if (normalizedTab === 'users') loadAdminUsersAccess();
+}
+
+function showAdminSubTab(tab, btn) {
+  showAdminTab(tab, btn);
 }
 
 const adminUsersState = {
@@ -6109,31 +6267,10 @@ function renderAdminUsersAccess() {
   const tabPermissionsHtml = `
     <div style="margin:0 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:#fff">
       <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
-        <div style="font-weight:700;color:var(--text-main)">Tab-wise Access Level Details</div>
-        <div style="font-size:11px;color:var(--text-soft)">Use this matrix to review exact view/edit restrictions by role</div>
+        <div style="font-weight:700;color:var(--text-main)">Detailed Tab Access Matrix</div>
+        <div style="font-size:11px;color:var(--text-soft)">Auto-updated with role/permission changes</div>
       </div>
-      <div style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff">
-        <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:920px">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Tab</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Admin</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Facilitator</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Sadhak</th>
-              <th style="text-align:left;padding:8px;border-bottom:1px solid var(--border-light)">Guest</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tabPermissionRows.map(row => `<tr>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light);font-weight:700">${escapeAdminHtml(row.tab)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.admin)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.facilitator)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.sadhak)}</td>
-              <td style="padding:8px;border-bottom:1px solid var(--border-light)">${escapeAdminHtml(row.guest)}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
+      <div id="role-access-matrix-table" style="overflow:auto;border:1px solid var(--border-light);border-radius:8px;background:#fff;padding:8px">Loading access matrix…</div>
     </div>`;
   const accessLevelsHtml = `
     <div style="margin:0 0 14px;padding:12px;border:1px solid var(--border-light);border-radius:12px;background:linear-gradient(180deg,#fcfbff,#f5f2ff)">
@@ -6288,6 +6425,7 @@ function renderAdminUsersAccess() {
       ${tabPermissionsHtml}
     </div>`;
 
+  renderRoleAccessMatrix();
   applyAdminProgramAccessCategoryFilter();
 }
 
@@ -6406,10 +6544,9 @@ async function runAdminUserAction(action) {
 function renderAdminTransfers() {
   const panel = document.getElementById('admin-transfers');
   if (!panel) return;
-  const scopedTransfers = getScopedProgramItems(transferLog);
-  const pending = scopedTransfers.filter(t => t.status === 'Pending' || t.status === 'Submitted');
-  const done = scopedTransfers.filter(t => t.status !== 'Pending' && t.status !== 'Submitted');
-  if (!scopedTransfers.length) { panel.innerHTML = '<div class="empty-state">No transfer requests yet.</div>'; return; }
+  const pending = transferLog.filter(t => t.status === 'Pending' || t.status === 'Submitted');
+  const done = transferLog.filter(t => t.status !== 'Pending' && t.status !== 'Submitted');
+  if (!transferLog.length) { panel.innerHTML = '<div class="empty-state">No transfer requests yet.</div>'; return; }
   const renderCard = (e) => {
     const isActionable = e.status === 'Pending' || e.status === 'Submitted';
     const isDone = !isActionable;
@@ -6457,7 +6594,7 @@ function renderAdminTransfers() {
   html += done.map(renderCard).join('');
   panel.innerHTML = html;
   // Pre-select requested target group in each dropdown
-  scopedTransfers.forEach(t => {
+  transferLog.forEach(t => {
     if ((t.status === 'Pending' || t.status === 'Submitted') && t.to && t.to !== 'Pending Admin Decision') {
       const sel = document.getElementById('transfer-group-' + t.id);
       if (sel) sel.value = t.to;
@@ -6530,11 +6667,9 @@ function adminRejectTransfer(id) {
 function renderAdminTasks() {
   const panel = document.getElementById('admin-tasks');
   if (!panel) return;
-  const scopedTransfers = getScopedProgramItems(transferLog);
-  const scopedQuestions = getScopedProgramItems(guruQuestions);
   const allTasks = [
-    ...scopedTransfers.map(t => ({ type: 'Transfer', label: `${t.sadhak} — ${t.from.split(' - ').slice(0,2).join(' ')} → ${t.to.split(' - ').slice(0,2).join(' ')}`, status: t.status, date: t.date, by: t.requestor })),
-    ...scopedQuestions.map(q => ({ type: 'Gurudev Q', label: q.question.substring(0, 60) + (q.question.length > 60 ? '…' : ''), status: q.status, date: q.date, by: q.facilitator })),
+    ...transferLog.map(t => ({ type: 'Transfer', label: `${t.sadhak} — ${t.from.split(' - ').slice(0,2).join(' ')} → ${t.to.split(' - ').slice(0,2).join(' ')}`, status: t.status, date: t.date, by: t.requestor })),
+    ...guruQuestions.map(q => ({ type: 'Gurudev Q', label: q.question.substring(0, 60) + (q.question.length > 60 ? '…' : ''), status: q.status, date: q.date, by: q.facilitator })),
   ].sort((a, b) => (a.status === 'Pending' ? -1 : 1));
   if (!allTasks.length) { panel.innerHTML = '<div class="empty-state">No tasks logged yet.</div>'; return; }
   panel.innerHTML = `<table><thead><tr><th>Type</th><th>Details</th><th>Raised By</th><th>Date</th><th>Status</th></tr></thead><tbody>` +
@@ -6545,10 +6680,9 @@ function renderAdminTasks() {
 function renderAdminGuruQ() {
   const panel = document.getElementById('admin-guru-q');
   if (!panel) return;
-  const scopedQuestions = getScopedProgramItems(guruQuestions);
-  const pending = scopedQuestions.filter(q => q.status === 'Pending');
-  if (!scopedQuestions.length) { panel.innerHTML = '<div class="empty-state">No questions submitted yet.</div>'; return; }
-  panel.innerHTML = scopedQuestions.map(q => `
+  const pending = guruQuestions.filter(q => q.status === 'Pending');
+  if (!guruQuestions.length) { panel.innerHTML = '<div class="empty-state">No questions submitted yet.</div>'; return; }
+  panel.innerHTML = guruQuestions.map(q => `
     <div class="question-card">
       <div class="qc-header" onclick="this.nextElementSibling.classList.toggle('open')">
         <div class="qc-avatar" style="background:${q.status === 'Answered' ? 'var(--bilva-lt)' : 'var(--trishul-lt)'};color:${q.status === 'Answered' ? 'var(--bilva)' : 'var(--saffron-dk)'}">${q.facilitator ? q.facilitator.charAt(0).toUpperCase() : 'F'}</div>
@@ -6571,9 +6705,8 @@ function renderAdminGuruQ() {
 function renderAdminNotes() {
   const panel = document.getElementById('admin-notes');
   if (!panel) return;
-  const scopedNotes = getScopedProgramItems(notesLog);
-  if (!scopedNotes.length) { panel.innerHTML = '<div class="empty-state">No special notes saved.</div>'; return; }
-  panel.innerHTML = scopedNotes.map(n => `
+  if (!notesLog.length) { panel.innerHTML = '<div class="empty-state">No special notes saved.</div>'; return; }
+  panel.innerHTML = notesLog.map(n => `
     <div class="task-card pending">
       <div class="tc-header"><div><div class="tc-title">${n.who}</div><div class="tc-meta">${n.date}</div></div></div>
       <div class="tc-body">${n.note}</div>
@@ -6628,7 +6761,7 @@ function filterGQTab(tab, btn) {
 function renderGuruQuestions() {
   const list = document.getElementById('guru-questions-list');
   if (!list) return;
-  let filtered = getScopedProgramItems(guruQuestions);
+  let filtered = guruQuestions;
   if (gqTabFilter === 'pending') filtered = filtered.filter(q => q.status === 'Pending');
   if (gqTabFilter === 'answered') filtered = filtered.filter(q => q.status === 'Answered');
   // Non-admin roles see only their own; admins see all
@@ -6666,7 +6799,6 @@ function submitGuruQuestion() {
     question, facilitator,
     sadhak: document.getElementById('gq-sadhak').value.trim(),
     group: document.getElementById('gq-group').value,
-    program_id: ACTIVE_PROGRAM_ID || null,
     lang: document.getElementById('gq-lang').value,
     category: document.getElementById('gq-category').value,
     priority: document.getElementById('gq-priority').value,
@@ -7147,7 +7279,6 @@ function submitChange() {
     id: Date.now(), date: new Date().toLocaleDateString(),
     sadhak: selectedForChange.name, email: selectedForChange.email,
     from: selectedForChange.group,
-    program_id: ACTIVE_PROGRAM_ID || null,
     to: 'Pending Admin Decision',
     reason, requestor,
     status: 'Submitted'
@@ -7190,7 +7321,7 @@ function addNote() {
   const note = document.getElementById('special-note').value.trim();
   const who = document.getElementById('special-note-who').value.trim();
   if (!note) { alert('Please enter a note.'); return; }
-  notesLog.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), note, who: who || 'General', program_id: ACTIVE_PROGRAM_ID || null });
+  notesLog.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), note, who: who || 'General' });
   localStorage.setItem('pns_notes', JSON.stringify(notesLog));
   document.getElementById('special-note').value = '';
   document.getElementById('special-note-who').value = '';
@@ -7540,7 +7671,6 @@ function renderFacilitatorOverview() {
 // ── GROUPS (patched for culmination) ──────────────────────────────────────
 function initGroups() {
   deriveAssignedGroupsFromProfile();
-  ensureProgramGroupsFromMembers();
   const picker = document.getElementById('group-picker');
   picker.innerHTML = '<option value="">— Select a Group —</option>';
   const viewGroups = getScopedGroups();
@@ -7549,74 +7679,13 @@ function initGroups() {
   if (attSel) { attSel.innerHTML = ''; viewGroups.forEach((g, i) => attSel.innerHTML += `<option value="${i}">${g.group}</option>`); }
 }
 
-function normalizeGroupKey(name){
-  return String(name || '').trim().toLowerCase();
-}
-
-function shortGroupName(name){
-  const raw = String(name || '').trim();
-  if(!raw) return '';
-  return raw.includes(' - ') ? raw.split(' - ').slice(-1)[0].trim() : raw;
-}
-
-function memberBelongsToGroup(member, groupObj){
-  const memberGroup = String(member?.group || member?.fac_group || '').trim();
-  const groupName = String(groupObj?.group || '').trim();
-  if(!memberGroup || !groupName) return false;
-
-  const mg = normalizeGroupKey(memberGroup);
-  const gg = normalizeGroupKey(groupName);
-  if(mg === gg) return true;
-
-  return normalizeGroupKey(shortGroupName(memberGroup)) === normalizeGroupKey(shortGroupName(groupName));
-}
-
-function ensureProgramGroupsFromMembers(){
-  if((GROUPS || []).length > 0) return;
-  if(!(members || []).length) return;
-
-  const byName = {};
-  (members || []).forEach(m => {
-    const role = (m.role || 'Sadhak');
-    if(role === 'Facilitator') return;
-    const gname = String(m.group || '').trim();
-    if(!gname || gname === 'Unassigned' || gname === 'Facilitators') return;
-
-    if(!byName[gname]) {
-      const facilitatorSeed = String(m.fac_group || m.facilitators || '').trim();
-      byName[gname] = {
-        group: gname,
-        facilitator: facilitatorSeed,
-        facilitator_names: facilitatorSeed ? [facilitatorSeed] : [],
-        region: m.region || '',
-        language: m.language || '',
-        total: 0,
-        wa_added: 0,
-        initiation: 0,
-        culmination: 0,
-        sessions: new Array(DATES.length).fill(0),
-        meet_link: '',
-        program_id: ACTIVE_PROGRAM_ID || m.program_id || null
-      };
-    }
-
-    byName[gname].total += 1;
-  });
-
-  const rebuilt = Object.values(byName);
-  if(rebuilt.length) {
-    GROUPS.length = 0;
-    rebuilt.forEach(g => GROUPS.push(g));
-  }
-}
-
 function renderGroupDetail() {
   const idx = document.getElementById('group-picker').value;
   if (idx === '') { document.getElementById('group-detail-panel').innerHTML = '<div class="empty-state">Select a group above</div>'; return; }
   const viewGroups = getScopedGroups();
   const g = viewGroups[idx];
   if(!g){ document.getElementById('group-detail-panel').innerHTML = '<div class="empty-state">No assigned group available.</div>'; return; }
-  const gmems = getScopedMembers().filter(m => memberBelongsToGroup(m, g));
+  const gmems = getScopedMembers().filter(m => m.group === g.group);
   const n = gmems.length;
   const waAdded = gmems.filter(m => m.wa === 'Yes').length;
   const initiated = gmems.filter(m => m.init === 'Yes').length;
@@ -7810,7 +7879,6 @@ function exportCSV() {
 // ── ATTENDANCE ────────────────────────────────────────────────────────
 function initAttendance() {
   deriveAssignedGroupsFromProfile();
-  ensureProgramGroupsFromMembers();
   // Rebuild session selector from live DATES every time tab opens
   const sel = document.getElementById('att-session-sel');
   if (sel) sel.innerHTML = DATES.map((d, i) => `<option value="${i}">${d}</option>`).join('');
@@ -7834,7 +7902,7 @@ function showAttGroup(idx, btn) {
   const viewGroups = getScopedGroups();
   const g = viewGroups[idx];
   if(!g){ document.getElementById('attendance-view').innerHTML = '<div class="empty-state">No assigned group available.</div>'; return; }
-  const gmems = getScopedMembers().filter(m => memberBelongsToGroup(m, g));
+  const gmems = getScopedMembers().filter(m => m.group === g.group);
 
   const sessionSummary = DATES.map((d, si) => {
     const present = gmems.filter(m => m.att[si] === 1).length;
@@ -8203,7 +8271,6 @@ function saveRecording() {
   const editId = document.getElementById('rec-edit-id').value;
   const data = {
     cat: document.getElementById('rec-cat').value,
-    program_id: ACTIVE_PROGRAM_ID || null,
     title,
     lang: document.getElementById('rec-lang').value,
     session: document.getElementById('rec-session').value,
@@ -9285,10 +9352,6 @@ function checkFirstLaunch(){
   ALL_PROGRAMS = JSON.parse(localStorage.getItem('pns_all_programs')||'[]');
   ACTIVE_PROGRAM_ID = localStorage.getItem('pns_active_program_id')||null;
   editableContent = JSON.parse(localStorage.getItem('pns_editable_content')||'{}');
-  const activeProgramDataKey = ACTIVE_PROGRAM_ID ? ('pns_prog_data_' + ACTIVE_PROGRAM_ID) : null;
-  const hasActiveProgramSnapshot = activeProgramDataKey ? !!localStorage.getItem(activeProgramDataKey) : false;
-  const allowLegacyMigration = ALL_PROGRAMS.length <= 1;
-  const shouldUseLegacyFallback = allowLegacyMigration && (!ACTIVE_PROGRAM_ID || !hasActiveProgramSnapshot);
   currentRole = localStorage.getItem('pns_current_role') || 'facilitator';
   applyRole();
   const hasData=localStorage.getItem('pns_project_loaded');
@@ -9316,25 +9379,25 @@ function checkFirstLaunch(){
     return;
   }
   
-  // Try to load program-specific data first when snapshot exists
-  if(ACTIVE_PROGRAM_ID && hasActiveProgramSnapshot) {
+  // Try to load program-specific data first
+  if(ACTIVE_PROGRAM_ID) {
     loadProgramData(ACTIVE_PROGRAM_ID);
   }
   
-  // Fallback to legacy data loading only for migration (no program snapshot yet)
-  if(shouldUseLegacyFallback && DATES.length === 0) {
+  // Fallback to legacy data loading if program data not found
+  if(DATES.length === 0) {
     const sD=localStorage.getItem('pns_live_dates');
     if(sD){const d=JSON.parse(sD);DATES.length=0;d.forEach(x=>DATES.push(x));RAW.dates.length=0;d.forEach(x=>RAW.dates.push(x));}
   }
-  if(shouldUseLegacyFallback && GROUPS.length === 0) {
+  if(GROUPS.length === 0) {
     const sG=localStorage.getItem('pns_live_groups');
     if(sG){const g=JSON.parse(sG);GROUPS.length=0;g.forEach(x=>GROUPS.push(x));RAW.groups=g;}
   }
-  if(shouldUseLegacyFallback && members.length === 0) {
+  if(members.length === 0) {
     const sM=localStorage.getItem('pns_live_members');
     if(sM) members=JSON.parse(sM);
   }
-  if(shouldUseLegacyFallback && FACILITATORS.length === 0) {
+  if(FACILITATORS.length === 0) {
     const sF=localStorage.getItem('pns_live_facilitators');
     if(sF){
       const f=JSON.parse(sF);
@@ -9356,11 +9419,6 @@ function checkFirstLaunch(){
       }
     }
   }
-
-  // Create initial snapshot after one-time legacy migration.
-  if(ACTIVE_PROGRAM_ID && !hasActiveProgramSnapshot && allowLegacyMigration) {
-    saveCurrentProgramData();
-  }
   
   bootstrapProjectStateFromLocal(false);
   document.getElementById('setup-screen').style.display='none';
@@ -9368,22 +9426,7 @@ function checkFirstLaunch(){
   updateProgPill();
   setTimeout(renderOverview, 0);
 }
-function resetProject(){
-  if(currentRole!=='admin'){alert('Admin access required.');return;}
-  if(!confirm('Reset ALL data? This cannot be undone.')) return;
-
-  clearTimeout(saveTimeout);
-  suspendAutoSave = true;
-
-  // Clear every app-owned key, including hidden per-program snapshots.
-  Object.keys(localStorage).forEach(k => {
-    if(k.startsWith('pns_')) localStorage.removeItem(k);
-  });
-
-  suspendAutoSave = false;
-
-  location.reload();
-}
+function resetProject(){if(currentRole!=='admin'){alert('Admin access required.');return;}if(!confirm('Reset ALL data? This cannot be undone.'))return;['pns_project_loaded','pns_project_name','pns_live_members','pns_live_groups','pns_live_dates','pns_live_facilitators','pns_transfers','pns_notes','pns_guru_q','pns_notifs','pns_checklist','pns_recordings','pns_all_programs','pns_active_program_id','pns_editable_content'].forEach(k=>localStorage.removeItem(k));location.reload();}
 
 // ── BACKUP & RESTORE ──────────────────────────────────────────────────────
 function buildBackupPayload(){
@@ -9499,68 +9542,8 @@ function importGroupsData(file){if(!file)return;_parseCSV(file,(hdrs,rows)=>{con
     showToast('✓ '+updated+' groups updated');});}
 function importSessionDatesData(file){if(!file)return;_parseCSV(file,(hdrs,rows)=>{const sI=hdrs.findIndex(h=>h.includes('session')),dI=hdrs.findIndex(h=>h.includes('date')||h.includes('label'));if(sI<0||dI<0){alert('Columns needed: Session_Number, Date_Label');return;}let updated=0;rows.forEach(cols=>{const ss=(cols[sI]||'').trim(),lb=(cols[dI]||'').trim();const m=ss.match(/\d+/);if(!m||!lb)return;const idx=parseInt(m[0])-1;if(idx>=0&&idx<DATES.length){DATES[idx]=lb;updated++;}});localStorage.setItem('pns_live_dates',JSON.stringify(DATES));renderOverview();if(document.getElementById('s-attendance')?.classList.contains('active'))initAttendance();alert('✓ Session Dates Updated!\n\n'+DATES.map((d,i)=>'Session '+(i+1)+': '+d).join('\n'));localStorage.setItem('pns_ts_import_dates',new Date().toISOString());renderBackupTimestamps();
     showToast('✓ '+updated+' session dates updated');});}
-function importRecordingsData(file){
-  if(!file) return;
-  _parseCSV(file,(hdrs,rows)=>{
-    const col=(...ns)=>{for(const n of ns){const i=hdrs.findIndex(h=>h===n||h.includes(n));if(i>=0)return i;}return -1;};
-    const rI=col('id'),tI=col('title'),catI=col('category','cat'),lI=col('language','lang'),sI=col('session'),dI=col('duration'),yI=col('youtube_link','youtube','yt'),drI=col('drive_link','drive'),dcI=col('description','desc');
-    if(tI<0){alert('No Title column found.');return;}
-
-    let recs=JSON.parse(localStorage.getItem('pns_recordings')||'[]');
-    let updated=0,added=0;
-    const currentProgramId = ACTIVE_PROGRAM_ID || null;
-    const allowLegacy = (ALL_PROGRAMS || []).length <= 1;
-    const isSameProgram = (r) => {
-      if(!currentProgramId) return true;
-      if(allowLegacy) return !r.program_id || r.program_id === currentProgramId;
-      return r.program_id === currentProgramId;
-    };
-
-    rows.forEach(cols=>{
-      const title=(cols[tI]||'').trim();
-      if(!title) return;
-
-      const id = rI>=0 ? parseInt(cols[rI]) : 0;
-      const lang = lI>=0 ? (cols[lI]||'').trim() : '';
-      let ri = id ? recs.findIndex(r => r.id===id && isSameProgram(r)) : -1;
-      if(ri<0) ri = recs.findIndex(r =>
-        (r.title||'').trim().toLowerCase()===title.toLowerCase() &&
-        (r.lang||'').trim().toLowerCase()===(lang.toLowerCase()) &&
-        isSameProgram(r)
-      );
-
-      const d={
-        cat:catI>=0?cols[catI]:'',
-        title,
-        lang,
-        session:sI>=0?cols[sI]:'',
-        duration:dI>=0?cols[dI]:'',
-        yt:yI>=0?cols[yI]:'',
-        drive:drI>=0?cols[drI]:'',
-        desc:dcI>=0?cols[dcI]:'',
-        program_id: currentProgramId
-      };
-
-      if(ri>=0){
-        Object.keys(d).forEach(k=>{ if(d[k]!=='' && d[k]!==null && d[k]!==undefined) recs[ri][k]=d[k]; });
-        recs[ri].program_id = recs[ri].program_id || currentProgramId;
-        if(!Array.isArray(recs[ri].shownLog)) recs[ri].shownLog = [];
-        updated++;
-      }else{
-        recs.push({id:id||Date.now(),...d,shownLog:[]});
-        added++;
-      }
-    });
-
-    recordings = recs;
-    localStorage.setItem('pns_recordings',JSON.stringify(recs));
-    if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
-    alert('✓ Recordings Import Complete!\n\n• '+updated+' updated\n• '+added+' added');
-    localStorage.setItem('pns_ts_import_recordings',new Date().toISOString());
-    renderBackupTimestamps();
-    showToast('✓ Recordings: '+updated+' updated · '+added+' added');
-  });
-}
+function importRecordingsData(file){if(!file)return;_parseCSV(file,(hdrs,rows)=>{const col=(...ns)=>{for(const n of ns){const i=hdrs.findIndex(h=>h===n||h.includes(n));if(i>=0)return i;}return -1;};const rI=col('id'),tI=col('title'),catI=col('category','cat'),lI=col('language','lang'),sI=col('session'),dI=col('duration'),yI=col('youtube_link','youtube','yt'),drI=col('drive_link','drive'),dcI=col('description','desc');if(tI<0){alert('No Title column found.');return;}let recs=JSON.parse(localStorage.getItem('pns_recordings')||'[]'),updated=0,added=0;rows.forEach(cols=>{const title=(cols[tI]||'').trim();if(!title)return;const id=rI>=0?parseInt(cols[rI]):0;let ri=id?recs.findIndex(r=>r.id===id):-1;if(ri<0)ri=recs.findIndex(r=>r.title===title);const d={cat:catI>=0?cols[catI]:'',title,lang:lI>=0?cols[lI]:'',session:sI>=0?cols[sI]:'',duration:dI>=0?cols[dI]:'',yt:yI>=0?cols[yI]:'',drive:drI>=0?cols[drI]:'',desc:dcI>=0?cols[dcI]:''};if(ri>=0){Object.keys(d).forEach(k=>{if(d[k])recs[ri][k]=d[k];});updated++;}else{recs.push({id:id||Date.now(),...d,shownLog:[]});added++;}});localStorage.setItem('pns_recordings',JSON.stringify(recs));if(document.getElementById('s-recordings')?.classList.contains('active'))initRecordings();alert('✓ Recordings Import Complete!\n\n• '+updated+' updated\n• '+added+' added');localStorage.setItem('pns_ts_import_recordings',new Date().toISOString());renderBackupTimestamps();
+    showToast('✓ Recordings: '+updated+' updated · '+added+' added');});}
 
 function getAutoBackupConfig(){return JSON.parse(localStorage.getItem('pns_auto_backup_config')||'null')||{enabled:false,frequency:'daily',time:'20:00',dayOfWeek:0,lastBackup:null};}
 function saveAutoBackupConfig(cfg){localStorage.setItem('pns_auto_backup_config',JSON.stringify(cfg));}
@@ -9641,7 +9624,6 @@ function saveMeetLink(groupIdx, url) {
   showToast(url ? '✓ Meet link saved!' : 'Meet link removed.');
 }
 
-// initCloudSync kept for compatibility but auth is handled server-side via proxies
 function clearCloudSession({ expired = false } = {}){
   _cloudSession = null;
   try{ localStorage.removeItem(CLOUD_SESSION_STORAGE_KEY); }catch(_e){}
@@ -9708,7 +9690,10 @@ async function handleCloudApiResponse(response, fallbackMessage, options = {}){
         showLoginModal();
       }
     }
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = response.status;
+    error.payload = data;
+    throw error;
   }
   return data;
 }
@@ -9882,12 +9867,6 @@ function updateCloudAuthUI(user){
     setCloudSnapshotListStatus('Sign in to view snapshots', false);
     renderCloudSnapshotList([]);
   }
-}
-
-async function refreshCloudSyncStatus(){
-  await initCloudSync();
-  updateCloudSyncStatus(_cloudSession ? ('Cloud sync: Signed in as ' + _cloudSession.email) : 'Cloud sync: Ready for sign in', !!_cloudSession);
-  renderDbSyncHealth();
 }
 
 function setCloudSnapshotListStatus(msg, ok){
@@ -10079,7 +10058,7 @@ function updateCloudSyncStatus(msg, ok){
   const el = document.getElementById('cloud-sync-status');
   if(!el) return;
   el.textContent = msg;
-  el.style.color = ok ? 'var(--bilva)' : 'var(--text-mute)';
+  el.style.color = ok ? 'var(--bilva)' : 'var(--saffron)';
 }
 
 async function cloudBackupNow(opts = {}){
@@ -10299,7 +10278,7 @@ async function tryAutoSignInWithSavedCredentials(){
 }
 
 function showColdStartRecoveryBanner(){
-  if(document.getElementById('cold-start-banner')) return; // already shown
+  if(document.getElementById('cold-start-banner')) return;
   const banner = document.createElement('div');
   banner.id = 'cold-start-banner';
   banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#7b1c2e;color:#fff;padding:12px 20px;' +
@@ -10329,12 +10308,10 @@ async function cloudRestoreLatest(){
     updateCloudSyncStatus('Cloud sync: Restored snapshot from ' + readableDate, true);
     alert('☁ Cloud snapshot restored successfully. Reloading now...');
     location.reload();
-  }
-  catch(e){
+  }catch(e){
     if(isCloudAuthError(0, e.message)) return;
     updateCloudSyncStatus('Cloud restore failed: ' + e.message, false);
     alert('Cloud restore failed: ' + e.message);
-    return;
   }
 }
 
@@ -10684,10 +10661,10 @@ function renderProgramsList(){
             <button class="btn btn-outline btn-sm" onclick="toggleMenu('${menuId}')" title="More options">⋮ More</button>
             <div id="${menuId}" class="prog-menu" style="display:none;position:absolute;right:0;top:100%;background:white;border:1px solid #ddd;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:1000;min-width:180px;margin-top:4px">
               <button onclick="editProgram('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">⚙ Edit Program</button>
-              <button onclick="exportProgramCompleteCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📥 Export Program CSV (Full)</button>
-              <button onclick="importProgramCompleteCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📤 Import Program CSV (Full)</button>
-              <button onclick="backupProgramJSON('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">💾 Backup Program JSON (Full)</button>
-              <button onclick="restoreProgramJSON('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">♻️ Restore Program JSON (Full)</button>
+              <button onclick="exportProgramCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📥 Export CSV</button>
+              <button onclick="importProgramCSV('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">📤 Import CSV</button>
+              <button onclick="backupProgramJSON('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">💾 Backup JSON</button>
+              <button onclick="restoreProgramJSON('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#333;border-bottom:1px solid #f0f0f0;transition:background 0.2s">♻️ Restore JSON</button>
               <button onclick="resetProgram('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#d32f2f;border-bottom:1px solid #f0f0f0;transition:background 0.2s">🗑 Reset Data</button>
               ${!isActive ? `<button onclick="deleteProgramEntry('${p.id}');toggleMenu('${menuId}')" style="display:block;width:100%;text-align:left;padding:10px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#d32f2f;transition:background 0.2s">✕ Delete Program</button>` : ''}
             </div>
@@ -10767,7 +10744,6 @@ function createNewProgram(){
   const newId = 'prog_'+Date.now();
   const newCategory = (document.getElementById('new-prog-category')?.value || '').trim() || 'General';
   const newProg = {id:newId, name, category:newCategory, status:'active', created_at:new Date().toISOString(),
-    sessions:sessions.map(s => ({ date:s, label:s, created_at:new Date().toISOString() })),
     meta:{member_count:0, session_count:sessions.length}};
   ALL_PROGRAMS.unshift(newProg);
   ACTIVE_PROGRAM_ID = newId;
@@ -10775,18 +10751,13 @@ function createNewProgram(){
   localStorage.setItem('pns_active_program_id', newId);
   localStorage.setItem('pns_project_name', name);
   
+  // ✅ CRITICAL: Set DATES first before calling loadProgramData
+  DATES.length = 0;
+  sessions.forEach(s => DATES.push(s));
+  
   // ✅ Call loadProgramData to ensure complete clear of all other data
   // This will clear everything since new program has no saved data
   loadProgramData(newId);
-
-  // Apply the new program sessions after clearing.
-  DATES.length = 0;
-  sessions.forEach(s => DATES.push(s));
-  GROUPS.length = 0;
-  FACILITATORS.length = 0;
-  localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
-  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
-  localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
   
   // ✅ CRITICAL FIX: Reload ALL memory variables from cleared storage
   recordings = JSON.parse(localStorage.getItem('pns_recordings') || '[]');
@@ -10851,43 +10822,6 @@ function switchToProgram(id){
   guruQuestions = JSON.parse(localStorage.getItem('pns_guru_q') || '[]');
   transferLog = JSON.parse(localStorage.getItem('pns_transfers') || '[]');
   notesLog = JSON.parse(localStorage.getItem('pns_notes') || '[]');
-
-  // Strictly isolate active program state when multiple programs exist.
-  if((ALL_PROGRAMS || []).length > 1) {
-    members = (members || [])
-      .filter(m => m.program_id === id)
-      .map((m, i) => ({ ...m, idx:i }));
-
-    ensureProgramGroupsFromMembers();
-
-    FACILITATORS.length = 0;
-    members
-      .filter(m => (m.role || 'Sadhak') === 'Facilitator')
-      .forEach(m => FACILITATORS.push({
-        name: m.name || '',
-        email: m.email || '',
-        mobile: m.mobile || '',
-        region: m.region || '',
-        language: m.language || '',
-        country: m.country || ''
-      }));
-
-    const progSessions = (selectedProg?.sessions || [])
-      .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
-      .filter(Boolean);
-    if(progSessions.length > 0) {
-      DATES.length = 0;
-      progSessions.forEach(s => DATES.push(s));
-    } else if(members.length === 0) {
-      DATES.length = 0;
-    }
-
-    localStorage.setItem('pns_live_members', JSON.stringify(members));
-    localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
-    localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
-    localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
-    saveCurrentProgramData();
-  }
   
   // ✅ CRITICAL FIX: Refresh the active tab to show program-specific data
   const activeSection = document.querySelector('.section.active');
@@ -10918,34 +10852,16 @@ function switchToProgram(id){
 function saveCurrentProgramData(){
   if(!ACTIVE_PROGRAM_ID) return;
   const key = 'pns_prog_data_' + ACTIVE_PROGRAM_ID;
-  const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
-  const scopedMembers = (members || [])
-    .filter(m => m.program_id === ACTIVE_PROGRAM_ID || (allowLegacyMembers && !m.program_id))
-    .map((m, i) => ({ ...m, program_id: m.program_id || ACTIVE_PROGRAM_ID, idx: i }));
-  const scopedGroups = (GROUPS || []).map(g => ({ ...g, program_id: ACTIVE_PROGRAM_ID }));
-  const scopedFacilitators = (FACILITATORS || []).map(f => ({ ...f, program_id: ACTIVE_PROGRAM_ID }));
   const activeProg = (ALL_PROGRAMS || []).find(p => p.id === ACTIVE_PROGRAM_ID);
-  const progSessions = (activeProg?.sessions || [])
-    .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
-    .filter(Boolean);
-  const scopeByProgram = (arr) => (arr || [])
-    .filter(x => (x && x.program_id === ACTIVE_PROGRAM_ID) || (allowLegacyMembers && x && !x.program_id))
-    .map(x => ({ ...x, program_id: x.program_id || ACTIVE_PROGRAM_ID }));
-
-  const scopedRecordings = scopeByProgram(JSON.parse(localStorage.getItem('pns_recordings')||'[]'));
-  const scopedGuruQ = scopeByProgram(JSON.parse(localStorage.getItem('pns_guru_q')||'[]'));
-  const scopedTransfers = scopeByProgram(JSON.parse(localStorage.getItem('pns_transfers')||'[]'));
-  const scopedNotes = scopeByProgram(JSON.parse(localStorage.getItem('pns_notes')||'[]'));
-
   const data = {
-    dates: progSessions.length ? progSessions : DATES,
-    groups: scopedGroups,
-    members: scopedMembers,
-    facilitators: scopedFacilitators,
-    recordings: scopedRecordings,
-    guru_q: scopedGuruQ,
-    transfers: scopedTransfers,
-    notes: scopedNotes,
+    dates: DATES,
+    groups: GROUPS,
+    members: members,
+    facilitators: FACILITATORS,
+    recordings: JSON.parse(localStorage.getItem('pns_recordings')||'[]'),
+    guru_q: JSON.parse(localStorage.getItem('pns_guru_q')||'[]'),
+    transfers: JSON.parse(localStorage.getItem('pns_transfers')||'[]'),
+    notes: JSON.parse(localStorage.getItem('pns_notes')||'[]'),
     custom_checklist_items: JSON.parse(localStorage.getItem('pns_prog_checklist_items_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_workflow_phases: JSON.parse(localStorage.getItem('pns_prog_workflow_' + ACTIVE_PROGRAM_ID) || 'null'),
     custom_faqs: JSON.parse(localStorage.getItem('pns_prog_faqs_' + ACTIVE_PROGRAM_ID) || 'null'),
@@ -10961,15 +10877,6 @@ function saveCurrentProgramData(){
 function loadProgramData(progId){
   const key = 'pns_prog_data_' + progId;
   const savedData = localStorage.getItem(key);
-  const selectedProg = (ALL_PROGRAMS || []).find(p => p.id === progId);
-  const allowLegacyMembers = (ALL_PROGRAMS || []).length <= 1;
-  const pickProgramItems = (arr) => {
-    const items = Array.isArray(arr) ? arr : [];
-    const tagged = items.filter(x => x && x.program_id === progId);
-    const legacy = items.filter(x => x && !x.program_id);
-    const chosen = tagged.length ? tagged : (allowLegacyMembers ? legacy : []);
-    return chosen.map(x => ({ ...x, program_id: progId }));
-  };
   
   // ✅ CRITICAL: Clear ALL data first (for new/empty programs)
   DATES.length = 0;
@@ -10989,67 +10896,49 @@ function loadProgramData(progId){
   if(savedData) {
     try {
       const data = JSON.parse(savedData);
-      let migratedLegacyToProgram = false;
       
-      // Load dates (prefer program session definition in multi-program mode)
-      const progSessions = (selectedProg?.sessions || [])
-        .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
-        .filter(Boolean);
-      if(progSessions.length > 0) {
-        progSessions.forEach(d => DATES.push(d));
-      } else if(data.dates && Array.isArray(data.dates)) {
+      // Load dates
+      if(data.dates && Array.isArray(data.dates)) {
         data.dates.forEach(d => DATES.push(d));
       }
       
       // Load groups
       if(data.groups && Array.isArray(data.groups)) {
-        const taggedGroups = data.groups.filter(g => (g && typeof g === 'object' ? g.program_id : null) === progId);
-        const legacyGroups = data.groups.filter(g => !(g && typeof g === 'object' ? g.program_id : null));
-        const groupsToUse = taggedGroups.length ? taggedGroups : ((allowLegacyMembers || taggedGroups.length===0) ? legacyGroups : []);
-        if(taggedGroups.length===0 && legacyGroups.length>0) migratedLegacyToProgram = true;
-        groupsToUse.forEach(g => GROUPS.push({ ...g, program_id: progId }));
+        data.groups.forEach(g => GROUPS.push(g));
       }
       
       // Load members
       if(data.members && Array.isArray(data.members)) {
-        const taggedMembers = data.members.filter(m => m.program_id === progId);
-        const legacyMembers = data.members.filter(m => !m.program_id);
-        const membersToUse = taggedMembers.length ? taggedMembers : ((allowLegacyMembers || taggedMembers.length===0) ? legacyMembers : []);
-        if(taggedMembers.length===0 && legacyMembers.length>0) migratedLegacyToProgram = true;
-        members = membersToUse.map((m, i) => ({ ...m, program_id: progId, idx: i }));
+        members = JSON.parse(JSON.stringify(data.members));
       }
       
       // Load facilitators
       if(data.facilitators && Array.isArray(data.facilitators)) {
-        const taggedFacs = data.facilitators.filter(f => (f && typeof f === 'object' ? f.program_id : null) === progId);
-        const legacyFacs = data.facilitators.filter(f => !(f && typeof f === 'object' ? f.program_id : null));
-        const facsToUse = taggedFacs.length ? taggedFacs : ((allowLegacyMembers || taggedFacs.length===0) ? legacyFacs : []);
-        if(taggedFacs.length===0 && legacyFacs.length>0) migratedLegacyToProgram = true;
-        facsToUse.forEach(f => FACILITATORS.push({ ...f, program_id: progId }));
+        data.facilitators.forEach(f => FACILITATORS.push(f));
       }
       
       // Load recordings
       if(data.recordings && Array.isArray(data.recordings)) {
-        recordings = pickProgramItems(data.recordings);
-        localStorage.setItem('pns_recordings', JSON.stringify(recordings));
+        recordings = JSON.parse(JSON.stringify(data.recordings));
+        localStorage.setItem('pns_recordings', JSON.stringify(data.recordings));
       }
       
       // Load guru questions
       if(data.guru_q && Array.isArray(data.guru_q)) {
-        guruQuestions = pickProgramItems(data.guru_q);
-        localStorage.setItem('pns_guru_q', JSON.stringify(guruQuestions));
+        guruQuestions = JSON.parse(JSON.stringify(data.guru_q));
+        localStorage.setItem('pns_guru_q', JSON.stringify(data.guru_q));
       }
       
       // Load transfers
       if(data.transfers && Array.isArray(data.transfers)) {
-        transferLog = pickProgramItems(data.transfers);
-        localStorage.setItem('pns_transfers', JSON.stringify(transferLog));
+        transferLog = JSON.parse(JSON.stringify(data.transfers));
+        localStorage.setItem('pns_transfers', JSON.stringify(data.transfers));
       }
       
       // Load notes
       if(data.notes && Array.isArray(data.notes)) {
-        notesLog = pickProgramItems(data.notes);
-        localStorage.setItem('pns_notes', JSON.stringify(notesLog));
+        notesLog = JSON.parse(JSON.stringify(data.notes));
+        localStorage.setItem('pns_notes', JSON.stringify(data.notes));
       }
 
       // Restore per-program resource overrides (Checklist, Workflow, FAQs & Guidelines)
@@ -11065,17 +10954,6 @@ function loadProgramData(progId){
       if(data.custom_guidelines) localStorage.setItem('pns_prog_guidelines_' + progId, JSON.stringify(data.custom_guidelines));
       else if (legacyGuidelines && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
       else localStorage.removeItem('pns_prog_guidelines_' + progId);
-
-      // Persist migration if legacy untagged data was adopted into this program.
-      if(migratedLegacyToProgram) {
-        localStorage.setItem(key, JSON.stringify({
-          ...data,
-          dates: DATES,
-          groups: GROUPS,
-          members: members,
-          facilitators: FACILITATORS
-        }));
-      }
       
     } catch(e) {
       console.log('Error loading program data:', e);
@@ -11092,34 +10970,6 @@ function loadProgramData(progId){
     if (legacyGuidelines && isMahashivaratri2026Program(progId)) localStorage.setItem('pns_prog_guidelines_' + progId, legacyGuidelines);
     else localStorage.removeItem('pns_prog_guidelines_' + progId);
   }
-
-  // Enforce strict scoped state in multi-program setups.
-  if((ALL_PROGRAMS || []).length > 1) {
-    members = (members || [])
-      .filter(m => m.program_id === progId)
-      .map((m, i) => ({ ...m, idx:i }));
-
-    ensureProgramGroupsFromMembers();
-
-    FACILITATORS.length = 0;
-    members
-      .filter(m => (m.role || 'Sadhak') === 'Facilitator')
-      .forEach(m => FACILITATORS.push({
-        name: m.name || '',
-        email: m.email || '',
-        mobile: m.mobile || '',
-        region: m.region || '',
-        language: m.language || '',
-        country: m.country || '',
-        program_id: progId
-      }));
-  }
-
-  // Keep legacy keys aligned with currently loaded active program state.
-  localStorage.setItem('pns_live_members', JSON.stringify(members));
-  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
-  localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
-  localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
 }
 
 // Auto-save wrapper - call this after ANY data modification
@@ -11158,6 +11008,11 @@ function scheduleRealtimeCloudSync(reason){
   }, 1400);
 }
 
+// Override key save functions to auto-save program data
+const originalSetItem = localStorage.setItem;
+let saveTimeout;
+let suspendAutoSave = false;
+
 const DB_STATE_GLOBAL_PROGRAM_ID = '__global__';
 const DB_STATE_SYNC_EXCLUDED_KEYS = new Set([
   CLOUD_SESSION_STORAGE_KEY,
@@ -11180,18 +11035,121 @@ let dbStateSyncInFlight = false;
 let dbStateSyncQueued = false;
 const dbStatePendingMap = new Map();
 let dbStateLastWriteAt = null;
+let dbStateLastSyncAt = null;
 let dbStateLastError = '';
+let dbStateManualSyncInFlight = false;
+let dbStateLastAttemptAt = null;
+let dbStateLastResult = 'Idle';
+let dbStateLastStatusCode = null;
+let dbStateLastRequestLabel = 'None';
+let dbStateLastWriteAttemptAt = null;
+let dbStateLastWriteResult = 'Never attempted';
+let dbStateLastWriteStatusCode = null;
+let dbStateLastRefreshAt = null;
+let dbStateLastRefreshResult = 'Never attempted';
+let dbStateLastRefreshStatusCode = null;
+
+function formatDbSyncTimestamp(ts){
+  if(!ts) return 'Never';
+  const date = new Date(ts);
+  if(Number.isNaN(date.getTime())) return 'Never';
+  return date.toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+}
+
+function buildDbSyncResultText(){
+  const statusText = dbStateLastStatusCode ? ` (${dbStateLastStatusCode})` : '';
+  return `${dbStateLastResult || 'Idle'}${statusText}`;
+}
+
+function buildDbSyncOperationText(result, statusCode){
+  const statusText = statusCode ? ` (${statusCode})` : '';
+  return `${result || 'Idle'}${statusText}`;
+}
+
+async function fetchDbStateWithTimeout(url, options = {}, timeoutMs = 15000){
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+  try{
+    return await fetch(url, {
+      ...options,
+      signal: controller ? controller.signal : options.signal,
+    });
+  }catch(e){
+    if(e && e.name === 'AbortError'){
+      const timeoutError = new Error(`Request timed out after ${Math.round(timeoutMs / 1000)}s`);
+      timeoutError.status = 0;
+      timeoutError.code = 'timeout';
+      throw timeoutError;
+    }
+    throw e;
+  }finally{
+    if(timeoutId) clearTimeout(timeoutId);
+  }
+}
 
 function renderDbSyncHealth(){
   const el = document.getElementById('db-sync-health');
-  if(!el) return;
   const queueSize = dbStatePendingMap.size;
   const signedIn = !!(_cloudSession && _cloudSession.access_token);
-  const writeText = dbStateLastWriteAt ? new Date(dbStateLastWriteAt).toLocaleTimeString() : 'Never';
+  const recentWriteMs = dbStateLastWriteAt ? (Date.now() - dbStateLastWriteAt) : Number.POSITIVE_INFINITY;
+  const queueLikelyDraining = queueSize > 0 && queueSize <= 2 && recentWriteMs < 15000 && !dbStateLastError;
+  const writeText = formatDbSyncTimestamp(dbStateLastWriteAt);
+  const syncText = formatDbSyncTimestamp(dbStateLastSyncAt || dbStateLastRefreshAt || dbStateLastWriteAt);
+  const attemptText = formatDbSyncTimestamp(dbStateLastAttemptAt);
+  const resultText = buildDbSyncResultText();
+  const requestText = dbStateLastRequestLabel || 'None';
+  const writeAttemptText = formatDbSyncTimestamp(dbStateLastWriteAttemptAt);
+  const writeResultText = buildDbSyncOperationText(dbStateLastWriteResult, dbStateLastWriteStatusCode);
+  const refreshResultText = buildDbSyncOperationText(dbStateLastRefreshResult, dbStateLastRefreshStatusCode);
   const errorText = dbStateLastError ? dbStateLastError : 'None';
-  const mode = signedIn ? 'Active' : 'Signed out';
-  el.textContent = `DB Sync ${mode} | Queue: ${queueSize} | Last Write: ${writeText} | Last Error: ${errorText}`;
-  el.style.color = dbStateLastError ? 'var(--saffron)' : 'var(--text-soft)';
+  const mode = !signedIn
+    ? 'Waiting for sign-in'
+    : (dbStateManualSyncInFlight || dbStateSyncInFlight)
+      ? 'Syncing'
+      : dbStateLastError
+        ? 'Needs attention'
+        : queueLikelyDraining
+          ? 'Syncing recent changes'
+          : queueSize
+            ? 'Pending changes'
+          : 'Synced';
+  const tone = dbStateLastError
+    ? 'var(--saffron)'
+    : (!signedIn
+      ? 'var(--text-soft)'
+      : (dbStateManualSyncInFlight || dbStateSyncInFlight || queueLikelyDraining)
+        ? 'var(--shiva-mid)'
+        : 'var(--bilva)');
+  if(el){
+    const summaryText = `DB Sync ${mode} | Last Refresh: ${syncText} | Last Write: ${writeText}`;
+    const diagnosticsText = `${summaryText} | Last Attempt: ${attemptText} | Write Attempt: ${writeAttemptText} | Last Request: ${requestText} | Last Result: ${resultText} | Write Result: ${writeResultText} | Refresh Result: ${refreshResultText} | Last Error: ${errorText}`;
+    el.textContent = dbStateLastError ? diagnosticsText : summaryText;
+    el.style.color = tone;
+  }
+
+  const topbarStateEl = document.getElementById('topbar-db-sync-state');
+  const topbarTimeEl = document.getElementById('topbar-db-sync-time');
+  const topbarSyncBtn = document.getElementById('topbar-sync-now-btn');
+  const panelSyncBtn = document.getElementById('db-sync-manual-btn');
+  if(topbarStateEl) topbarStateEl.textContent = `DB Sync: ${mode}`;
+  if(topbarTimeEl){
+    const topbarHealthyText = `Refresh: ${syncText}`;
+    const topbarErrorText = `Write ${writeResultText} | Refresh ${refreshResultText} | Error: ${errorText}`;
+    topbarTimeEl.textContent = dbStateLastError ? topbarErrorText : topbarHealthyText;
+  }
+  [topbarSyncBtn, panelSyncBtn].forEach(btn => {
+    if(!btn) return;
+    btn.textContent = dbStateManualSyncInFlight || dbStateSyncInFlight ? 'Syncing...' : '⟳ Sync Now';
+    btn.disabled = !signedIn || dbStateManualSyncInFlight || dbStateSyncInFlight;
+    btn.style.opacity = btn.disabled ? '0.65' : '1';
+    btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+  });
 }
 
 function inferStateProgramIdFromKey(key){
@@ -11223,6 +11181,7 @@ function queueDbStateSync(key, value){
 
   const programId = inferStateProgramIdFromKey(key);
   if(!programId) return;
+  if(programId === DB_STATE_GLOBAL_PROGRAM_ID && currentRole !== 'admin') return;
   const entryKey = programId + '::' + key;
   dbStatePendingMap.set(entryKey, {
     program_id: programId,
@@ -11241,14 +11200,24 @@ function scheduleDbStateSync(){
 async function flushDbStateSync(){
   if(dbStateSyncInFlight) {
     dbStateSyncQueued = true;
-    return;
+    return false;
   }
-  if(!_cloudSession || !_cloudSession.access_token || !dbStatePendingMap.size) return;
+  if(!_cloudSession || !_cloudSession.access_token) return false;
+  if(!dbStatePendingMap.size) return true;
   dbStateSyncInFlight = true;
+  let ok = false;
   const entries = Array.from(dbStatePendingMap.values()).slice(0, 250);
   entries.forEach(entry => dbStatePendingMap.delete(entry.program_id + '::' + entry.state_key));
   try{
-    const r = await fetch('/api/state', {
+    dbStateLastAttemptAt = Date.now();
+    dbStateLastWriteAttemptAt = dbStateLastAttemptAt;
+    dbStateLastRequestLabel = 'POST /api/state';
+    dbStateLastResult = `Writing ${entries.length} change${entries.length === 1 ? '' : 's'}`;
+    dbStateLastStatusCode = null;
+    dbStateLastWriteResult = dbStateLastResult;
+    dbStateLastWriteStatusCode = null;
+    renderDbSyncHealth();
+    const r = await fetchDbStateWithTimeout('/api/state', {
       method: 'POST',
       headers: {
         Authorization: 'Bearer ' + _cloudSession.access_token,
@@ -11256,12 +11225,22 @@ async function flushDbStateSync(){
       },
       body: JSON.stringify({ entries }),
     });
-    await handleCloudApiResponse(r, 'DB state sync failed', { promptOnAuthError: false });
+    dbStateLastStatusCode = r.status || 200;
+    dbStateLastWriteStatusCode = dbStateLastStatusCode;
+    const responseData = await handleCloudApiResponse(r, 'DB state sync failed', { promptOnAuthError: false });
     dbStateLastError = '';
     dbStateLastWriteAt = Date.now();
+    dbStateLastSyncAt = dbStateLastWriteAt;
+    dbStateLastResult = `Write OK: ${responseData?.count || entries.length} saved`;
+    dbStateLastWriteResult = dbStateLastResult;
+    ok = true;
   }catch(e){
     entries.forEach(entry => dbStatePendingMap.set(entry.program_id + '::' + entry.state_key, entry));
+    dbStateLastStatusCode = Number.isFinite(e?.status) ? e.status : (e?.code === 'timeout' ? 'timeout' : null);
+    dbStateLastWriteStatusCode = dbStateLastStatusCode;
     dbStateLastError = String(e?.message || 'Unknown error');
+    dbStateLastResult = e?.code === 'timeout' ? 'Write timed out' : 'Write failed';
+    dbStateLastWriteResult = dbStateLastResult;
     updateCloudSyncStatus('Cloud sync state queue pending: ' + (e?.message || 'Unknown error'), false);
   }finally{
     dbStateSyncInFlight = false;
@@ -11271,6 +11250,7 @@ async function flushDbStateSync(){
       scheduleDbStateSync();
     }
   }
+  return ok;
 }
 
 function syncAllLocalStateToDb(){
@@ -11283,18 +11263,49 @@ function syncAllLocalStateToDb(){
   renderDbSyncHealth();
 }
 
-async function retryDbStateSyncNow(){
+async function manualDbStateSyncNow(){
   if(!_cloudSession || !_cloudSession.access_token){
-    showToast('Sign in to cloud before retrying DB sync.');
+    showToast('Sign in to cloud before syncing with DB.');
     return;
   }
+  if(dbStateManualSyncInFlight || dbStateSyncInFlight) return;
   clearTimeout(dbStateSyncTimeout);
-  if(!dbStatePendingMap.size){
+  dbStateManualSyncInFlight = true;
+  dbStateLastAttemptAt = Date.now();
+  dbStateLastResult = 'Manual sync started';
+  dbStateLastStatusCode = null;
+  renderDbSyncHealth();
+  try{
+    const writeOk = await flushDbStateSync();
+    let refreshOk = true;
+    if(ACTIVE_PROGRAM_ID){
+      refreshOk = await hydrateProgramStateFromDb(ACTIVE_PROGRAM_ID, { refreshUi: true, silent: true });
+    } else {
+      dbStateLastSyncAt = Date.now();
+    }
+    if(!writeOk || !refreshOk){
+      const syncError = new Error(dbStateLastError || 'DB sync could not be confirmed.');
+      syncError.status = dbStateLastStatusCode;
+      throw syncError;
+    }
+    dbStateLastError = '';
+    dbStateLastResult = 'Manual sync OK';
     renderDbSyncHealth();
-    showToast('DB sync queue is already empty.');
-    return;
+    showToast('DB sync completed.');
+  }catch(e){
+    dbStateLastStatusCode = Number.isFinite(e?.status) ? e.status : (e?.code === 'timeout' ? 'timeout' : null);
+    dbStateLastError = String(e?.message || 'Unknown error');
+    dbStateLastResult = e?.code === 'timeout' ? 'Manual sync timed out' : 'Manual sync failed';
+    renderDbSyncHealth();
+    showToast('DB sync failed: ' + (e?.message || 'Unknown error'));
+  }finally{
+    dbStateManualSyncInFlight = false;
+    renderDbSyncHealth();
   }
-  await flushDbStateSync();
+}
+
+async function retryDbStateSyncNow(){
+  await manualDbStateSyncNow();
 }
 
 function stringifyStateValueForLocalStorage(value){
@@ -11327,12 +11338,33 @@ async function hydrateProgramStateFromDb(programId, opts = {}){
   if(!pid || !_cloudSession || !_cloudSession.access_token) return false;
   try{
     const qs = '?program_id=' + encodeURIComponent(pid) + '&include_global=1';
-    const r = await fetch('/api/state' + qs, {
+    dbStateLastAttemptAt = Date.now();
+    dbStateLastRefreshAt = dbStateLastAttemptAt;
+    dbStateLastRequestLabel = 'GET /api/state?program_id=' + pid + '&include_global=1';
+    dbStateLastResult = 'Refreshing from DB';
+    dbStateLastStatusCode = null;
+    dbStateLastRefreshResult = dbStateLastResult;
+    dbStateLastRefreshStatusCode = null;
+    renderDbSyncHealth();
+    const r = await fetchDbStateWithTimeout('/api/state' + qs, {
       headers: { Authorization: 'Bearer ' + _cloudSession.access_token }
     });
+    dbStateLastStatusCode = r.status || 200;
+    dbStateLastRefreshStatusCode = dbStateLastStatusCode;
     const data = await handleCloudApiResponse(r, 'Could not load DB state.', { promptOnAuthError: false });
     const rows = Array.isArray(data.rows) ? data.rows : [];
-    if(!rows.length) return false;
+    dbStateLastError = '';
+    dbStateLastSyncAt = rows.reduce((latest, row) => {
+      const ts = Date.parse(row?.updated_at || '');
+      if(Number.isNaN(ts)) return latest;
+      return Math.max(latest, ts);
+    }, 0) || Date.now();
+    if(!rows.length) {
+      dbStateLastResult = 'Refresh OK: no rows found';
+      dbStateLastRefreshResult = dbStateLastResult;
+      renderDbSyncHealth();
+      return true;
+    }
 
     const prevSuspend = suspendAutoSave;
     suspendAutoSave = true;
@@ -11362,21 +11394,29 @@ async function hydrateProgramStateFromDb(programId, opts = {}){
     }
 
     if(!silent) showToast('☁ Latest DB state loaded');
+    dbStateLastResult = `Refresh OK: ${rows.length} row${rows.length === 1 ? '' : 's'} loaded`;
+    dbStateLastRefreshResult = dbStateLastResult;
+    renderDbSyncHealth();
     return true;
   }catch(e){
     if(!silent) showToast('DB state load skipped: ' + (e?.message || 'Unknown error'));
+    dbStateLastStatusCode = Number.isFinite(e?.status) ? e.status : (e?.code === 'timeout' ? 'timeout' : null);
+    dbStateLastRefreshStatusCode = dbStateLastStatusCode;
+    dbStateLastError = String(e?.message || 'Unknown error');
+    dbStateLastResult = e?.code === 'timeout' ? 'Refresh timed out' : 'Refresh failed';
+    dbStateLastRefreshResult = dbStateLastResult;
+    renderDbSyncHealth();
     return false;
   }
 }
 
-// Override key save functions to auto-save program data
-const originalSetItem = localStorage.setItem;
-let saveTimeout;
-let suspendAutoSave = false;
 localStorage.setItem = function(key, value) {
+  const prevValue = localStorage.getItem(key);
+  const nextValue = String(value);
+  const valueChanged = prevValue !== nextValue;
   originalSetItem.call(this, key, value);
-  if(!suspendAutoSave) queueDbStateSync(key, value);
-  
+  if(!suspendAutoSave && valueChanged) queueDbStateSync(key, value);
+
   // Auto-save program data when these keys are modified
   const shouldTrack = (
     ['pns_live_members', 'pns_live_groups', 'pns_live_dates', 'pns_live_facilitators',
@@ -11387,7 +11427,7 @@ localStorage.setItem = function(key, value) {
     || key.startsWith('pns_prog_workflow_')
     || key.startsWith('pns_prog_checklist_items_')
   );
-  if(!suspendAutoSave && shouldTrack && ACTIVE_PROGRAM_ID) {
+  if(!suspendAutoSave && valueChanged && shouldTrack && ACTIVE_PROGRAM_ID) {
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
       saveCurrentProgramData();
@@ -11405,259 +11445,86 @@ function deleteProgramEntry(id){
 }
 
 // ── PROGRAM-LEVEL BACKUP/RESTORE FUNCTIONS ─────────────────────────────────────
-function parseCsvLine(line) {
-  const out = [];
-  let cur = '';
-  let inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') {
-      if (inQ && line[i + 1] === '"') {
-        cur += '"';
-        i++;
-      } else {
-        inQ = !inQ;
-      }
-    } else if (ch === ',' && !inQ) {
-      out.push(cur.trim());
-      cur = '';
-    } else {
-      cur += ch;
-    }
-  }
-  out.push(cur.trim());
-  return out;
-}
-
-function toCsvCell(v) {
-  return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
-}
-
-function buildProgramSnapshotForCSV(progId) {
-  const key = 'pns_prog_data_' + progId;
-  let snap = {};
-  try { snap = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch { snap = {}; }
-
-  const activeProg = (ALL_PROGRAMS || []).find(p => p.id === progId);
-  const progSessions = (activeProg?.sessions || [])
-    .map(s => (typeof s === 'string' ? s : (s?.date || s?.label || '')))
-    .filter(Boolean);
-
-  const scoped = (arr) => (Array.isArray(arr) ? arr : []).filter(x => !x || !x.program_id || x.program_id === progId).map(x => ({ ...x, program_id: progId }));
-
-  return {
-    dates: Array.isArray(snap.dates) && snap.dates.length ? snap.dates : progSessions,
-    groups: scoped(snap.groups),
-    members: scoped(snap.members),
-    facilitators: scoped(snap.facilitators),
-    recordings: scoped(snap.recordings),
-    guru_q: scoped(snap.guru_q),
-    transfers: scoped(snap.transfers),
-    notes: scoped(snap.notes)
-  };
-}
-
-function exportProgramCompleteCSV(progId) {
+function exportProgramCSV(progId) {
   const prog = ALL_PROGRAMS.find(p => p.id === progId);
   if (!prog) { alert('Program not found'); return; }
-
-  const data = buildProgramSnapshotForCSV(progId);
-  const dates = Array.isArray(data.dates) ? data.dates : [];
-  const membersRows = Array.isArray(data.members) ? data.members : [];
-
-  let csv = 'PROGRAM_COMPLETE_BACKUP,' + toCsvCell(progId) + ',' + toCsvCell(prog.name || '') + ',' + new Date().toISOString() + '\n\n';
-
-  csv += '=== SESSION_DATES ===\n';
-  csv += ['SessionNumber', 'DateLabel'].map(toCsvCell).join(',') + '\n';
-  dates.forEach((d, i) => {
-    csv += [toCsvCell(i + 1), toCsvCell(d)].join(',') + '\n';
+  
+  // Get members for this program
+  const progMembers = members.filter(m => !m.program_id || m.program_id === progId);
+  if (!progMembers.length) { alert('No members in this program'); return; }
+  
+  const q = v => '"' + String(v || '').replace(/"/g, '""') + '"';
+  const hdr = ['Name','Email','Mobile','Role','Region','Language','Country','CountryCode','Facilitators','Group','RegisteredThrough','WhatsAppStatus','InitStatus','CulminationStatus','Notes','RegisteredBy',...DATES.map((d,i)=>'Session_'+(i+1))].map(q).join(',');
+  const rows = progMembers.map(m => {
+    return [m.name,m.email,m.mobile,m.role,m.region,m.language,m.country,m.country_code,m.facilitators,m.group,m.registered_through,m.whatsapp_status,m.init_status,m.culmination_status,m.notes,m.registered_by,...(m.att||[]).map(a=>a===1?'Present':a===0?'Absent':'')].map(q).join(',');
   });
-
-  csv += '\n=== GROUPS ===\n';
-  csv += ['Group', 'Facilitator', 'Region', 'Language', 'MeetLink'].map(toCsvCell).join(',') + '\n';
-  (data.groups || []).forEach(g => {
-    csv += [toCsvCell(g.group || ''), toCsvCell(g.facilitator || ''), toCsvCell(g.region || ''), toCsvCell(g.language || ''), toCsvCell(g.meet_link || '')].join(',') + '\n';
-  });
-
-  csv += '\n=== FACILITATORS ===\n';
-  csv += ['Name', 'Email', 'Mobile', 'Region', 'Language', 'Country'].map(toCsvCell).join(',') + '\n';
-  (data.facilitators || []).forEach(f => {
-    csv += [toCsvCell(f.name || ''), toCsvCell(f.email || ''), toCsvCell(f.mobile || ''), toCsvCell(f.region || ''), toCsvCell(f.language || ''), toCsvCell(f.country || '')].join(',') + '\n';
-  });
-
-  csv += '\n=== MEMBERS ===\n';
-  const memberHeader = ['Name','Email','Mobile','Role','Region','Language','Country','CountryCode','Facilitators','Group','RegisteredThrough','WhatsAppStatus','InitStatus','CulminationStatus','Notes','RegisteredBy','CreatedAt','UpdatedAt', ...dates.map((_, i) => 'Session_' + (i + 1))];
-  csv += memberHeader.map(toCsvCell).join(',') + '\n';
-  membersRows.forEach(m => {
-    const att = Array.isArray(m.att) ? m.att : [];
-    const row = [
-      m.name || '', m.email || '', m.mobile || '', m.role || '', m.region || '', m.language || '', m.country || '', m.country_code || '',
-      m.facilitators || '', m.group || '', m.registered_through || '', m.whatsapp_status || '', m.init_status || '', m.culmination_status || '',
-      m.notes || '', m.registered_by || '', m.created_at || '', m.updated_at || ''
-    ];
-    for (let i = 0; i < dates.length; i++) row.push(att[i] === 1 ? 'Present' : att[i] === 0 ? 'Absent' : '');
-    csv += row.map(toCsvCell).join(',') + '\n';
-  });
-
-  csv += '\n=== RECORDINGS ===\n';
-  csv += ['ID','Category','Title','Language','Session','Duration','YouTube_Link','Drive_Link','Description'].map(toCsvCell).join(',') + '\n';
-  (data.recordings || []).forEach(r => {
-    csv += [toCsvCell(r.id || ''), toCsvCell(r.cat || ''), toCsvCell(r.title || ''), toCsvCell(r.lang || ''), toCsvCell(r.session || ''), toCsvCell(r.duration || ''), toCsvCell(r.yt || ''), toCsvCell(r.drive || ''), toCsvCell(r.desc || '')].join(',') + '\n';
-  });
-
-  csv += '\n=== GURU_Q ===\n';
-  csv += ['Timestamp','Question','AskedBy','Group','Status','Answer'].map(toCsvCell).join(',') + '\n';
-  (data.guru_q || []).forEach(q => {
-    csv += [toCsvCell(q.ts || ''), toCsvCell(q.q || ''), toCsvCell(q.by || ''), toCsvCell(q.group || ''), toCsvCell(q.status || ''), toCsvCell(q.answer || '')].join(',') + '\n';
-  });
-
-  csv += '\n=== TRANSFERS ===\n';
-  csv += ['Timestamp','MemberName','FromGroup','ToGroup','RequestedBy','Status'].map(toCsvCell).join(',') + '\n';
-  (data.transfers || []).forEach(t => {
-    csv += [toCsvCell(t.ts || ''), toCsvCell(t.name || ''), toCsvCell(t.from || ''), toCsvCell(t.to || ''), toCsvCell(t.by || ''), toCsvCell(t.status || '')].join(',') + '\n';
-  });
-
-  csv += '\n=== NOTES ===\n';
-  csv += ['Timestamp','MemberName','Group','Note','By'].map(toCsvCell).join(',') + '\n';
-  (data.notes || []).forEach(n => {
-    csv += [toCsvCell(n.ts || ''), toCsvCell(n.name || ''), toCsvCell(n.group || ''), toCsvCell(n.note || ''), toCsvCell(n.by || '')].join(',') + '\n';
-  });
-
+  
+  const csv = [hdr,...rows].join('\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = (prog.name || 'program').replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_complete_backup_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.download = prog.name.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
-
-  localStorage.setItem('pns_ts_program_export_complete_csv', new Date().toISOString());
-  showToast('✓ Program complete CSV exported');
+  showToast('✓ Program CSV exported');
 }
 
-function importProgramCompleteCSV(progId) {
+function importProgramCSV(progId) {
   const prog = ALL_PROGRAMS.find(p => p.id === progId);
   if (!prog) { alert('Program not found'); return; }
-
+  
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.csv';
   input.onchange = e => {
     const file = e.target.files[0];
     if (!file) return;
-
-    if (!confirm('Import complete CSV for "' + (prog.name || 'Program') + '"?\n\nThis will REPLACE this program\'s stored data (members, groups, sessions, facilitators, recordings, Guru Q, transfers, notes).')) return;
-
+    
     const reader = new FileReader();
     reader.onload = event => {
       try {
-        const raw = String(event.target.result || '');
-        const lines = raw.split(/\r?\n/);
-        let section = '';
-        let skipHeader = false;
-
-        const dates = [];
-        const groups = [];
-        const facilitators = [];
-        const membersIn = [];
-        const recordingsIn = [];
-        const guruIn = [];
-        const transfersIn = [];
-        const notesIn = [];
-
-        lines.forEach((rawLine) => {
-          const line = rawLine.trim();
-          if (!line) return;
-          if (line.startsWith('PROGRAM_COMPLETE_BACKUP')) return;
-          if (line === '=== SESSION_DATES ===') { section = 'dates'; skipHeader = true; return; }
-          if (line === '=== GROUPS ===') { section = 'groups'; skipHeader = true; return; }
-          if (line === '=== FACILITATORS ===') { section = 'facilitators'; skipHeader = true; return; }
-          if (line === '=== MEMBERS ===') { section = 'members'; skipHeader = true; return; }
-          if (line === '=== RECORDINGS ===') { section = 'recordings'; skipHeader = true; return; }
-          if (line === '=== GURU_Q ===') { section = 'guru_q'; skipHeader = true; return; }
-          if (line === '=== TRANSFERS ===') { section = 'transfers'; skipHeader = true; return; }
-          if (line === '=== NOTES ===') { section = 'notes'; skipHeader = true; return; }
-          if (line.startsWith('===')) { section = ''; skipHeader = false; return; }
-          if (!section) return;
-          if (skipHeader) { skipHeader = false; return; }
-
-          const v = parseCsvLine(rawLine).map(x => String(x || '').replace(/^"|"$/g, '').trim());
-
-          if (section === 'dates') {
-            if (v[1]) dates.push(v[1]);
-          } else if (section === 'groups') {
-            if (!v[0]) return;
-            groups.push({ group: v[0], facilitator: v[1] || '', region: v[2] || '', language: v[3] || '', meet_link: v[4] || '', program_id: progId });
-          } else if (section === 'facilitators') {
-            if (!v[0]) return;
-            facilitators.push({ name: v[0], email: v[1] || '', mobile: v[2] || '', region: v[3] || '', language: v[4] || '', country: v[5] || '', program_id: progId });
-          } else if (section === 'members') {
-            if (!v[0]) return;
-            const att = [];
-            for (let i = 18; i < v.length; i++) {
-              const s = (v[i] || '').toLowerCase();
-              att.push(s === 'present' ? 1 : s === 'absent' ? 0 : -1);
-            }
-            while (att.length < dates.length) att.push(-1);
-            membersIn.push({
-              idx: membersIn.length,
-              name: v[0], email: v[1] || '', mobile: v[2] || '', role: v[3] || 'Sadhak', region: v[4] || '', language: v[5] || '', country: v[6] || '', country_code: v[7] || '',
-              facilitators: v[8] || '', group: v[9] || '', registered_through: v[10] || '', whatsapp_status: v[11] || '', init_status: v[12] || '', culmination_status: v[13] || '',
-              notes: v[14] || '', registered_by: v[15] || '', created_at: v[16] || new Date().toISOString(), updated_at: v[17] || '', program_id: progId, att
-            });
-          } else if (section === 'recordings') {
-            if (!v[2]) return;
-            recordingsIn.push({ id: parseInt(v[0], 10) || Date.now() + recordingsIn.length, cat: v[1] || '', title: v[2] || '', lang: v[3] || '', session: v[4] || '', duration: v[5] || '', yt: v[6] || '', drive: v[7] || '', desc: v[8] || '', shownLog: [], program_id: progId });
-          } else if (section === 'guru_q') {
-            if (!v[1]) return;
-            guruIn.push({ ts: v[0] || new Date().toISOString(), q: v[1] || '', by: v[2] || '', group: v[3] || '', status: v[4] || 'Pending', answer: v[5] || '', program_id: progId });
-          } else if (section === 'transfers') {
-            if (!v[1]) return;
-            transfersIn.push({ ts: v[0] || new Date().toISOString(), name: v[1] || '', from: v[2] || '', to: v[3] || '', by: v[4] || '', status: v[5] || 'Pending', program_id: progId });
-          } else if (section === 'notes') {
-            if (!v[1] && !v[3]) return;
-            notesIn.push({ ts: v[0] || new Date().toISOString(), name: v[1] || '', group: v[2] || '', note: v[3] || '', by: v[4] || '', program_id: progId });
-          }
-        });
-
-        const snapshot = {
-          dates,
-          groups,
-          members: membersIn,
-          facilitators,
-          recordings: recordingsIn,
-          guru_q: guruIn,
-          transfers: transfersIn,
-          notes: notesIn
-        };
-
-        localStorage.setItem('pns_prog_data_' + progId, JSON.stringify(snapshot));
-
-        const progIndex = ALL_PROGRAMS.findIndex(p => p.id === progId);
-        if (progIndex >= 0) {
-          ALL_PROGRAMS[progIndex].sessions = dates.slice();
-          ALL_PROGRAMS[progIndex].meta = {
-            ...(ALL_PROGRAMS[progIndex].meta || {}),
-            member_count: membersIn.length,
-            session_count: dates.length
+        const csv = event.target.result;
+        const lines = csv.trim().split('\n');
+        const headers = lines[0].split(',');
+        
+        let imported = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const values = lines[i].match(/"([^"]*)"|([^,]+)/g).map(v => v.replace(/^"|"$/g, ''));
+          if (values.length < 4) continue;
+          
+          const member = {
+            idx: members.length,
+            name: values[0],
+            email: values[1],
+            mobile: values[2],
+            role: values[3],
+            region: values[4] || '',
+            language: values[5] || '',
+            country: values[6] || '',
+            country_code: values[7] || '',
+            facilitators: values[8] || '',
+            group: values[9] || '',
+            registered_through: values[10] || '',
+            whatsapp_status: values[11] || '',
+            init_status: values[12] || '',
+            culmination_status: values[13] || '',
+            notes: values[14] || '',
+            registered_by: values[15] || '',
+            program_id: progId,
+            created_at: new Date().toISOString(),
+            att: new Array(DATES.length).fill(-1)
           };
-          ALL_PROGRAMS[progIndex].updated_at = new Date().toISOString();
-          localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
+          
+          members.push(member);
+          imported++;
         }
-
-        if (ACTIVE_PROGRAM_ID === progId) {
-          loadProgramData(progId);
-          renderOverview();
-          renderMembersDisplay();
-          initGroups();
-          if(document.getElementById('s-attendance')?.classList.contains('active')) initAttendance();
-          if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
-          if(document.getElementById('s-gurudev')?.classList.contains('active')) initGurudev();
-          if(document.getElementById('s-admin')?.classList.contains('active')) initAdmin();
-        }
-
-        renderProgramsList();
-        localStorage.setItem('pns_ts_program_import_complete_csv', new Date().toISOString());
-        showToast('✓ Program complete CSV imported');
+        
+        localStorage.setItem('pns_live_members', JSON.stringify(members));
+        renderOverview();
+        renderMembersDisplay();
+        initGroups();
+        
+        showToast(`✓ Imported ${imported} members to program`);
       } catch (err) {
-        alert('Error importing complete CSV: ' + err.message);
+        alert('Error importing CSV: ' + err.message);
       }
     };
     reader.readAsText(file);
@@ -11731,19 +11598,6 @@ function restoreProgramJSON(progId) {
         if (backup.dates && Array.isArray(backup.dates)) {
           DATES = backup.dates;
         }
-
-        // Restore recordings (tag all with program_id)
-        if (backup.recordings && Array.isArray(backup.recordings)) {
-          const existing = JSON.parse(localStorage.getItem('pns_recordings') || '[]');
-          const incoming = backup.recordings.map(r => ({ ...r, program_id: progId }));
-          incoming.forEach(nr => {
-            const idx = existing.findIndex(r => r.id === nr.id || ((r.title||'').toLowerCase() === (nr.title||'').toLowerCase()));
-            if (idx >= 0) existing[idx] = nr;
-            else existing.push(nr);
-          });
-          recordings = existing;
-          localStorage.setItem('pns_recordings', JSON.stringify(existing));
-        }
         
         localStorage.setItem('pns_live_members', JSON.stringify(members));
         localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
@@ -11752,10 +11606,8 @@ function restoreProgramJSON(progId) {
         renderOverview();
         renderMembersDisplay();
         initGroups();
-        if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
         
-        const recCount = backup.recordings?.length || 0;
-        showToast(`✓ Program restored with ${backup.members?.length || 0} members${recCount ? ' · ' + recCount + ' recordings' : ''}`);
+        showToast(`✓ Program restored with ${backup.members?.length || 0} members`);
       } catch (err) {
         alert('Error restoring backup: ' + err.message);
       }
@@ -11791,56 +11643,25 @@ function resetProgram(progId) {
     if (confirmed !== null) showToast('⚠️ Deletion cancelled - name did not match');
     return;
   }
-
-  clearTimeout(saveTimeout);
-  suspendAutoSave = true;
-
-  // Remove complete snapshot for this program (members, groups, dates, recordings, Q&A, transfers, notes).
-  localStorage.removeItem('pns_prog_data_' + progId);
-
-  // Reset metadata for this program.
-  prog.sessions = [];
-  prog.meta = { ...(prog.meta || {}), member_count: 0, session_count: 0 };
-  prog.updated_at = new Date().toISOString();
-  localStorage.setItem('pns_all_programs', JSON.stringify(ALL_PROGRAMS));
-
-  // If this is active program, clear in-memory and visible local state immediately.
-  if (ACTIVE_PROGRAM_ID === progId) {
-    members = [];
-    GROUPS = [];
-    DATES = [];
-    FACILITATORS.length = 0;
-    recordings = [];
-    guruQuestions = [];
-    transferLog = [];
-    notesLog = [];
-
-    localStorage.setItem('pns_live_members', JSON.stringify(members));
-    localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
-    localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
-    localStorage.setItem('pns_live_facilitators', JSON.stringify(FACILITATORS));
-    localStorage.setItem('pns_recordings', JSON.stringify(recordings));
-    localStorage.setItem('pns_guru_q', JSON.stringify(guruQuestions));
-    localStorage.setItem('pns_transfers', JSON.stringify(transferLog));
-    localStorage.setItem('pns_notes', JSON.stringify(notesLog));
-
-    renderOverview();
-    renderMembersDisplay();
-    initGroups();
-    if(document.getElementById('s-attendance')?.classList.contains('active')) initAttendance();
-    if(document.getElementById('s-recordings')?.classList.contains('active')) initRecordings();
-    if(document.getElementById('s-gurudev')?.classList.contains('active')) initGurudev();
-    if(document.getElementById('s-admin')?.classList.contains('active')) initAdmin();
-  }
-
-  suspendAutoSave = false;
-
-  if (ACTIVE_PROGRAM_ID === progId) {
-    saveCurrentProgramData();
-  }
-
-  renderProgramsList();
-  showToast('✓ Program data fully reset');
+  
+  // Delete all members for this program
+  members = members.filter(m => m.program_id && m.program_id !== progId);
+  
+  // Clear groups and sessions
+  GROUPS = [];
+  DATES = [];
+  
+  // Update localStorage
+  localStorage.setItem('pns_live_members', JSON.stringify(members));
+  localStorage.setItem('pns_live_groups', JSON.stringify(GROUPS));
+  localStorage.setItem('pns_live_dates', JSON.stringify(DATES));
+  
+  // Update UI
+  renderOverview();
+  renderMembersDisplay();
+  initGroups();
+  
+  showToast('✓ Program data reset - all members deleted');
 }
 
 // ── DROPDOWN MENU TOGGLE ────────────────────────────────────────
@@ -12508,6 +12329,7 @@ checkFirstLaunch();
 startAutoBackupScheduler();
 initCloudSync();
 </script>
+
 <!-- CLOUD LOGIN MODAL -->
 <div class="modal-overlay" id="cloud-login-modal">
   <div class="modal" style="max-width:400px">
@@ -12521,7 +12343,7 @@ initCloudSync();
     </div>
     <div class="form-row">
       <label>Password</label>
-      <input type="password" id="cloud-login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginToCloud()">
+      <input type="password" id="cloud-login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginToCloud()">
     </div>
     <div id="cloud-login-error" style="font-size:12px;color:var(--rudra);margin:6px 0 10px;min-height:16px"></div>
     <div class="modal-footer">

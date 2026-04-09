@@ -3,6 +3,17 @@
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
+  const STATE_STORE_MISSING_MESSAGE = 'Realtime DB state store is not installed in Supabase. Run supabase/sql/007_realtime_state_store.sql or the full supabase/sql/000_run_all_setup.sql migration, then retry.';
+
+  const isMissingStateStoreError = (message) => {
+    const text = String(message || '').toLowerCase();
+    return text.includes("dashboard_state_entries") && (
+      text.includes('could not find the table')
+      || text.includes('schema cache')
+      || text.includes('relation')
+    );
+  };
+
   const authHeader = req.headers['authorization'] || '';
   const accessToken = authHeader.replace(/^Bearer\s+/i, '').trim();
   if (!accessToken) return res.status(401).json({ error: 'Authentication required.' });
@@ -25,7 +36,7 @@ module.exports = async function handler(req, res) {
     if (!r.ok) {
       const msg = data.message || data.error_description || data.error || 'State API request failed.';
       const err = new Error(msg);
-      err.status = r.status;
+      err.status = isMissingStateStoreError(msg) ? 503 : r.status;
       throw err;
     }
     return data;
@@ -89,6 +100,9 @@ module.exports = async function handler(req, res) {
       if (!r.ok) {
         const data = await r.json().catch(() => ({}));
         const msg = data.message || data.error_description || data.error || 'State upsert failed.';
+        if (isMissingStateStoreError(msg)) {
+          return res.status(503).json({ error: STATE_STORE_MISSING_MESSAGE, code: 'missing_state_store' });
+        }
         return res.status(r.status).json({ error: msg });
       }
 
@@ -97,6 +111,9 @@ module.exports = async function handler(req, res) {
 
     return res.status(405).json({ error: 'Method not allowed.' });
   } catch (e) {
+    if (isMissingStateStoreError(e.message)) {
+      return res.status(503).json({ error: STATE_STORE_MISSING_MESSAGE, code: 'missing_state_store' });
+    }
     return res.status(e.status || 502).json({ error: e.message || 'State API server error.' });
   }
 };

@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saadho Bodhashala Dashboard | Sri Anish</title>
-*{box-sizing:border-box;margin:0;padding:0}
-/* ── TOPBAR ── */
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Nunito:wght@300;400;600;700&display=swap');
 
 :root {
   --saffron:     #E8873A;
@@ -60,16 +59,11 @@ body.dark-mode {
 body.dark-mode[data-dark-preset="blue"] {
   --dm-bg: #0D1420;
   --dm-bg-alt: #111B2A;
-    font-family:'Plus Jakarta Sans', 'DM Sans', sans-serif;
-    background: #F2EEFF;
-    background-image: radial-gradient(ellipse 80% 60% at 70% -5%, rgba(122,85,192,0.07), transparent 55%),
-                      radial-gradient(ellipse 50% 40% at 5% 90%, rgba(232,135,58,0.05), transparent 50%);
-    color: var(--text-main);
-    font-size: 13.5px;
-    line-height: 1.6;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  --dm-surface: #152235;
+  --dm-card: #1B2A40;
+  --dm-elev: #223552;
+  --dm-text: #E6EEF8;
+  --dm-text-soft: #B7C6DA;
   --dm-text-mute: #8FA4C0;
   --dm-border: rgba(143,164,192,0.28);
   --dm-glow: rgba(122,158,78,0.14);
@@ -107,12 +101,158 @@ body.dark-mode[data-dark-preset="dusk"] {
   --dm-accent-text: #ffd7b3;
 }
 
-/* ...existing code... */
-</style>
-</style>
-</style>
-</style>
-</style>
+body.dark-mode .card,
+body.dark-mode .topbar,
+body.dark-mode .nav-wrap {
+  background-color: var(--dm-surface);
+  color: var(--dm-text);
+}
+
+body.dark-mode .card {
+  border-color: var(--dm-border);
+  background: var(--dm-card);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+}
+
+body.dark-mode .topbar {
+  background: linear-gradient(135deg, #142033 0%, #1A2940 100%);
+  border-bottom: 1px solid rgba(143,164,192,0.35);
+}
+
+body.dark-mode .nav-wrap {
+  border-right: 1px solid var(--dm-border);
+}
+
+body.dark-mode .nav-btn {
+  color: var(--dm-text-soft);
+}
+
+body.dark-mode .nav-btn:hover,
+body.dark-mode .nav-btn.active {
+  background: rgba(var(--dm-accent-rgb),0.14);
+  color: var(--dm-text);
+}
+
+body.dark-mode .section-title,
+body.dark-mode h2,
+body.dark-mode h3 {
+  color: var(--dm-text);
+}
+
+body.dark-mode .empty-state,
+body.dark-mode .muted,
+body.dark-mode .subtext {
+  color: var(--dm-text-mute);
+}
+
+body.dark-mode table tr,
+body.dark-mode td,
+body.dark-mode th {
+  background: transparent;
+  color: var(--dm-text);
+  border-color: var(--dm-border);
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: var(--dm-elev);
+  border-color: var(--dm-border);
+  color: var(--dm-text);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--dm-text-mute);
+}
+
+body.dark-mode .btn-outline {
+  border-color: rgba(143,164,192,0.42);
+  color: var(--dm-text-soft);
+  background: transparent;
+}
+
+body.dark-mode .btn-outline:hover {
+  background: rgba(var(--dm-accent-rgb),0.12);
+  color: var(--dm-text);
+}
+
+body.dark-mode .modal,
+body.dark-mode .modal-content {
+  background: var(--dm-card);
+  border-color: var(--dm-border);
+}
+
+body.dark-mode .notif-bell,
+body.dark-mode .theme-toggle {
+  border-color: rgba(143,164,192,0.35);
+  background: rgba(20,32,51,0.7);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body {
+  font-family:'Nunito',sans-serif;
+  background: #F7F3FF;
+  color: var(--text-main);
+  font-size:14px;
+  min-height:100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: linear-gradient(135deg, var(--shiva-deep) 0%, var(--shiva-mid) 100%);
+  border-bottom: 1px solid rgba(184,147,74,0.4);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 60px;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.om-symbol {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--saffron) 0%, var(--trishul) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Crimson Pro', serif;
+  font-size: 22px;
+  color: #fff;
+  font-weight: 600;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.brand-text h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.brand-text p {
+  font-size: 10px;
+  color: var(--trishul);
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  letter-spacing: 0.3px;
+}
+
+/* ── PROGRAM BANNER ── */
+.program-banner {
   background: linear-gradient(135deg, rgba(232, 135, 58, 0.12) 0%, rgba(122, 158, 78, 0.08) 50%, rgba(122, 85, 192, 0.08) 100%);
   border-bottom: 3px solid;
   border-image: linear-gradient(90deg, var(--saffron), var(--bilva)) 1;
@@ -407,7 +547,7 @@ body.dark-mode .dark-preset-select option {
   white-space: nowrap;
   position: relative;
 }
-.nav-btn:hover { color: rgba(255,255,255,0.82); }
+.nav-btn:hover { color: rgba(255,255,255,0.85); }
 .nav-btn.active {
   color: var(--saffron);
   border-bottom-color: var(--saffron);
@@ -432,12 +572,12 @@ body.dark-mode .dark-preset-select option {
 
 /* ── CONTENT ── */
 .content {
-  padding: 10px 16px;
-  color: rgba(255,255,255,0.55);
-  font-family: 'Nunito', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
 
 .section { display: none; }
 .section.active { display: block; }
@@ -446,11 +586,12 @@ body.dark-mode .dark-preset-select option {
 .card {
   background: var(--card-bg);
   border-radius: 12px;
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
 .card-header {
   font-family: 'Cinzel', serif;
   font-size: 12px;
@@ -483,8 +624,8 @@ body.dark-mode .dark-preset-select option {
 .stat-card {
   background: var(--card-bg);
   border-radius: 12px;
-  padding: 22px 24px;
-  max-width: 1420px;
+  padding: 16px;
+  border: 1px solid var(--border);
   box-shadow: var(--shadow);
   text-align: center;
   position: relative;
@@ -1898,10 +2039,10 @@ body.dark-mode .program-comparison-table td {
   position: relative;
   margin-bottom: 20px;
   padding: 12px;
-  background: rgba(255,255,255,0.97);
-  border-radius: 14px;
-  padding: 18px 20px;
-  border: 1px solid rgba(122,85,192,0.11);
+  background: var(--card-bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--saffron);
+}
 
 .timeline-item::before {
   content: '';
