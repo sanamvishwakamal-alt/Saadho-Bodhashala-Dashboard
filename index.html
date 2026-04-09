@@ -878,6 +878,36 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 
 #admin-admin-tabs.admin-subtabs .tab-pill {
   background: rgba(255,255,255,0.92);
+  color: var(--text-soft);
+  opacity: 1;
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill[disabled],
+#admin-admin-tabs.admin-subtabs .tab-pill:disabled {
+  background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft));
+  color: #fff !important;
+  opacity: 1 !important;
+  border-color: transparent;
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill:hover:not(.active):not([disabled]) {
+  background: rgba(74,43,138,0.13);
+  color: var(--shiva-mid);
+  border-color: rgba(122,85,192,0.35);
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill:hover[disabled],
+#admin-admin-tabs.admin-subtabs .tab-pill:disabled:hover {
+  background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft));
+  color: #fff !important;
+  opacity: 1 !important;
+  border-color: transparent;
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill:hover:not(.active) {
+  background: rgba(74,43,138,0.13); /* Match blue hover of main admin tabs */
+  color: var(--shiva-mid);
+  border-color: rgba(122,85,192,0.35);
 }
 
 /* ── PAGINATION ── */
@@ -2942,6 +2972,26 @@ body.edit-mode .nav-wrap { top: 108px; }
       <span id="prog-pill-name" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Programs</span>
       <span style="opacity:.6">&#9662;</span>
     </div>
+    <div id="admin-selector-pill" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(74,43,138,0.3);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:11px;color:#fff;font-weight:600;margin-left:8px" onclick="showSection('admin')">
+      <span style="width:7px;height:7px;border-radius:50%;background:#7B55C0;flex-shrink:0;display:inline-block"></span>
+      <span id="admin-pill-name" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Admin</span>
+    </div>
+
+<script>
+// Show admin-only elements if user is admin
+function updateAdminMode() {
+  var role = document.getElementById('role-display')?.value;
+  if (role === 'admin') {
+    document.body.classList.add('admin-mode');
+    document.getElementById('admin-selector-pill').style.display = 'flex';
+  } else {
+    document.body.classList.remove('admin-mode');
+    document.getElementById('admin-selector-pill').style.display = 'none';
+  }
+}
+document.getElementById('role-display')?.addEventListener('change', updateAdminMode);
+window.addEventListener('DOMContentLoaded', updateAdminMode);
+</script>
     <div id="topbar-db-sync" style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:18px;background:rgba(255,255,255,0.09);border:1px solid rgba(184,147,74,0.28);color:#fff;max-width:340px">
       <div style="display:flex;flex-direction:column;gap:1px;min-width:0;flex:1">
         <span id="topbar-db-sync-state" style="font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">DB Sync: Waiting for sign-in</span>
