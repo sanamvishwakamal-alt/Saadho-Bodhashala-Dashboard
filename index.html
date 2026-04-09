@@ -6,36 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saadho Bodhashala Dashboard | Sri Anish</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
 <style>
 
 :root {
-  --saffron:     #E8873A;
-  --saffron-dk:  #C4621A;
-  --saffron-lt:  #FFF0E0;
-  --bilva:       #7A9E4E;
-  --bilva-lt:    #EBF3DF;
-  --rudra:       #C0392B;
-  --rudra-lt:    #FDECEA;
-  --shiva-deep:  #1A0A2E;
-  --shiva-mid:   #2E1760;
-  --shiva-soft:  #4A2B8A;
-  --shiva-mist:  #7B55C0;
-  --moon:        #F5F0FF;
-  --moon-dk:     #E8DFFF;
-  --ganga:       #D4E8F8;
-  --trishul:     #B8934A;
-  --trishul-lt:  #FBF3E3;
-  --ash:         #F0EDE8;
-  --ash-dk:      #D8D2C8;
-  --text-main:   #1A0A2E;
-  --text-soft:   #5A4A7A;
-  --text-mute:   #9A8ABB;
-  --white:       #FFFFFF;
-  --card-bg:     #FFFFFF;
-  --border:      rgba(122,85,192,0.15);
-  --border-med:  rgba(122,85,192,0.3);
-  --shadow:      0 2px 12px rgba(26,10,46,0.08);
+  --primary:     #6C47FF;
+  --primary-light: #F3F1FF;
+  --accent:      #FFB347;
+  --accent-light: #FFF7E6;
+  --success:     #4BB543;
+  --danger:      #E74C3C;
+  --gray-bg:     #F7F8FA;
+  --gray-card:   #FFFFFF;
+  --gray-border: #E0E3EB;
+  --gray-text:   #3A3A3A;
+  --gray-soft:   #7A7A8C;
+  --gray-mute:   #B0B0C3;
+  --shadow:      0 2px 12px rgba(108,71,255,0.08);
   
   /* Dark mode colors (softer + calmer) */
   --dm-bg:       #0D1420;
@@ -193,13 +180,11 @@ body.dark-mode .theme-toggle {
 *{box-sizing:border-box;margin:0;padding:0}
 
 body {
-  font-family:'Plus Jakarta Sans', 'DM Sans', sans-serif;
-  background: #F2EEFF;
-  background-image: radial-gradient(ellipse 80% 60% at 70% -5%, rgba(122,85,192,0.07), transparent 55%),
-                    radial-gradient(ellipse 50% 40% at 5% 90%, rgba(232,135,58,0.05), transparent 50%);
-  color: var(--text-main);
-  font-size: 13.5px;
-  line-height: 1.6;
+  font-family: 'Inter', Arial, sans-serif;
+  background: var(--gray-bg);
+  color: var(--gray-text);
+  font-size: 15px;
+  line-height: 1.7;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -543,25 +528,25 @@ body.dark-mode .dark-preset-select option {
 .nav-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 11px 15px;
+  gap: 7px;
+  padding: 12px 18px;
   background: transparent;
   border: none;
-  color: rgba(255,255,255,0.48);
+  color: var(--gray-soft);
   cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 11.5px;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.25px;
-  border-bottom: 2px solid transparent;
+  letter-spacing: 0.2px;
+  border-bottom: 2.5px solid transparent;
   transition: all 0.2s;
   white-space: nowrap;
   position: relative;
 }
 .nav-btn:hover { color: rgba(255,255,255,0.82); }
 .nav-btn.active {
-  color: var(--saffron);
-  border-bottom-color: var(--saffron);
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
 .nav-btn .nav-icon { font-size: 14px; }
 .nav-badge {
@@ -595,29 +580,34 @@ body.dark-mode .dark-preset-select option {
 
 /* ── CARDS ── */
 .card {
-  background: rgba(255,255,255,0.97);
-  border-radius: 14px;
-  padding: 18px 20px;
-  border: 1px solid rgba(122,85,192,0.11);
-  margin-bottom: 18px;
-  box-shadow: 0 1px 3px rgba(26,10,46,0.04), 0 4px 16px rgba(26,10,46,0.06);
-  transition: box-shadow 0.2s;
+  background: var(--gray-card);
+  border-radius: 18px;
+  padding: 24px 28px;
+  border: 1px solid var(--gray-border);
+  margin-bottom: 22px;
+  box-shadow: 0 2px 12px rgba(108,71,255,0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+  font-family: 'Inter', Arial, sans-serif;
+}
+.card:hover {
+  box-shadow: 0 8px 32px rgba(108,71,255,0.10);
+  transform: translateY(-2px) scale(1.01);
 }
 .card:hover { box-shadow: 0 2px 6px rgba(26,10,46,0.06), 0 8px 24px rgba(26,10,46,0.09); }
 
 .card-header {
   font-family: 'Cinzel', serif;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--shiva-soft);
-  letter-spacing: 1px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 1.2px;
   text-transform: uppercase;
-  margin-bottom: 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(122,85,192,0.1);
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--primary-light);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 .card-header .ch-icon { color: var(--saffron); }
 
@@ -721,32 +711,33 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 
 /* ── BUTTONS ── */
 .btn {
-  padding: 7.5px 18px;
-  border-radius: 9px;
-  border: 1px solid var(--shiva-mid);
-  background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft));
-  color: #fff;
-  cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 12px;
+  font-family: 'Inter', Arial, sans-serif;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.2px;
-  transition: all 0.18s ease;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(108,71,255,0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
 }
-.btn:hover { background: linear-gradient(135deg, var(--shiva-soft), var(--shiva-mist)); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,43,138,0.28); }
+
+.btn:hover, .btn-saffron:hover {
+  background: #5633d7;
+  box-shadow: 0 6px 24px rgba(108,71,255,0.13);
+  transform: translateY(-1px) scale(1.01);
+}
 .btn-outline {
-  background: rgba(255,255,255,0.95);
-  border: 1.5px solid rgba(74,43,138,0.35);
-  color: var(--shiva-soft);
+  background: #fff;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
 }
-.btn-outline:hover { background: rgba(74,43,138,0.05); transform: none; box-shadow: none; }
-.btn-sm { padding: 5px 12px; font-size: 11px; }
-.btn-saffron { background: linear-gradient(135deg, var(--saffron-dk), var(--saffron)); border-color: var(--saffron-dk); }
-.btn-saffron:hover { background: linear-gradient(135deg, var(--saffron), #f09a50); }
-.btn-danger { background: linear-gradient(135deg, #a32020, var(--rudra)); border-color: #a32020; }
-.btn-danger:hover { background: linear-gradient(135deg, var(--rudra), #e05050); }
-.btn-success { background: linear-gradient(135deg, #1a6e3c, #27a75a); border-color: #1a6e3c; }
-.btn-success:hover { background: linear-gradient(135deg, #27a75a, #40c070); }
+.btn-outline:hover {
+  background: var(--primary-light);
+  color: #5633d7;
+}
 
 /* ── FORMS ── */
 .form-row { margin-bottom: 14px; }
@@ -9575,6 +9566,9 @@ function updateAutoBackupFreq(){const cfg=getAutoBackupConfig();cfg.frequency=do
 function updateAutoBackupTime(){const cfg=getAutoBackupConfig();cfg.time=document.getElementById('ab-time').value;saveAutoBackupConfig(cfg);startAutoBackupScheduler();}
 
 // ── FAQ & GUIDELINES ADMIN CRUD ───────────────────────────────────────────
+
+// Fix: Declare autoBackupTimer in the correct scope
+let autoBackupTimer = null;
 function openAddFAQModal(idx){const faqs=JSON.parse(localStorage.getItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID)||'null')||getActiveFAQs();const f=idx!==undefined?faqs[idx]:null;const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;background:rgba(26,10,46,0.65);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)';ov.innerHTML='<div style="background:#fff;border-radius:14px;padding:24px;width:90%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,10,46,0.35)"><h2 style="font-family:Cinzel,serif;font-size:15px;color:var(--shiva-mid);margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:8px">'+(f?'Edit':'Add')+' FAQ</h2><div class="form-row"><label>Language</label><select id="faq-e-lang"><option value="en" '+((!f||f.lang==="en")?'selected':'')+'>English</option><option value="hi" '+(f&&f.lang==="hi"?'selected':'')+'>Hindi</option></select></div><div class="form-row"><label>Question *</label><input type="text" id="faq-e-q" value="'+(f?f.q.replace(/"/g,"&quot;"):'')+'" placeholder="Question…"></div><div class="form-row"><label>Answer *</label><textarea id="faq-e-a" style="height:120px">'+(f?f.a:'')+'</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button onclick="this.closest(\'[style*=z-index]\').remove()" class="btn btn-outline">Cancel</button><button onclick="saveFAQEdit('+(idx!==undefined?idx:-1)+')" class="btn btn-saffron">Save</button></div></div>';document.body.appendChild(ov);ov.addEventListener('click',e=>{if(e.target===ov)ov.remove();});}
 function saveFAQEdit(idx){const q=document.getElementById('faq-e-q').value.trim(),a=document.getElementById('faq-e-a').value.trim(),lang=document.getElementById('faq-e-lang').value;if(!q||!a){alert('Question and Answer required.');return;}let faqs=JSON.parse(localStorage.getItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID)||'null')||getActiveFAQs();if(idx>=0)faqs[idx]={...faqs[idx],q,a,lang};else faqs.push({q,a,lang});localStorage.setItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID,JSON.stringify(faqs));document.querySelectorAll('[style*="z-index: 9999"],[style*="z-index:9999"]').forEach(el=>el.remove());saveCurrentProgramData();filterFAQ();}
 function deleteFAQ(idx){if(!confirm('Delete this FAQ? This cannot be undone.'))return;let faqs=JSON.parse(localStorage.getItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID)||'null')||getActiveFAQs();faqs.splice(idx,1);localStorage.setItem('pns_prog_faqs_'+ACTIVE_PROGRAM_ID,JSON.stringify(faqs));saveCurrentProgramData();filterFAQ();}
