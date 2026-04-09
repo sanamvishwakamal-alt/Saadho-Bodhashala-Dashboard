@@ -23,6 +23,23 @@ module.exports = async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
+      // Optional list mode for admin/debug UI.
+      const listMode = String(req.query.list || '').trim() === '1';
+      if (listMode) {
+        const limitRaw = parseInt(String(req.query.limit || '20'), 10);
+        const limit = Number.isFinite(limitRaw) ? Math.max(1, Math.min(limitRaw, 100)) : 20;
+        const r = await fetch(
+          `${supabaseUrl}/rest/v1/dashboard_snapshots?select=program_id,project_name,updated_at,created_at&order=updated_at.desc&limit=${limit}`,
+          { headers }
+        );
+        const data = await r.json().catch(() => []);
+        if (!r.ok) {
+          const msg = (data && (data.message || data.error_description || data.error)) || 'Snapshot list fetch failed.';
+          return res.status(r.status).json({ error: msg });
+        }
+        return res.status(200).json({ rows: Array.isArray(data) ? data : [] });
+      }
+
       // Read snapshot for program_id. If not found, fall back to latest snapshot user can access.
       const programId = (req.query.program_id || '').trim();
 
