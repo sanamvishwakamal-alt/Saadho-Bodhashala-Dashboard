@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saadho Bodhashala Dashboard | Sri Anish</title>
+<title>Saadho Bodhashala | Sri Anish</title>
 <style>
 
 
@@ -523,6 +523,20 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
   color: var(--shiva-soft);
 }
 .btn-outline:hover { background: rgba(74,43,138,0.05); transform: none; box-shadow: none; }
+
+/* Sign In button in topbar — override btn-outline to match dark topbar style */
+#topbar-cloud-signin-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  color: #fff;
+  border-radius: 20px;
+}
+#topbar-cloud-signin-btn:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.55);
+  transform: none;
+  box-shadow: none;
+}
 .btn-sm { padding: 5px 12px; font-size: 11px; }
 .btn-saffron { background: linear-gradient(135deg, var(--saffron-dk), var(--saffron)); border-color: var(--saffron-dk); }
 .btn-saffron:hover { background: linear-gradient(135deg, var(--saffron), #f09a50); }
@@ -662,6 +676,14 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 
 #admin-admin-tabs.admin-subtabs .tab-pill {
   background: rgba(255,255,255,0.92);
+  color: var(--shiva-mid);
+}
+
+#admin-admin-tabs.admin-subtabs .tab-pill.active {
+  background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 3px 10px rgba(74,43,138,0.25);
 }
 
 /* ── PAGINATION ── */
@@ -962,6 +984,13 @@ canvas { width: 100% !important; }
     text-align: left;
     border-radius: 10px;
     padding: 8px 12px;
+    color: var(--shiva-mid);
+  }
+
+  #admin-admin-tabs.admin-subtabs .tab-pill.active {
+    background: linear-gradient(135deg, var(--shiva-mid), var(--shiva-soft));
+    color: #fff;
+    border-color: transparent;
   }
 
   .topbar {
@@ -2660,8 +2689,8 @@ body.edit-mode .nav-wrap { top: 108px; }
   <div class="topbar-brand">
     <div class="om-symbol">ॐ</div>
     <div class="brand-text">
-      <h1 id="brand-h1">Saadho Bodhashala Dashboard</h1>
-      <p id="brand-sub">ॐ नमः शिवाय · Gurudev Sri Anish · Facilitator Dashboard</p>
+      <h1 id="brand-h1">Saadho Bodhashala</h1>
+      <p id="brand-sub">ॐ नमः शिवाय · Gurudev Sri Anish</p>
     </div>
   </div>
   <div class="topbar-right">
@@ -2711,6 +2740,7 @@ body.edit-mode .nav-wrap { top: 108px; }
   </button>
   <button class="nav-btn" onclick="showSection('changes')"><span class="nav-icon">⇄</span> Group Changes</button>
   <button class="nav-btn admin-only" id="programs-nav-btn" onclick="showSection('programs')" style="display:none"><span class="nav-icon">&#10041;</span> Programs</button>
+  <button class="nav-btn admin-only" id="admintask-nav-btn" onclick="showSection('admintask')" style="display:none"><span class="nav-icon">&#9881;</span> Admin Task</button>
 </div>
 
 <!-- PROGRAM BANNER -->
@@ -3091,23 +3121,33 @@ body.edit-mode .nav-wrap { top: 108px; }
     </div>
   </div>
   <div class="tab-pills" id="admin-tabs">
-    <button class="tab-pill" data-admin-tab="admin" onclick="showAdminTab('admin',this)">Admin</button>
-    <button class="tab-pill active" onclick="showAdminTab('transfers',this)">Transfer Requests <span id="transfer-count-badge" class="nav-badge" style="display:inline-block;background:var(--rudra)">0</span></button>
+    <button class="tab-pill active" onclick="showAdminTab('transfers',this)">Transfer Requests <span id="transfer-count-badge" class="nav-badge" style="display:none;background:var(--rudra)">0</span></button>
     <button class="tab-pill" onclick="showAdminTab('tasks',this)">All Tasks</button>
-    <button class="tab-pill" onclick="showAdminTab('guru-q',this)">Gurudev Questions <span id="guru-count-badge" class="nav-badge" style="display:inline-block;background:var(--shiva-soft)">0</span></button>
+    <button class="tab-pill" onclick="showAdminTab('guru-q',this)">Gurudev Questions <span id="guru-count-badge" class="nav-badge" style="display:inline-block;background:var(--shiva-soft)">1</span></button>
     <button class="tab-pill" onclick="showAdminTab('notes',this)">Special Notes</button>
   </div>
-  <div id="admin-admin" class="admin-group-wrap" style="display:none">
+  <div id="admin-transfers"></div>
+  <div id="admin-tasks" style="display:none"></div>
+  <div id="admin-guru-q" style="display:none"></div>
+  <div id="admin-notes" style="display:none"></div>
+</div>
+
+<!-- ADMIN TASK -->
+<div class="section" id="s-admintask">
+  <div class="admin-panel-banner">
+    <div class="apb-icon">&#9881;</div>
+    <div>
+      <h3>Admin Task</h3>
+      <p>Manage users, access levels, backup &amp; restore, and system settings.</p>
+    </div>
+  </div>
+  <div id="admin-admin" class="admin-group-wrap">
     <div class="tab-pills admin-subtabs" id="admin-admin-tabs">
       <button class="tab-pill active" data-admin-subtab="users" onclick="showAdminSubTab('users',this)">Users &amp; Access</button>
       <button class="tab-pill" data-admin-subtab="settings" onclick="showAdminSubTab('settings',this)">⚙ Settings &amp; Backup</button>
     </div>
   </div>
-  <div id="admin-users" style="display:none"></div>
-  <div id="admin-transfers"></div>
-  <div id="admin-tasks" style="display:none"></div>
-  <div id="admin-guru-q" style="display:none"></div>
-  <div id="admin-notes" style="display:none"></div>
+  <div id="admin-users"></div>
   <div id="admin-settings" style="display:none">
     <div class="two-col" style="margin-bottom:16px">
 
@@ -3148,8 +3188,7 @@ body.edit-mode .nav-wrap { top: 108px; }
         </div>
       </div>
 
-
-      <!-- Role Switcher info card (replaces old PIN/passcode card) -->
+      <!-- Role Switcher info card -->
       <div class="card" style="margin-bottom:0">
         <div class="card-header"><span class="ch-icon">&#128272;</span> Role &amp; Access</div>
         <p style="font-size:12px;color:var(--text-soft);margin-bottom:14px;line-height:1.7">
@@ -3157,7 +3196,7 @@ body.edit-mode .nav-wrap { top: 108px; }
         </p>
         <div style="background:rgba(74,43,138,0.05);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px">
           <div style="font-weight:700;color:var(--shiva-mid);margin-bottom:8px">Role Access Details</div>
-          <div style="font-size:11px;color:var(--text-soft);line-height:1.7">Open <b>Action Center → Users &amp; Access</b> to view the live tab-wise access matrix.</div>
+          <div style="font-size:11px;color:var(--text-soft);line-height:1.7">Open <b>Admin Task → Users &amp; Access</b> to view the live tab-wise access matrix.</div>
           <div style="font-size:11px;color:var(--text-mute);line-height:1.7;margin-top:6px">That matrix is auto-generated from the current role and permission configuration.</div>
         </div>
         <div style="margin-top:14px;background:rgba(74,43,138,0.04);border:1px solid rgba(122,85,192,0.15);border-radius:10px;padding:14px 16px">
@@ -3176,7 +3215,6 @@ body.edit-mode .nav-wrap { top: 108px; }
       </div>
 
     </div>
-
   </div>
 </div>
 
@@ -4148,10 +4186,13 @@ function applyRole() {
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'flex' : 'none');
   const progBtn = document.getElementById('programs-nav-btn');
   if (progBtn) progBtn.style.display = isAdmin ? 'flex' : 'none';
+  const adminTaskBtn = document.getElementById('admintask-nav-btn');
+  if (adminTaskBtn) adminTaskBtn.style.display = isAdmin ? 'flex' : 'none';
   const regBtn = document.getElementById('registrations-nav-btn');
   if (regBtn) regBtn.style.display = canViewRegistrations ? 'flex' : 'none';
   if (!canViewRegistrations && document.getElementById('s-data-entry')?.classList.contains('active')) showSection('overview');
   if (!isAdmin && document.getElementById('s-admin')?.classList.contains('active')) showSection('overview');
+  if (!isAdmin && document.getElementById('s-admintask')?.classList.contains('active')) showSection('overview');
   if (!isAdmin && document.getElementById('s-programs')?.classList.contains('active')) showSection('overview');
   updateBadges();
   if (typeof updateProgPill === 'function') updateProgPill();
@@ -5175,6 +5216,8 @@ function showSection(id) {
   if (id === 'attendance') initAttendance();
   if (id === 'recordings') initRecordings();
   if (id === 'resources')  initResources();
+  if (id === 'admin')      initAdmin();
+  if (id === 'admintask')  initAdminTask();
   if (id === 'adminmain')  { showAdminMainTab('users'); }
   if (id === 'gurudev')    initGurudev();
   if (id === 'changes')    initChanges();
@@ -5409,54 +5452,38 @@ function pBar(label, val, total, cls) {
 
 // ── ADMIN PANEL ───────────────────────────────────────────────────────────
 function initAdmin() {
-  loadAdminUsersAccess();
   renderAdminTransfers();
   renderAdminTasks();
   renderAdminGuruQ();
   renderAdminNotes();
   updateBadges();
-  setTimeout(() => { renderAutoBackupSettings(); if(typeof filterFAQ==='function') filterFAQ(); if(typeof renderGuidelines==='function') renderGuidelines(); }, 100);
+}
+function initAdminTask() {
+  loadAdminUsersAccess();
+  setTimeout(() => { renderAutoBackupSettings(); }, 100);
   renderBackupTimestamps();
+  // Default to Users & Access sub-tab
+  const usersBtn = document.querySelector('#admin-admin-tabs .tab-pill[data-admin-subtab="users"]');
+  showAdminSubTab('users', usersBtn);
 }
 function showAdminTab(tab, btn) {
-  const normalizedTab = tab === 'admin' ? 'users' : tab;
-  const adminGroupOpen = normalizedTab === 'users' || normalizedTab === 'settings';
-  ['admin','users','transfers','tasks','guru-q','notes','settings'].forEach(t => {
+  // Handle the four Action Center panels only
+  ['transfers','tasks','guru-q','notes'].forEach(t => {
     const el = document.getElementById('admin-' + t);
-    if (!el) return;
-    if (t === 'admin') {
-      el.style.display = adminGroupOpen ? 'block' : 'none';
-      return;
-    }
-    if (t === 'users' || t === 'settings') {
-      el.style.display = adminGroupOpen && t === normalizedTab ? 'block' : 'none';
-      return;
-    }
-    el.style.display = t === normalizedTab ? 'block' : 'none';
+    if (el) el.style.display = t === tab ? 'block' : 'none';
   });
-  document.querySelectorAll('#admin-tabs > .tab-pill').forEach(b => b.classList.remove('active'));
-  const topTab = adminGroupOpen ? 'admin' : normalizedTab;
-  const topBtn = btn && btn.closest('#admin-tabs')
-    ? btn
-    : document.querySelector(`#admin-tabs > .tab-pill[data-admin-tab="${topTab}"]`);
-  if (topBtn) topBtn.classList.add('active');
-
-  const subTabs = document.getElementById('admin-admin-tabs');
-  if (subTabs) {
-    subTabs.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
-    if (adminGroupOpen) {
-      const subBtn = btn && btn.closest('#admin-admin-tabs')
-        ? btn
-        : subTabs.querySelector(`.tab-pill[data-admin-subtab="${normalizedTab}"]`);
-      if (subBtn) subBtn.classList.add('active');
-    }
-  }
-
-  if (normalizedTab === 'users') loadAdminUsersAccess();
+  document.querySelectorAll('#admin-tabs .tab-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
 }
 
 function showAdminSubTab(tab, btn) {
-  showAdminTab(tab, btn);
+  ['users','settings'].forEach(t => {
+    const el = document.getElementById('admin-' + t);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('#admin-admin-tabs .tab-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (tab === 'settings') renderAutoBackupSettings && renderAutoBackupSettings();
 }
 
 const adminUsersState = {
@@ -7815,6 +7842,13 @@ if (!Array.isArray(recordings)) {
 
 function saveRecordings() { localStorage.setItem('pns_recordings', JSON.stringify(recordings)); }
 
+// Scope items to active program (filter by program_id if present, else return all)
+function getScopedProgramItems(items) {
+  if (!Array.isArray(items)) return [];
+  if (!ACTIVE_PROGRAM_ID || !ALL_PROGRAMS || ALL_PROGRAMS.length <= 1) return items;
+  return items.filter(item => !item.program_id || item.program_id === ACTIVE_PROGRAM_ID);
+}
+
 let recCatFilter = 'all';
 
 function filterRecCat(cat, btn) {
@@ -10030,7 +10064,7 @@ let ACTIVE_PROGRAM_ID = localStorage.getItem('pns_active_program_id') || null;
 let editableContent = JSON.parse(localStorage.getItem('pns_editable_content') || '{}');
 const EDITABLE_DEFAULTS = {
   brand_h1:      'Panchakshari Naad Sadhana | Mahashivaratri 2026',
-  brand_sub:     'ॐ नमः शिवाय · Gurudev Sri Anish · Facilitator Dashboard',
+  brand_sub:     'ॐ नमः शिवाय · Gurudev Sri Anish',
   lbl_trend:     'Session Attendance Trend',
   lbl_grouprate: 'Group-wise Attendance Rate',
   lbl_alerts:    'Alerts & Action Items',
