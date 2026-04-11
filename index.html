@@ -35,7 +35,7 @@
   --border:      rgba(122,85,192,0.15);
   --border-med:  rgba(122,85,192,0.3);
   --shadow:      0 2px 12px rgba(26,10,46,0.08);
-  
+}
 
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -934,48 +934,339 @@ canvas { width: 100% !important; }
 .prog-status.archived { background:#F1EFE8; color:#5F5E5A; }
 
 /* ── MOBILE RESPONSIVENESS ── */
-@media (max-width: 1024px) {
-  .topbar {
-    padding: 0 12px;
-    height: auto;
-    flex-wrap: wrap;
-  }
-  
-  .brand-text h1 {
-    font-size: 13px;
-  }
-  
-  .brand-text p {
-    font-size: 9px;
-  }
-  
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN — MOBILE & DESKTOP COMPATIBILITY
+   Breakpoints:
+     ≤1280px  Wide desktop / large laptop
+     ≤1024px  Standard laptop / small desktop
+     ≤768px   Tablet / large mobile
+     ≤480px   Mobile
+     ≤360px   Small mobile
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── WIDE DESKTOP (≤1280px) ── */
+@media (max-width: 1280px) {
   .content {
-    padding: 16px;
+    padding: 20px;
   }
-  
-  .two-col {
-    grid-template-columns: 1fr;
+  .three-col {
+    grid-template-columns: 1fr 1fr;
   }
-  
-  .stats-grid {
+  .comparison-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
-  .card {
-    padding: 12px 14px;
-    margin-bottom: 12px;
+  .widget-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .template-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* ── LAPTOP / SMALL DESKTOP (≤1024px) ── */
+@media (max-width: 1024px) {
+  /* Hide topbar stats chips — save space */
+  .topbar-stats {
+    display: none;
+  }
+
+  .topbar {
+    padding: 0 16px;
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 13px;
+  }
+
+  .brand-text p {
+    font-size: 9px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+
+  /* Hide long DB sync label */
+  #topbar-db-sync {
+    max-width: 180px;
+  }
+}
+
+/* ── TABLET / LARGE MOBILE (≤768px) ── */
 @media (max-width: 768px) {
+  /* ── TOPBAR ── */
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: 10px 12px;
+    gap: 8px;
+    /* Use relative so nav can follow document flow */
+    position: relative;
+  }
+
+  .topbar-brand {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .topbar-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .om-symbol {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+
+  .brand-text h1 {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .brand-text p {
+    font-size: 9px;
+  }
+
+  /* Hide verbose DB sync bar — too wide for mobile */
+  #topbar-db-sync {
+    display: none !important;
+  }
+
+  #topbar-cloud-auth {
+    padding: 0 6px !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  #topbar-cloud-email {
+    display: none;
+  }
+
+  /* ── PROGRAM BANNER ── */
+  /* Remove sticky — topbar height varies on mobile so fixed offset breaks */
+  .program-banner {
+    position: static;
+    top: auto;
+    padding: 10px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .program-banner-devanagari {
+    font-size: 13px;
+  }
+
+  .program-banner-text {
+    font-size: 11px;
+    letter-spacing: 0.4px;
+  }
+
+  /* ── NAVIGATION ── */
+  /* Static so it flows below the variable-height topbar naturally */
+  .nav-wrap {
+    position: static;
+    top: auto;
+    padding: 0 8px;
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .nav-btn {
+    padding: 9px 10px;
+    font-size: 11px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .nav-icon {
+    font-size: 12px;
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 12px;
+    max-width: 100%;
+  }
+
+  /* ── GRIDS ── */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .two-col,
+  .three-col,
+  .dashboard-builder {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .comparison-grid,
+  .widget-grid,
+  .template-grid,
+  .stat-row,
+  .member-card-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card-header {
+    font-size: 11px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+
+  /* ── STAT CARDS ── */
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-card .val {
+    font-size: 22px;
+  }
+
+  /* ── TABLES — horizontal scroll ── */
+  .card > table,
+  .card > div > table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 6px 14px;
+    font-size: 11px;
+  }
+
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 10.5px;
+  }
+
+  /* ── INPUTS — 14px prevents iOS zoom on focus ── */
+  input, textarea, select {
+    font-size: 14px !important;
+  }
+
+  /* ── TAB PILLS ── */
+  .tab-pills {
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+
+  .tab-pill {
+    padding: 5px 12px;
+    font-size: 11px;
+  }
+
+  /* ── SEARCH / FORM ROWS ── */
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-row input,
+  .search-row select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .group-select {
+    min-width: unset;
+    width: 100%;
+  }
+
+  /* ── MODALS ── */
+  .modal {
+    width: 96%;
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .modal h2 {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  /* ── RECORDING GRID ── */
+  .rec-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  /* ── TASK CARDS ── */
+  .task-card {
+    padding: 11px 12px;
+  }
+
+  .task-card .tc-header {
+    flex-wrap: wrap;
+  }
+
+  /* ── ROLE BADGE / CONTROLS ── */
+  .role-badge {
+    padding: 3px 8px;
+    font-size: 9px;
+  }
+
+  .role-select {
+    min-width: 120px;
+  }
+
+  .notif-bell {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  /* ── ADMIN SECTIONS ── */
   #admin-admin.admin-group-wrap {
     padding: 8px;
     margin-bottom: 12px;
   }
 
   #admin-admin-tabs.admin-subtabs {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 6px;
   }
 
@@ -993,357 +1284,295 @@ canvas { width: 100% !important; }
     border-color: transparent;
   }
 
-  .topbar {
+  .admin-panel-banner {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .admin-panel-banner .apb-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 15px;
+  }
+
+  /* ── PROGRAMS ── */
+  .prog-card {
     flex-direction: column;
-    gap: 10px;
-    height: auto;
-    padding: 12px;
+    align-items: flex-start;
+    gap: 8px;
   }
-  
-  .om-symbol {
-    width: 32px;
-    height: 32px;
+
+  /* ── LEADERBOARD ── */
+  .leaderboard-item {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .leaderboard-rank {
     font-size: 18px;
-  }
-  
-  .brand-text h1 {
-    font-size: 12px;
-    white-space: nowrap;
-  }
-  
-  .brand-text p {
-    font-size: 8px;
-  }
-  
-  .topbar-brand {
-    gap: 8px;
-  }
-  
-  .topbar-right {
-    gap: 8px;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
+    min-width: 30px;
   }
 
-  #topbar-cloud-auth {
-    padding: 0 6px !important;
-    border-left: none !important;
-    border-right: none !important;
+  .leaderboard-rank.first {
+    font-size: 22px;
   }
 
-  #topbar-cloud-email {
-    display: none;
+  /* ── TIMELINE ── */
+  .timeline {
+    padding-left: 28px;
   }
-  
-  .program-banner {
-    padding: 10px 12px;
-    gap: 8px;
+
+  /* ── FILTER ── */
+  .filter-dropdown {
     flex-wrap: wrap;
+    gap: 6px;
   }
-  
-  .program-banner-devanagari {
-    font-size: 13px;
-  }
-  
-  .program-banner-text {
-    font-size: 11px;
-    letter-spacing: 0.4px;
-  }
-  
-  .nav-wrap {
-    padding: 0 12px;
-    gap: 0;
-  }
-  
-  .nav-btn {
-    padding: 8px 10px;
-    font-size: 11px;
-    gap: 4px;
-  }
-  
-  .nav-icon {
-    font-size: 12px;
-  }
-  
-  .content {
-    padding: 12px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  
-  .stat-card {
-    padding: 12px;
-  }
-  
-  .val {
-    font-size: 20px;
-  }
-  
-  .lbl {
-    font-size: 10px;
-  }
-  
-  .card {
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-  
-  .card-header {
-    font-size: 11px;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-  }
-  
-  .btn {
-    padding: 6px 12px;
-    font-size: 11px;
-  }
-  
-  input, textarea, select {
-    font-size: 14px !important;
-  }
-  
-  .role-badge {
-    padding: 3px 8px;
-    font-size: 9px;
-  }
-  
-  .notif-bell {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
-  
+
+  /* ── MISC ── */
   .theme-toggle {
     width: 32px;
     height: 32px;
     font-size: 14px;
   }
-  
+
   .btn-edit-toggle {
     padding: 6px 10px;
     font-size: 11px;
   }
 }
 
+/* ── MOBILE (≤480px) ── */
 @media (max-width: 480px) {
+  /* ── TOPBAR ── */
   .topbar {
-    padding: 8px;
+    padding: 8px 10px;
   }
-  
+
   .om-symbol {
     width: 28px;
     height: 28px;
     font-size: 14px;
   }
-  
+
   .brand-text h1 {
     font-size: 11px;
   }
-  
+
   .brand-text p {
     display: none;
   }
-  
-  .prog-selector-pill {
+
+  #prog-selector-pill {
     display: none !important;
-  }
-  
-  .program-banner {
-    padding: 8px;
-    gap: 6px;
-    top: 50px;
-  }
-  
-  .program-banner-devanagari {
-    font-size: 12px;
-  }
-  
-  .program-banner-text {
-    font-size: 10px;
-    letter-spacing: 0.2px;
-  }
-  
-  .nav-btn {
-    padding: 6px 8px;
-    font-size: 10px;
-  }
-  
-  .nav-icon {
-    font-size: 11px;
-  }
-  
-  .nav-badge {
-    font-size: 8px;
-    padding: 0 3px;
-  }
-  
-  .content {
-    padding: 8px;
-    max-width: 100%;
-  }
-  
-  .card {
-    padding: 8px 10px;
-    margin-bottom: 8px;
-  }
-  
-  .stats-grid {
-    gap: 8px;
-  }
-  
-  .stat-card {
-    padding: 8px;
-  }
-  
-  .val {
-    font-size: 16px;
-  }
-  
-  .lbl {
-    font-size: 9px;
-  }
-  
-  .btn {
-    padding: 6px 10px;
-    font-size: 10px;
-  }
-  
-  input, textarea {
-    padding: 8px 10px;
-    font-size: 14px !important;
-  }
-  
-  table {
-    font-size: 11px;
-  }
-  
-  .role-badge {
-    padding: 2px 6px;
-    font-size: 8px;
-  }
-  
-  .topbar-right {
-    gap: 6px;
   }
 
   #topbar-cloud-signin-btn {
     font-size: 10px !important;
     padding: 4px 8px !important;
   }
-}
 
-@media (max-width: 480px) {
-  .topbar {
-    padding: 8px;
+  .topbar-right {
+    gap: 5px;
   }
-  
-  .om-symbol {
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-  }
-  
-  .brand-text h1 {
-    font-size: 11px;
-  }
-  
-  .brand-text p {
-    display: none;
-  }
-  
-  .prog-selector-pill {
-    display: none !important;
-  }
-  
+
+  /* ── PROGRAM BANNER ── */
   .program-banner {
     padding: 8px;
     gap: 6px;
-    top: 50px;
   }
-  
+
   .program-banner-devanagari {
     font-size: 12px;
   }
-  
+
   .program-banner-text {
     font-size: 10px;
     letter-spacing: 0.2px;
   }
-  
+
+  /* ── NAVIGATION ── */
   .nav-btn {
     padding: 6px 8px;
     font-size: 10px;
   }
-  
+
   .nav-icon {
     font-size: 11px;
   }
-  
+
   .nav-badge {
     font-size: 8px;
     padding: 0 3px;
   }
-  
+
+  /* ── CONTENT ── */
   .content {
     padding: 8px;
-    max-width: 100%;
   }
-  
+
+  /* ── GRIDS — all single column ── */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* ── CARDS ── */
   .card {
     padding: 8px 10px;
     margin-bottom: 8px;
+    border-radius: 8px;
   }
-  
-  .stats-grid {
-    gap: 8px;
+
+  .card-header {
+    font-size: 10.5px;
   }
-  
+
+  /* ── STAT CARDS ── */
   .stat-card {
     padding: 8px;
   }
-  
-  .val {
-    font-size: 16px;
+
+  .stat-card .val {
+    font-size: 18px;
   }
-  
-  .lbl {
+
+  .stat-card .lbl {
     font-size: 9px;
   }
-  
+
+  /* ── TABLES ── */
+  table {
+    font-size: 11px;
+  }
+
+  th {
+    padding: 7px 8px;
+  }
+
+  td {
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  /* ── BUTTONS ── */
   .btn {
     padding: 6px 10px;
     font-size: 10px;
   }
-  
-  input, textarea {
-    padding: 8px 10px;
-    font-size: 14px !important;
-  }
-  
-  table {
-    font-size: 11px;
-  }
-  
-  .role-badge {
-    padding: 2px 6px;
-    font-size: 8px;
-  }
-  
-  .topbar-right {
-    gap: 6px;
-  }
-  
+
   .btn-edit-toggle {
     padding: 4px 8px;
     font-size: 10px;
   }
+
+  /* ── INPUTS ── */
+  input, textarea {
+    padding: 8px 10px;
+    font-size: 14px !important;
+  }
+
+  /* ── TAB PILLS ── */
+  .tab-pill {
+    padding: 5px 10px;
+    font-size: 10.5px;
+  }
+
+  /* ── ROLE BADGE ── */
+  .role-badge {
+    padding: 2px 6px;
+    font-size: 8px;
+  }
+
+  .role-select {
+    min-width: 100px;
+  }
+
+  /* ── MODALS ── */
+  .modal {
+    width: 98%;
+    padding: 14px;
+    border-radius: 10px;
+    max-height: 95vh;
+  }
+
+  .modal h2 {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  /* ── ADMIN ── */
+  .admin-panel-banner {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  /* ── PROGRAMS ── */
+  .prog-card-name {
+    font-size: 13px;
+  }
 }
+
+/* ── SMALL MOBILE (≤360px) ── */
+@media (max-width: 360px) {
+  .topbar {
+    padding: 6px 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 10px;
+  }
+
+  .om-symbol {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+  }
+
+  .nav-btn {
+    padding: 5px 6px;
+    font-size: 9.5px;
+  }
+
+  .nav-btn .nav-icon {
+    font-size: 10px;
+  }
+
+  .content {
+    padding: 6px;
+  }
+
+  .card {
+    padding: 6px 8px;
+  }
+
+  .stat-card .val {
+    font-size: 16px;
+  }
+
+  .btn {
+    font-size: 9.5px;
+    padding: 5px 8px;
+  }
+
+  .tab-pill {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .role-select {
+    min-width: 80px;
+    font-size: 9px;
+  }
+
+  .topbar-right {
+    gap: 4px;
+  }
+
+  .modal {
+    padding: 10px;
+  }
+}
+
 
 /* ── ENHANCED DATA VISUALIZATION ── */
 .viz-container {
@@ -2623,6 +2852,313 @@ body.edit-mode .nav-wrap { top: 108px; }
 .progress-label { font-size: 12.5px; }
 .progress-val { font-size: 12.5px; }
 
+/* ══════════════════════════════════════════════════
+   HAMBURGER BUTTON & MOBILE DRAWER NAVIGATION
+   Visible only on ≤768px. Desktop unaffected.
+   ══════════════════════════════════════════════════ */
+
+/* Hide hamburger on desktop */
+.hamburger-btn { display: none; }
+
+/* ── HAMBURGER BUTTON ── */
+.hamburger-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  display: none;              /* hidden on desktop */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+  margin-left: auto;
+}
+.hamburger-btn:hover { background: rgba(255,255,255,0.18); }
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+/* Animated X when menu is open */
+.hamburger-btn.is-open .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn.is-open .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-btn.is-open .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── OVERLAY (darkens content behind menu) ── */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,4,25,0.65);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.mobile-menu-overlay.open { display: block; }
+
+/* ── DRAWER MENU ── */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 88vw);
+  height: 100dvh;             /* uses dynamic viewport height on mobile */
+  background: linear-gradient(160deg, #1a0a2e 0%, #250d52 60%, #1a0a2e 100%);
+  border-left: 1px solid rgba(184,147,74,0.35);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.5);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.mobile-menu.open {
+  transform: translateX(0);
+}
+
+/* ── DRAWER HEADER ── */
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(184,147,74,0.3);
+  flex-shrink: 0;
+}
+.mobile-menu-title {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(232,171,98,0.85);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.mobile-menu-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  padding: 0;
+}
+.mobile-menu-close:hover { background: rgba(255,255,255,0.2); }
+
+/* ── DRAWER BODY (nav items) ── */
+.mobile-menu-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: none;
+}
+.mobile-menu-body::-webkit-scrollbar { display: none; }
+
+/* Each nav item in drawer */
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 20px;
+  color: rgba(255,255,255,0.65);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.15s, color 0.15s, border-left-color 0.15s;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+.mobile-nav-item:hover {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.9);
+}
+.mobile-nav-item.active {
+  color: var(--saffron);
+  background: rgba(232,135,58,0.1);
+  border-left-color: var(--saffron);
+  font-weight: 600;
+}
+.mobile-nav-item .mob-icon {
+  font-size: 16px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.mobile-nav-item .mob-badge {
+  background: var(--rudra);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
+  margin-left: auto;
+  display: none;
+}
+.mobile-nav-item .mob-badge.visible { display: block; }
+
+/* Admin-only items in mobile menu — hidden by default */
+.mobile-nav-item.admin-only-mob { display: none; }
+body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
+
+/* ── DRAWER FOOTER (role selector) ── */
+.mobile-menu-footer {
+  padding: 14px 18px;
+  border-top: 1px solid rgba(184,147,74,0.25);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Sign In row */
+.mobile-signin-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mobile-signin-btn {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(184,147,74,0.5);
+  border-radius: 10px;
+  color: var(--saffron);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s;
+  letter-spacing: 0.2px;
+}
+.mobile-signin-btn:hover {
+  background: rgba(184,147,74,0.15);
+}
+
+.mobile-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(76,175,80,0.12);
+  border: 1px solid rgba(76,175,80,0.35);
+  border-radius: 10px;
+}
+.mobile-user-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4caf50;
+  flex-shrink: 0;
+}
+.mobile-user-email {
+  flex: 1;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mobile-signout-btn {
+  background: rgba(192,57,43,0.2);
+  border: 1px solid rgba(192,57,43,0.4);
+  color: #e57373;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.mobile-signout-btn:hover {
+  background: rgba(192,57,43,0.35);
+}
+
+.mobile-role-select {
+  width: 100%;
+  min-width: unset;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(184,147,74,0.3);
+  color: #fff;
+  cursor: pointer;
+}
+.mobile-role-select option {
+  background: #1a0a2e;
+  color: #fff;
+}
+
+/* ── SHOW HAMBURGER, HIDE DESKTOP NAV on mobile ── */
+@media (max-width: 768px) {
+  /* Show hamburger */
+  .hamburger-btn { display: flex; }
+
+  /* Hide entire desktop nav bar */
+  .nav-wrap { display: none; }
+
+  /* Hide topbar-right controls — replaced by hamburger */
+  .topbar-right { display: none; }
+
+  /* Topbar layout: brand left, hamburger right */
+  .topbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    height: 58px;
+    position: sticky;
+    top: 0;
+  }
+
+  /* Keep DB sync status small next to brand — show syncing state inline */
+  #topbar-db-sync {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar { height: 52px; padding: 0 12px; }
+  .mobile-menu { width: min(300px, 92vw); }
+  .mobile-nav-item { padding: 14px 16px; font-size: 13.5px; }
+}
+
+
 </style>
 </head>
 <body>
@@ -2693,6 +3229,14 @@ body.edit-mode .nav-wrap { top: 108px; }
       <p id="brand-sub">ॐ नमः शिवाय · Gurudev Sri Anish</p>
     </div>
   </div>
+
+  <!-- Hamburger button — mobile only -->
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Open navigation menu" aria-expanded="false">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
   <div class="topbar-right">
     <div id="prog-selector-pill" style="display:none;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(184,147,74,0.3);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:11px;color:#fff;font-weight:600" onclick="showSection('programs')">
       <span style="width:7px;height:7px;border-radius:50%;background:#4caf50;flex-shrink:0;display:inline-block"></span>
@@ -2711,6 +3255,40 @@ body.edit-mode .nav-wrap { top: 108px; }
     </div>
     <button id="topbar-cloud-signin-btn" class="btn btn-outline" onclick="showLoginModal()" style="display:inline-flex;font-size:11px;align-items:center;gap:4px">&#128274; Sign In</button>
     <select id="role-display" class="role-badge role-select role-facilitator" onchange="setRole(this.value)" title="Select role">
+      <option value="admin">Admin</option>
+      <option value="facilitator" selected>Facilitator</option>
+      <option value="sadhak">Sadhak</option>
+      <option value="guest">Guest</option>
+    </select>
+  </div>
+</div>
+
+<!-- MOBILE MENU OVERLAY -->
+<div id="mobile-menu-overlay" class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+
+<!-- MOBILE MENU DRAWER -->
+<div id="mobile-menu" class="mobile-menu">
+  <div class="mobile-menu-header">
+    <span class="mobile-menu-title">Navigation</span>
+    <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+  </div>
+  <div class="mobile-menu-body" id="mobile-menu-body">
+    <!-- Items cloned dynamically from nav-wrap -->
+  </div>
+  <div class="mobile-menu-footer">
+    <!-- Sign In / User state — mirrors topbar -->
+    <div id="mobile-signin-row" class="mobile-signin-row">
+      <button id="mobile-cloud-signin-btn" class="mobile-signin-btn" onclick="showLoginModal(); closeMobileMenu();">
+        &#128274; Sign In to Cloud
+      </button>
+      <div id="mobile-user-pill" class="mobile-user-pill" style="display:none">
+        <span class="mobile-user-dot"></span>
+        <span id="mobile-user-email" class="mobile-user-email"></span>
+        <button class="mobile-signout-btn" onclick="logoutFromCloud(); closeMobileMenu();">Sign Out</button>
+      </div>
+    </div>
+    <!-- Role selector -->
+    <select id="role-display-mobile" class="role-badge role-select role-facilitator mobile-role-select" onchange="setRole(this.value)" title="Select role">
       <option value="admin">Admin</option>
       <option value="facilitator" selected>Facilitator</option>
       <option value="sadhak">Sadhak</option>
@@ -9557,6 +10135,11 @@ function updateCloudAuthUI(user){
   const topbarUserPill = document.getElementById('topbar-user-pill');
   const topbarUserEmail = document.getElementById('topbar-user-email');
 
+  // Mobile menu sign-in elements
+  const mobileSigninBtn = document.getElementById('mobile-cloud-signin-btn');
+  const mobileUserPill = document.getElementById('mobile-user-pill');
+  const mobileUserEmail = document.getElementById('mobile-user-email');
+
   if(user){
     if(signinBtn) signinBtn.style.display = 'none';
     if(signoutWrap) signoutWrap.style.display = 'flex';
@@ -9568,6 +10151,10 @@ function updateCloudAuthUI(user){
       topbarSigninBtn.innerHTML = 'Sign Out';
       topbarSigninBtn.onclick = logoutFromCloud;
     }
+    // Sync mobile
+    if(mobileSigninBtn) mobileSigninBtn.style.display = 'none';
+    if(mobileUserPill) mobileUserPill.style.display = 'flex';
+    if(mobileUserEmail) mobileUserEmail.textContent = user.email;
     if(currentRole === 'admin') setTimeout(loadCloudSnapshotList, 0);
   } else {
     if(signinBtn) signinBtn.style.display = '';
@@ -9579,6 +10166,10 @@ function updateCloudAuthUI(user){
       topbarSigninBtn.innerHTML = '&#128274; Sign In';
       topbarSigninBtn.onclick = showLoginModal;
     }
+    // Sync mobile
+    if(mobileSigninBtn) mobileSigninBtn.style.display = '';
+    if(mobileUserPill) mobileUserPill.style.display = 'none';
+    if(mobileUserEmail) mobileUserEmail.textContent = '';
     setCloudSnapshotListStatus('Sign in to view snapshots', false);
     renderCloudSnapshotList([]);
   }
@@ -11994,6 +12585,183 @@ initCloudSync();
     </div>
   </div>
 </div>
+
+<script>
+/* ══════════════════════════════════════════════
+   MOBILE HAMBURGER MENU — COMPLETE LOGIC
+   ══════════════════════════════════════════════ */
+
+// Navigation items definition — mirrors the desktop nav-wrap exactly
+const MOBILE_NAV_ITEMS = [
+  { id: 'overview',   icon: '◈',  label: 'Overview',       adminOnly: false, badge: null },
+  { id: 'data-entry', icon: '📝', label: 'Registrations',  adminOnly: false, badge: null, domId: 'registrations-nav-btn' },
+  { id: 'groups',     icon: '◎',  label: 'Groups',          adminOnly: false, badge: null },
+  { id: 'members',    icon: '⊕',  label: 'Members',         adminOnly: false, badge: null },
+  { id: 'attendance', icon: '✦',  label: 'Attendance',      adminOnly: false, badge: null },
+  { id: 'recordings', icon: '▷',  label: 'Recordings',      adminOnly: false, badge: null },
+  { id: 'resources',  icon: '◉',  label: 'Workflow & FAQ',  adminOnly: false, badge: null },
+  { id: 'admin',      icon: '⚙',  label: 'Action Center',   adminOnly: true,  badge: 'admin-badge' },
+  { id: 'gurudev',    icon: '🪷', label: 'Ask Gurudev',     adminOnly: false, badge: 'guru-badge' },
+  { id: 'changes',    icon: '⇄',  label: 'Group Changes',   adminOnly: false, badge: null },
+  { id: 'programs',   icon: '✺',  label: 'Programs',        adminOnly: true,  badge: null },
+  { id: 'admintask',  icon: '⚙',  label: 'Admin Task',      adminOnly: true,  badge: null },
+];
+
+// Build mobile menu items on first open
+function buildMobileMenu() {
+  const body = document.getElementById('mobile-menu-body');
+  if (!body || body.dataset.built) return;
+  body.dataset.built = '1';
+
+  MOBILE_NAV_ITEMS.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'mobile-nav-item' + (item.adminOnly ? ' admin-only-mob' : '');
+    btn.setAttribute('data-section', item.id);
+    if (item.domId) btn.id = item.domId + '-mob';
+
+    // Badge span
+    const badgeSpan = item.badge
+      ? `<span class="mob-badge" id="${item.badge}-mob"></span>`
+      : '';
+
+    btn.innerHTML = `<span class="mob-icon">${item.icon}</span><span>${item.label}</span>${badgeSpan}`;
+
+    btn.addEventListener('click', () => {
+      // Check access
+      if (typeof hasTabAction === 'function' && !hasTabAction(item.id, 'view')) {
+        if (typeof getTabAccessDeniedMessage === 'function') {
+          alert(getTabAccessDeniedMessage(item.id, 'view'));
+        }
+        closeMobileMenu();
+        return;
+      }
+      closeMobileMenu();
+      // Small delay so menu close animation plays before section renders
+      setTimeout(() => showSection(item.id), 50);
+    });
+
+    body.appendChild(btn);
+  });
+}
+
+// Open menu
+function openMobileMenu() {
+  buildMobileMenu();
+  syncMobileMenuState();
+
+  const menu = document.getElementById('mobile-menu');
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const btn = document.getElementById('hamburger-btn');
+
+  menu.classList.add('open');
+  overlay.classList.add('open');
+  btn.classList.add('is-open');
+  btn.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden'; // prevent background scroll
+}
+
+// Close menu
+function closeMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const overlay = document.getElementById('mobile-menu-overlay');
+  const btn = document.getElementById('hamburger-btn');
+
+  menu.classList.remove('open');
+  overlay.classList.remove('open');
+  btn.classList.remove('is-open');
+  btn.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+
+// Toggle
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  if (menu.classList.contains('open')) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+}
+
+// Close on Escape key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeMobileMenu();
+});
+
+// Sync active state in mobile menu to match desktop active section
+function syncMobileMenuState() {
+  const body = document.getElementById('mobile-menu-body');
+  if (!body) return;
+
+  // Find currently active section
+  const activeSection = document.querySelector('.section.active');
+  const activeId = activeSection ? activeSection.id.replace('s-', '') : 'overview';
+
+  body.querySelectorAll('.mobile-nav-item').forEach(btn => {
+    const sectionId = btn.getAttribute('data-section');
+    btn.classList.toggle('active', sectionId === activeId);
+  });
+
+  // Sync badges from desktop
+  MOBILE_NAV_ITEMS.forEach(item => {
+    if (!item.badge) return;
+    const desktopBadge = document.getElementById(item.badge);
+    const mobileBadge = document.getElementById(item.badge + '-mob');
+    if (desktopBadge && mobileBadge) {
+      mobileBadge.textContent = desktopBadge.textContent;
+      mobileBadge.classList.toggle('visible', desktopBadge.classList.contains('visible'));
+    }
+  });
+
+  // Sync role select
+  const roleDisplay = document.getElementById('role-display');
+  const mobileRole = document.getElementById('role-display-mobile');
+  if (roleDisplay && mobileRole) {
+    mobileRole.value = roleDisplay.value;
+    mobileRole.className = roleDisplay.className;
+  }
+
+  // Sync sign-in state from desktop
+  const topbarSigninBtn = document.getElementById('topbar-cloud-signin-btn');
+  const mobileSigninBtn = document.getElementById('mobile-cloud-signin-btn');
+  const mobileUserPill = document.getElementById('mobile-user-pill');
+  const mobileUserEmail = document.getElementById('mobile-user-email');
+  const topbarUserEmail = document.getElementById('topbar-user-email');
+  const topbarUserPill = document.getElementById('topbar-user-pill');
+
+  if (topbarUserPill && topbarUserPill.style.display !== 'none') {
+    // User is signed in
+    if (mobileSigninBtn) mobileSigninBtn.style.display = 'none';
+    if (mobileUserPill) mobileUserPill.style.display = 'flex';
+    if (mobileUserEmail && topbarUserEmail) mobileUserEmail.textContent = topbarUserEmail.textContent;
+  } else {
+    // Not signed in
+    if (mobileSigninBtn) mobileSigninBtn.style.display = '';
+    if (mobileUserPill) mobileUserPill.style.display = 'none';
+  }
+}
+
+// Keep mobile menu role in sync with desktop role selector
+const mobileRoleSel = document.getElementById('role-display-mobile');
+if (mobileRoleSel) {
+  mobileRoleSel.addEventListener('change', function() {
+    const desktopSel = document.getElementById('role-display');
+    if (desktopSel) desktopSel.value = this.value;
+    if (typeof setRole === 'function') setRole(this.value);
+  });
+}
+
+// Re-sync menu state whenever showSection is called
+// (wrap the existing showSection to hook into it)
+const _origShowSection = typeof showSection !== 'undefined' ? showSection : null;
+if (_origShowSection) {
+  window.showSection = function(id) {
+    _origShowSection(id);
+    // Sync mobile after short delay (section activation takes a tick)
+    setTimeout(syncMobileMenuState, 80);
+  };
+}
+</script>
 
 </body>
 </html>
