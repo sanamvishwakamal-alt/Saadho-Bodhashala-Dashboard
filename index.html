@@ -1465,7 +1465,8 @@ canvas { width: 100% !important; }
   }
 
   .brand-text p {
-    display: none;
+    display: block;
+    font-size: 8.5px;
   }
 
   #prog-selector-pill {
@@ -5153,15 +5154,100 @@ body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
 
 <!-- ADD MEMBER MODAL -->
 <div class="modal-overlay" id="add-member-modal">
-  <div class="modal">
+  <div class="modal" style="max-width:560px">
     <h2>Add New Member</h2>
-    <div class="form-row"><label>Full Name *</label><input type="text" id="nm-name"></div>
-    <div class="form-row"><label>Email</label><input type="email" id="nm-email"></div>
-    <div class="form-row"><label>WhatsApp</label><input type="text" id="nm-mobile"></div>
-    <div class="form-row"><label>Role *</label><select id="nm-role"><option value="Admin">Admin</option><option value="Facilitator">Facilitator</option><option value="Sadhak" selected>Sadhak</option><option value="Guest">Guest</option></select></div>
-    <div class="form-row"><label>Region *</label><select id="nm-region"><option>INDIA</option><option>NON INDIA</option></select></div>
-    <div class="form-row"><label>Country</label><select id="nm-country"><option>India</option><option>USA</option><option>Canada</option><option>United Kingdom</option><option>Australia</option><option>UAE</option><option>Germany</option><option>Sweden</option><option>Switzerland</option><option>Spain</option><option>Argentina</option><option>Cambodia</option><option>Japan</option><option>Other</option></select></div>
-    <div class="form-row"><label>Language *</label><select id="nm-language"><option>Hindi</option><option>English</option></select></div>
+    <div class="form-row"><label>Full Name *</label><input type="text" id="nm-name" required></div>
+    <div class="form-row"><label>Email Address *</label><input type="email" id="nm-email" required placeholder="e.g. name@email.com"></div>
+    <div class="form-row"><label>Mobile / WhatsApp *</label><input type="text" id="nm-mobile" required placeholder="e.g. +91 98765 43210"></div>
+    <div class="form-row"><label>Role *</label>
+      <select id="nm-role" required>
+        <option value="">— Select Role —</option>
+        <option value="Sadhak">Sadhak</option>
+        <option value="Facilitator">Facilitator</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Region *</label>
+      <select id="nm-region" required>
+        <option value="">— Select Region —</option>
+        <option value="India">India</option>
+        <option value="Non India">Non India</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Language *</label>
+      <select id="nm-language" required>
+        <option value="">— Select Language —</option>
+        <option value="Hindi">Hindi</option>
+        <option value="English">English</option>
+        <option value="Any">Any</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Country *</label>
+      <select id="nm-country" required onchange="document.getElementById('nm-country-other-wrap').style.display=this.value==='Other'?'block':'none'">
+        <option value="">— Select Country —</option>
+        <option value="India">India</option>
+        <option value="USA">USA</option>
+        <option value="Canada">Canada</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="Australia">Australia</option>
+        <option value="UAE">UAE</option>
+        <option value="Germany">Germany</option>
+        <option value="Sweden">Sweden</option>
+        <option value="Switzerland">Switzerland</option>
+        <option value="Spain">Spain</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Cambodia">Cambodia</option>
+        <option value="Japan">Japan</option>
+        <option value="Other">Other (specify below)</option>
+      </select>
+      <div id="nm-country-other-wrap" style="display:none;margin-top:6px">
+        <input type="text" id="nm-country-other" placeholder="Enter country name…">
+      </div>
+    </div>
+    <div class="form-row"><label>Country Code *</label>
+      <select id="nm-country-code" required onchange="document.getElementById('nm-country-code-other-wrap').style.display=this.value==='Other'?'block':'none'">
+        <option value="">— Select Code —</option>
+        <option value="+91">+91 (India)</option>
+        <option value="+1">+1 (USA / Canada)</option>
+        <option value="+44">+44 (UK)</option>
+        <option value="+61">+61 (Australia)</option>
+        <option value="+971">+971 (UAE)</option>
+        <option value="+49">+49 (Germany)</option>
+        <option value="+46">+46 (Sweden)</option>
+        <option value="+41">+41 (Switzerland)</option>
+        <option value="+34">+34 (Spain)</option>
+        <option value="+54">+54 (Argentina)</option>
+        <option value="+855">+855 (Cambodia)</option>
+        <option value="+81">+81 (Japan)</option>
+        <option value="Other">Other (specify below)</option>
+      </select>
+      <div id="nm-country-code-other-wrap" style="display:none;margin-top:6px">
+        <input type="text" id="nm-country-code-other" placeholder="Enter country code e.g. +65">
+      </div>
+    </div>
+    <div class="form-row"><label>WhatsApp Group Status</label>
+      <select id="nm-wa-status">
+        <option value="">— Select —</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Initiation Status</label>
+      <select id="nm-init-status">
+        <option value="">— Select —</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
+    <div class="form-row"><label>Culmination Status</label>
+      <select id="nm-culmination-status">
+        <option value="">— Select —</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </div>
     <div class="form-row"><label>Group *</label><select id="nm-group"></select></div>
     <div class="form-row"><label>Or New Group Name</label><input type="text" id="nm-new-group" placeholder="Type a brand new group name here"></div>
     <div class="form-row"><label>Registered Through</label>
@@ -9171,34 +9257,63 @@ function openAddMemberModal() {
 }
 
 function addNewMember() {
+  // Delegate to the full implementation below
   const name = document.getElementById('nm-name').value.trim();
   if (!name) { alert('Name is required'); return; }
-  
+
   const email = document.getElementById('nm-email').value.trim();
-  
+  if (!email) { alert('Email Address is required'); return; }
+
+  const mobile = document.getElementById('nm-mobile').value.trim();
+  if (!mobile) { alert('Mobile / WhatsApp is required'); return; }
+
+  const role = document.getElementById('nm-role')?.value || '';
+  if (!role) { alert('Role is required'); return; }
+
+  const region = document.getElementById('nm-region').value;
+  if (!region) { alert('Region is required'); return; }
+
+  const language = document.getElementById('nm-language').value;
+  if (!language) { alert('Language is required'); return; }
+
+  const countrySelect = document.getElementById('nm-country')?.value || '';
+  if (!countrySelect) { alert('Country is required'); return; }
+  const country = countrySelect === 'Other'
+    ? (document.getElementById('nm-country-other')?.value.trim() || 'Other')
+    : countrySelect;
+
+  const countryCodeSelect = document.getElementById('nm-country-code')?.value || '';
+  if (!countryCodeSelect) { alert('Country Code is required'); return; }
+  const countryCode = countryCodeSelect === 'Other'
+    ? (document.getElementById('nm-country-code-other')?.value.trim() || '')
+    : countryCodeSelect;
+
   // ✅ DUPLICATE VALIDATION: Check Name + Email combination
-  const duplicate = members.find(m => 
-    m.name.toLowerCase() === name.toLowerCase() && 
+  const duplicate = members.find(m =>
+    m.name.toLowerCase() === name.toLowerCase() &&
     email && m.email.toLowerCase() === email.toLowerCase()
   );
-  
+
   if (duplicate) {
     alert(`⚠️ DUPLICATE ENTRY FOUND!\n\nName: ${duplicate.name}\nEmail: ${duplicate.email}\n\nThis member already exists. Please check before adding.`);
-    return;  // ✅ PREVENT DUPLICATE - DO NOT ADD
+    return;
   }
-  
+
   const newMember = {
     idx: members.length,
     name,
-    email: email,
-    mobile: document.getElementById('nm-mobile').value.trim(),
-    role: document.getElementById('nm-role')?.value || 'Sadhak',
-    country: document.getElementById('nm-country')?.value || 'India',
-    region: document.getElementById('nm-region').value,
-    language: document.getElementById('nm-language').value,
+    email,
+    mobile,
+    role,
+    country,
+    countryCode,
+    region,
+    language,
     fac_group: document.getElementById('nm-group').value.split(' - ')[2] || '',
     group: document.getElementById('nm-group').value,
-    wa: 'No', init: 'Not Yet', culmination: '',
+    wa: document.getElementById('nm-wa-status')?.value || 'No',
+    init: document.getElementById('nm-init-status')?.value || 'No',
+    culmination: document.getElementById('nm-culmination-status')?.value || 'No',
     att: [-1, -1, -1, -1, -1]
   };
   members.push(newMember);
@@ -10101,20 +10216,45 @@ function openAddMemberModal() {
 function addNewMember() {
   const name = document.getElementById('nm-name').value.trim();
   if (!name) { alert('Name is required'); return; }
-  
+
   const email = document.getElementById('nm-email').value.trim();
-  
+  if (!email) { alert('Email Address is required'); return; }
+
+  const mobile = document.getElementById('nm-mobile').value.trim();
+  if (!mobile) { alert('Mobile / WhatsApp is required'); return; }
+
+  const role = document.getElementById('nm-role')?.value || '';
+  if (!role) { alert('Role is required'); return; }
+
+  const region = document.getElementById('nm-region').value;
+  if (!region) { alert('Region is required'); return; }
+
+  const language = document.getElementById('nm-language').value;
+  if (!language) { alert('Language is required'); return; }
+
+  const countrySelect = document.getElementById('nm-country')?.value || '';
+  if (!countrySelect) { alert('Country is required'); return; }
+  const country = countrySelect === 'Other'
+    ? (document.getElementById('nm-country-other')?.value.trim() || 'Other')
+    : countrySelect;
+
+  const countryCodeSelect = document.getElementById('nm-country-code')?.value || '';
+  if (!countryCodeSelect) { alert('Country Code is required'); return; }
+  const countryCode = countryCodeSelect === 'Other'
+    ? (document.getElementById('nm-country-code-other')?.value.trim() || '')
+    : countryCodeSelect;
+
   // ✅ DUPLICATE VALIDATION: Check Name + Email combination
-  const duplicate = members.find(m => 
-    m.name.toLowerCase() === name.toLowerCase() && 
+  const duplicate = members.find(m =>
+    m.name.toLowerCase() === name.toLowerCase() &&
     email && m.email.toLowerCase() === email.toLowerCase()
   );
-  
+
   if (duplicate) {
     alert(`⚠️ DUPLICATE ENTRY FOUND!\n\nName: ${duplicate.name}\nEmail: ${duplicate.email}\n\nThis member already exists. Please check before adding.`);
-    return;  // ✅ PREVENT DUPLICATE - DO NOT ADD
+    return;
   }
-  
+
   const selectedGroup = document.getElementById('nm-group').value.trim();
   const typedGroup = document.getElementById('nm-new-group')?.value.trim() || '';
   const groupName = typedGroup || selectedGroup;
@@ -10126,8 +10266,8 @@ function addNewMember() {
       group: groupName,
       facilitator: '',
       facilitator_names: [],
-      region: document.getElementById('nm-region').value,
-      language: document.getElementById('nm-language').value,
+      region,
+      language,
       total: 0,
       wa_added: 0,
       initiation: 0,
@@ -10140,15 +10280,18 @@ function addNewMember() {
 
   const newMember = {
     idx: members.length, name,
-    email: email,
-    mobile: document.getElementById('nm-mobile').value.trim(),
-    role: document.getElementById('nm-role')?.value || 'Sadhak',
-    country: document.getElementById('nm-country')?.value || 'India',
-    region: document.getElementById('nm-region').value,
-    language: document.getElementById('nm-language').value,
+    email,
+    mobile,
+    role,
+    country,
+    countryCode,
+    region,
+    language,
     fac_group: groupName.split(' - ')[2] || '',
     group: groupName,
-    wa: 'No', init: 'Not Yet', culmination: 'nan',
+    wa: document.getElementById('nm-wa-status')?.value || 'No',
+    init: document.getElementById('nm-init-status')?.value || 'No',
+    culmination: document.getElementById('nm-culmination-status')?.value || 'No',
     att: [-1, -1, -1, -1, -1]
   };
   members.push(newMember);
@@ -13447,8 +13590,8 @@ initCloudSync();
 // Navigation items definition — mirrors the desktop nav-wrap exactly
 const MOBILE_NAV_ITEMS = [
   { id: 'pillars',    icon: '🪔', label: '5 Pillars',        adminOnly: false, badge: null },
-  { id: 'overview',   icon: '◈',  label: 'Overview',       adminOnly: false, badge: null },
   { id: 'data-entry', icon: '📝', label: 'Registrations',  adminOnly: false, badge: null, domId: 'registrations-nav-btn' },
+  { id: 'overview',   icon: '◈',  label: 'Overview',       adminOnly: false, badge: null },
   { id: 'groups',     icon: '◎',  label: 'Groups',          adminOnly: false, badge: null },
   { id: 'members',    icon: '⊕',  label: 'Members',         adminOnly: false, badge: null },
   { id: 'attendance', icon: '✦',  label: 'Attendance',      adminOnly: false, badge: null },
