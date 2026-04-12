@@ -5,6 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saadho Bodhashala | Sri Anish</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 
@@ -54,9 +57,13 @@ body {
 
 /* ── TOPBAR ── */
 .topbar {
-  background: linear-gradient(135deg, var(--shiva-deep) 0%, #250d52 60%, var(--shiva-mid) 100%);
-  border-bottom: 1px solid rgba(184,147,74,0.35);
-  box-shadow: 0 2px 20px rgba(26,10,46,0.4);
+  background: linear-gradient(105deg, #0d0520 0%, #1a0840 30%, #0f1f3d 65%, #0d0520 100%);
+  border-bottom: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow:
+    0 1px 0 rgba(184,147,74,0.5),
+    0 4px 32px rgba(26,10,46,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.04);
   padding: 0 24px;
   display: flex;
   align-items: center;
@@ -64,48 +71,137 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 64px;
+  height: 70px;
+  overflow: hidden;
+}
+
+/* Topbar shimmer line at top */
+.topbar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(184,147,74,0.2) 10%,
+    rgba(232,135,58,0.9) 30%,
+    rgba(245,200,100,1) 50%,
+    rgba(232,135,58,0.9) 70%,
+    rgba(184,147,74,0.2) 90%,
+    transparent 100%
+  );
+}
+
+/* Subtle radial glow behind brand */
+.topbar::after {
+  content: '';
+  position: absolute;
+  left: -10px; top: -20px;
+  width: 260px; height: 110px;
+  background: radial-gradient(ellipse at 30% 50%, rgba(232,135,58,0.12), transparent 70%);
+  pointer-events: none;
 }
 
 .topbar-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
 }
 
+/* OM Symbol — multi-ring sacred geometry look */
 .om-symbol {
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, var(--saffron) 0%, var(--trishul) 100%);
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  position: relative;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.om-symbol::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(232,135,58,0.9) 0deg,
+    rgba(245,200,80,1) 90deg,
+    rgba(184,147,74,0.9) 180deg,
+    rgba(232,135,58,0.7) 270deg,
+    rgba(245,200,80,1) 360deg
+  );
+  animation: omRingRotate 8s linear infinite;
+}
+
+.om-symbol::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #1e0840 0%, #120530 100%);
+  z-index: 1;
+}
+
+.om-symbol span {
+  position: relative;
+  z-index: 2;
   font-family: 'Crimson Pro', serif;
-  font-size: 23px;
-  color: #fff;
+  font-size: 26px;
   font-weight: 600;
-  flex-shrink: 0;
-  border: 1.5px solid rgba(255,255,255,0.25);
-  box-shadow: 0 0 0 3px rgba(232,135,58,0.2), 0 4px 12px rgba(0,0,0,0.3);
+  color: transparent;
+  background: linear-gradient(160deg, #fde68a 0%, #f59e0b 40%, #e8873a 70%, #fbbf24 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(232,135,58,0.7));
+  animation: omGlow 3s ease-in-out infinite;
+}
+
+@keyframes omRingRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes omGlow {
+  0%,100% { filter: drop-shadow(0 0 4px rgba(232,135,58,0.6)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(245,200,80,1)) drop-shadow(0 0 20px rgba(232,135,58,0.5)); }
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .brand-text h1 {
-  font-family: 'Cinzel', serif;
-  font-size: 14.5px;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 1px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: transparent;
+  background: linear-gradient(135deg, #ffffff 0%, #f5e8c0 40%, #fde68a 60%, #fff8e1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow: none;
+  white-space: nowrap;
 }
 
 .brand-text p {
-  font-size: 10px;
-  color: rgba(232,171,98,0.9);
+  font-size: 10.5px;
   font-family: 'Crimson Pro', serif;
   font-style: italic;
-  letter-spacing: 0.5px;
-  margin-top: 1px;
+  font-weight: 300;
+  letter-spacing: 1.2px;
+  color: transparent;
+  background: linear-gradient(90deg, rgba(232,171,98,0.95) 0%, rgba(245,200,100,1) 50%, rgba(232,135,58,0.85) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 /* ── PROGRAM BANNER ── */
@@ -120,7 +216,7 @@ body {
   justify-content: center;
   gap: 12px;
   position: sticky;
-  top: 64px;
+  top: 70px;
   z-index: 98;
   transition: all 0.3s ease;
   animation: bannerSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -318,7 +414,7 @@ body.dark-mode .program-banner-text {
   overflow-x: auto;
   scrollbar-width: none;
   position: sticky;
-  top: 64px;
+  top: 70px;
   z-index: 99;
 }
 .nav-wrap::-webkit-scrollbar { display: none; }
@@ -581,6 +677,13 @@ tr.total-row.subtotal td, tr.total-row.subtotal:hover td { background: var(--moo
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; }
 @media(max-width:700px) { .two-col,.three-col { grid-template-columns: 1fr; } }
+
+/* 5 Pillars responsive */
+@media(max-width:640px) {
+  #s-pillars .card > div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
 
 /* ── BAR ── */
 .bar-wrap { background: rgba(122,85,192,0.1); border-radius: 6px; overflow: hidden; height: 7px; margin-top: 5px; }
@@ -1038,9 +1141,12 @@ canvas { width: 100% !important; }
   }
 
   .om-symbol {
-    width: 34px;
-    height: 34px;
-    font-size: 18px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .om-symbol span {
+    font-size: 20px;
   }
 
   .brand-text h1 {
@@ -3223,10 +3329,10 @@ body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
 
 <div class="topbar">
   <div class="topbar-brand">
-    <div class="om-symbol">ॐ</div>
+    <div class="om-symbol"><span>ॐ</span></div>
     <div class="brand-text">
       <h1 id="brand-h1">Saadho Bodhashala</h1>
-      <p id="brand-sub">ॐ नमः शिवाय · Gurudev Sri Anish</p>
+      <p id="brand-sub">ॐ नमः शिवाय &nbsp;·&nbsp; Gurudev Sri Anish</p>
     </div>
   </div>
 
@@ -3301,7 +3407,8 @@ body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
 
 <!-- NAV -->
 <div class="nav-wrap" id="main-nav">
-  <button class="nav-btn active" onclick="showSection('overview')"><span class="nav-icon">◈</span> Overview</button>
+  <button class="nav-btn active" onclick="showSection('pillars')"><span class="nav-icon">🪔</span> 5 Pillars</button>
+  <button class="nav-btn" onclick="showSection('overview')"><span class="nav-icon">◈</span> Overview</button>
   <button class="nav-btn" id="registrations-nav-btn" onclick="showSection('data-entry')"><span class="nav-icon">📝</span> Registrations</button>
   <button class="nav-btn" onclick="showSection('groups')"><span class="nav-icon">◎</span> Groups</button>
   <button class="nav-btn" onclick="showSection('members')"><span class="nav-icon">⊕</span> Members</button>
@@ -3322,15 +3429,729 @@ body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
 </div>
 
 <!-- PROGRAM BANNER -->
-<div class="program-banner">
+<div class="program-banner" style="display:none;">
   <span class="program-banner-devanagari">ॐ नमः शिवाय</span>
   <span class="program-banner-text" id="program-banner-name">Panchakshari Naad Sadhana | Mahashivaratri 2026</span>
 </div>
 
 <div class="content">
 
+<!-- 5 PILLARS -->
+<div class="section active" id="s-pillars">
+<style>
+/* ── PILLARS PAGE STYLES ── */
+.pillars-hero {
+  background: linear-gradient(140deg, var(--shiva-deep) 0%, #1e0d4a 50%, #0a1a2e 100%);
+  border-radius: 16px;
+  padding: 40px 28px 32px;
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(184,147,74,0.3);
+}
+.pillars-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(232,135,58,0.15), transparent 60%),
+              radial-gradient(ellipse 40% 60% at 80% 80%, rgba(122,85,192,0.12), transparent 50%);
+  pointer-events: none;
+}
+.pillars-hero-om {
+  font-family: 'Crimson Pro', serif;
+  font-size: 42px;
+  color: var(--saffron);
+  line-height: 1;
+  margin-bottom: 10px;
+  text-shadow: 0 0 30px rgba(232,135,58,0.5);
+  animation: omPulse 3s ease-in-out infinite;
+}
+@keyframes omPulse {
+  0%,100% { text-shadow: 0 0 20px rgba(232,135,58,0.4); }
+  50% { text-shadow: 0 0 40px rgba(232,135,58,0.8), 0 0 60px rgba(232,135,58,0.3); }
+}
+.pillars-hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.pillars-hero-sub {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(232,171,98,0.85);
+  margin-bottom: 16px;
+}
+.pillars-hero-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232,135,58,0.6), rgba(122,158,78,0.5), rgba(122,85,192,0.5), transparent);
+  max-width: 400px;
+  margin: 0 auto 16px;
+}
+.pillars-hero-tagline {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ── INSIGHT BANNER ── */
+.insight-banner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.insight-chip {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.insight-chip:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(26,10,46,0.12); }
+.insight-chip-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.insight-chip-text { font-size: 12px; color: var(--text-soft); line-height: 1.6; }
+.insight-chip-label { font-weight: 700; color: var(--text-main); font-size: 12.5px; display: block; margin-bottom: 2px; }
+
+/* ── PILLAR WHEEL NAVIGATOR ── */
+.pillar-wheel-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.pillar-wheel {
+  display: flex;
+  gap: 8px;
+  background: var(--card-bg);
+  border-radius: 50px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.pw-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-soft);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.pw-btn:hover { background: var(--moon-dk); color: var(--text-main); }
+.pw-btn.active { color: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.2); }
+.pw-btn-num { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; background: rgba(255,255,255,0.25); }
+
+/* ── PILLAR PANEL ── */
+.pillar-panels { position: relative; }
+.pillar-panel {
+  display: none;
+  animation: panelFadeIn 0.35s ease;
+}
+.pillar-panel.active { display: block; }
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pillar-panel-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.pillar-main-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-top: 4px solid;
+}
+.pillar-number-badge {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+.pillar-name-en {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--shiva-mid);
+  margin-bottom: 2px;
+}
+.pillar-name-sa {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--saffron);
+  margin-bottom: 14px;
+}
+.pillar-desc {
+  font-size: 13px;
+  color: var(--text-main);
+  line-height: 1.85;
+  margin-bottom: 14px;
+}
+.pillar-insight-box {
+  background: var(--shiva-deep);
+  border-radius: 10px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--saffron);
+}
+.pillar-insight-box p {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 13.5px;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.75;
+}
+
+.pillar-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pillar-points-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  flex: 1;
+}
+.pillar-points-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.pillar-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pillar-point:last-child { border-bottom: none; }
+.pillar-point-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+.pillar-point-text {
+  font-size: 12.5px;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+.pillar-challenge-card {
+  background: linear-gradient(135deg, rgba(26,10,46,0.04), rgba(122,85,192,0.05));
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-med);
+}
+.pillar-challenge-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 10px;
+}
+.pillar-challenge-text {
+  font-size: 12px;
+  color: var(--text-soft);
+  line-height: 1.75;
+}
+
+/* ── PILLAR PROGRESS STRIP ── */
+.pillar-progress-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+  background: var(--card-bg);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.pps-item {
+  flex: 1;
+  text-align: center;
+  padding: 14px 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+.pps-item:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--text-mute);
+  z-index: 2;
+}
+.pps-item:hover { background: var(--moon-dk); }
+.pps-item.active-pps { background: var(--moon); }
+.pps-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+.pps-label { font-size: 10px; font-weight: 700; font-family: 'Cinzel', serif; letter-spacing: 0.5px; color: var(--text-soft); text-transform: uppercase; }
+
+/* ── SYNTHESIS SECTION ── */
+.synthesis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.synthesis-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.synthesis-card-title {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--shiva-mid);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.challenges-list { list-style: none; padding: 0; }
+.challenges-list li {
+  display: flex;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-main);
+  line-height: 1.65;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.challenges-list li:last-child { border-bottom: none; }
+.challenges-list .warn-dot {
+  width: 6px; height: 6px;
+  background: var(--saffron);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* ── CLOSING QUOTE ── */
+.closing-mantra {
+  background: linear-gradient(140deg, var(--shiva-deep) 0%, #1a0a3e 100%);
+  border-radius: 16px;
+  padding: 32px 28px;
+  text-align: center;
+  border: 1px solid rgba(184,147,74,0.3);
+  position: relative;
+  overflow: hidden;
+}
+.closing-mantra::before {
+  content: '❝';
+  position: absolute;
+  top: 10px; left: 20px;
+  font-size: 60px;
+  color: rgba(232,135,58,0.12);
+  font-family: 'Crimson Pro', serif;
+  line-height: 1;
+}
+.closing-mantra blockquote {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.85;
+  max-width: 660px;
+  margin: 0 auto 16px;
+}
+.closing-mantra-pills {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.cm-pill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+}
+.closing-mantra cite {
+  font-size: 11px;
+  color: rgba(232,171,98,0.7);
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1px;
+  font-style: normal;
+}
+
+@media (max-width: 680px) {
+  .pillar-panel-inner { grid-template-columns: 1fr; }
+  .synthesis-grid { grid-template-columns: 1fr; }
+  .insight-banner { grid-template-columns: 1fr; }
+  .pillars-hero-title { font-size: 20px; }
+  .pps-label { font-size: 9px; }
+}
+</style>
+
+<div style="max-width:980px;margin:0 auto;">
+
+  <!-- HERO -->
+  <div class="pillars-hero">
+    <div class="pillars-hero-om">ॐ</div>
+    <div class="pillars-hero-title">The Five Pillars of Spiritual Practice</div>
+    <div class="pillars-hero-sub">Panchasthambha — The Foundation That Makes Sadhana Joyful &amp; Effective</div>
+    <div class="pillars-hero-divider"></div>
+    <div class="pillars-hero-tagline">Without these fundamentals, all spiritual efforts remain preparatory &nbsp;·&nbsp; With them, the path becomes a living fire</div>
+  </div>
+
+  <!-- KEY INSIGHTS CHIPS -->
+  <div class="insight-banner">
+    <div class="insight-chip">
+      <div class="insight-chip-icon">🌊</div>
+      <div class="insight-chip-text">
+        <span class="insight-chip-label">Align with Cosmic Rhythm</span>
+        The cosmos moves in a natural cyclical flow — dariya. Adhering to this rhythm in daily practice enhances velocity and removes struggle.
+      </div>
+    </div>
+    <div class="insight-chip">
+      <div class="insight-chip-icon">⚡</div>
+      <div class="insight-chip-text">
+        <span class="insight-chip-label">Joy + Velocity = Progress</span>
+        Both are necessary. Joy without velocity stagnates; velocity without joy burns out. The pillars ensure both arise together.
+      </div>
+    </div>
+    <div class="insight-chip">
+      <div class="insight-chip-icon">🧠</div>
+      <div class="insight-chip-text">
+        <span class="insight-chip-label">Beyond Gyana Yoga</span>
+        Intellectual understanding alone is insufficient. True transformation requires experiential depth — living the practice, not merely knowing it.
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR PROGRESS STRIP -->
+  <div class="pillar-progress-strip" id="pps">
+    <div class="pps-item active-pps" onclick="showPillar(1)" title="Presiding Deity"><span class="pps-icon">🔯</span><span class="pps-label">Deity</span></div>
+    <div class="pps-item" onclick="showPillar(2)" title="Guru"><span class="pps-icon">🪷</span><span class="pps-label">Guru</span></div>
+    <div class="pps-item" onclick="showPillar(3)" title="Sadhana"><span class="pps-icon">🌙</span><span class="pps-label">Sadhana</span></div>
+    <div class="pps-item" onclick="showPillar(4)" title="Sanga"><span class="pps-icon">🤝</span><span class="pps-label">Sanga</span></div>
+    <div class="pps-item" onclick="showPillar(5)" title="Seva"><span class="pps-icon">🙏</span><span class="pps-label">Seva</span></div>
+  </div>
+
+  <!-- PILLAR WHEEL NAV -->
+  <div class="pillar-wheel-wrap">
+    <div class="pillar-wheel">
+      <button class="pw-btn active" id="pw1" onclick="showPillar(1)" style="background:linear-gradient(135deg,var(--saffron),var(--saffron-dk));">
+        <span class="pw-btn-num">1</span> Presiding Deity
+      </button>
+      <button class="pw-btn" id="pw2" onclick="showPillar(2)">
+        <span class="pw-btn-num">2</span> Guru
+      </button>
+      <button class="pw-btn" id="pw3" onclick="showPillar(3)">
+        <span class="pw-btn-num">3</span> Sadhana
+      </button>
+      <button class="pw-btn" id="pw4" onclick="showPillar(4)">
+        <span class="pw-btn-num">4</span> Sanga
+      </button>
+      <button class="pw-btn" id="pw5" onclick="showPillar(5)">
+        <span class="pw-btn-num">5</span> Seva
+      </button>
+    </div>
+  </div>
+
+  <!-- PILLAR PANELS -->
+  <div class="pillar-panels">
+
+    <!-- PANEL 1: PRESIDING DEITY -->
+    <div class="pillar-panel active" id="pp1">
+      <div class="pillar-panel-inner">
+        <div class="pillar-main-card" style="border-top-color:var(--saffron);">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <div class="pillar-number-badge" style="background:linear-gradient(135deg,var(--saffron),var(--saffron-dk));">I</div>
+            <div>
+              <div class="pillar-name-en">Presiding Deity</div>
+              <div class="pillar-name-sa">देवता — Devata</div>
+            </div>
+          </div>
+          <p class="pillar-desc">The highest pillar is connection with a concentrated form of energy — a deity, tree, river, or any entity that symbolises the sacred. This is not mere belief, but a direct energetic transmission that anchors your practice in something larger than yourself.</p>
+          <p class="pillar-desc" style="margin-bottom:16px;">This connection enables energy to flow <em>through</em> the practitioner rather than being generated by personal effort alone — transforming sadhana from labour into grace.</p>
+          <div class="pillar-insight-box">
+            <p>"Can be a deity, tree, river, or any entity symbolizing energy. The connection itself is what matters — not the form it takes."</p>
+          </div>
+        </div>
+        <div class="pillar-side">
+          <div class="pillar-points-card" style="border-top:3px solid var(--saffron);">
+            <div class="pillar-points-title" style="color:var(--saffron-dk);">Key Points</div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--saffron);"></div><div class="pillar-point-text">Direct energy transmission — bypasses the intellect and reaches the energetic body</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--saffron);"></div><div class="pillar-point-text">The deity represents concentrated consciousness — a focal point for your devotion</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--saffron);"></div><div class="pillar-point-text">Without this anchor, practice becomes self-powered and eventually exhausting</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--saffron);"></div><div class="pillar-point-text">Chakra system deepens significantly when deity connection is established</div></div>
+          </div>
+          <div class="pillar-challenge-card">
+            <div class="pillar-challenge-title">⚠ Common Pitfall</div>
+            <div class="pillar-challenge-text">Many practitioners approach deity as symbolic or intellectual concept, missing the energetic reality. A deity is not metaphor — it is a living field of concentrated energy that responds.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: GURU -->
+    <div class="pillar-panel" id="pp2">
+      <div class="pillar-panel-inner">
+        <div class="pillar-main-card" style="border-top-color:var(--bilva);">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <div class="pillar-number-badge" style="background:linear-gradient(135deg,var(--bilva),#4e7a2a);">II</div>
+            <div>
+              <div class="pillar-name-en">Guru — The Living Teacher</div>
+              <div class="pillar-name-sa">गुरु — The Remover of Darkness</div>
+            </div>
+          </div>
+          <p class="pillar-desc">An embodied teacher is crucial for guidance — helping overcome ego and mental traps that no book or video can address. The guru sees what you cannot see about yourself, and provides correction at precisely the right moment.</p>
+          <p class="pillar-desc" style="margin-bottom:16px;">The guru-disciple relationship maintains correct spiritual direction. Without it, the seeker's ego gradually reasserts itself, creating convincing but ultimately misleading spiritual narratives.</p>
+          <div class="pillar-insight-box">
+            <p>"Embodied teachers have a transformative impact that books or photos cannot provide. A living guru can challenge ego and provide personalized support."</p>
+          </div>
+        </div>
+        <div class="pillar-side">
+          <div class="pillar-points-card" style="border-top:3px solid var(--bilva);">
+            <div class="pillar-points-title" style="color:#4e7a2a;">Key Points</div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--bilva);"></div><div class="pillar-point-text">A living guru challenges ego in ways that self-study cannot replicate</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--bilva);"></div><div class="pillar-point-text">Personalized correction prevents years of subtle misdirection</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--bilva);"></div><div class="pillar-point-text">The relationship is maintained through consistent practice and openness</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--bilva);"></div><div class="pillar-point-text">Guru transmits energetic understanding that cannot be conveyed intellectually</div></div>
+          </div>
+          <div class="pillar-challenge-card">
+            <div class="pillar-challenge-title">⚠ Common Pitfall</div>
+            <div class="pillar-challenge-text">Many seekers start with intellectual understanding (Gyana Yoga) — reading, watching, analyzing. But intellectual exploration alone is insufficient for deep transformation. The mind often creates distractions and tangents on the path.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: SADHANA -->
+    <div class="pillar-panel" id="pp3">
+      <div class="pillar-panel-inner">
+        <div class="pillar-main-card" style="border-top-color:var(--shiva-soft);">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <div class="pillar-number-badge" style="background:linear-gradient(135deg,var(--shiva-soft),var(--shiva-mid));">III</div>
+            <div>
+              <div class="pillar-name-en">Sadhana — Practice Rhythm</div>
+              <div class="pillar-name-sa">साधना — Cyclical Discipline</div>
+            </div>
+          </div>
+          <p class="pillar-desc">Regular, cyclical spiritual practice aligned with cosmic rhythms — tied to the sun, moon cycles, and the natural dariya of the universe. Consistency and meaningful repetition are essential to avoid the twin traps of boredom and fatigue.</p>
+          <p class="pillar-desc" style="margin-bottom:16px;">Many people treat meditation mechanically, missing its deeper essence. True sadhana is not a task to complete but a rhythm to inhabit — like breathing, like the tide, like the cycles of the cosmos itself.</p>
+          <div class="pillar-insight-box">
+            <p>"Spiritual progress requires aligning with the cosmos' natural rhythm — dariya. Regularity and meaningful repetition ensure the practice remains alive and transformative."</p>
+          </div>
+        </div>
+        <div class="pillar-side">
+          <div class="pillar-points-card" style="border-top:3px solid var(--shiva-soft);">
+            <div class="pillar-points-title" style="color:var(--shiva-soft);">Key Points</div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--shiva-soft);"></div><div class="pillar-point-text">Practice tied to daily cosmic rhythm (sun/moon cycles) creates resonance</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--shiva-soft);"></div><div class="pillar-point-text">Meaningful repetition — not mechanical repetition — is the key distinction</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--shiva-soft);"></div><div class="pillar-point-text">Following fundamentals prevents practice from becoming a personal struggle</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--shiva-soft);"></div><div class="pillar-point-text">Prior to integrating these fundamentals, all spiritual efforts are preparatory</div></div>
+          </div>
+          <div class="pillar-challenge-card">
+            <div class="pillar-challenge-title">⚠ Common Pitfall</div>
+            <div class="pillar-challenge-text">Practice becomes mechanical or burdensome when it is not correctly explained or understood, or not suited to the individual's unique wiring. Without understanding the dariya, sadhana becomes duty rather than devotion.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 4: SANGA -->
+    <div class="pillar-panel" id="pp4">
+      <div class="pillar-panel-inner">
+        <div class="pillar-main-card" style="border-top-color:var(--trishul);">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <div class="pillar-number-badge" style="background:linear-gradient(135deg,var(--trishul),#7a5c20);">IV</div>
+            <div>
+              <div class="pillar-name-en">Sanga — Sacred Community</div>
+              <div class="pillar-name-sa">संघ — The Spiritual Reverb</div>
+            </div>
+          </div>
+          <p class="pillar-desc">A supportive community provides essential spiritual "reverb" — mutual support and reflection that amplifies individual practice far beyond what solitary effort can achieve. Spiritual growth is not an isolated process but a collective interaction.</p>
+          <p class="pillar-desc" style="margin-bottom:16px;">Without community feedback, spiritual processes lose their vitality. Sharing experiences and guidance within a sanga sustains enthusiasm — the concept of holding each other's hand and walking each other home.</p>
+          <div class="pillar-insight-box">
+            <p>"Without community reverb, spiritual processes lose their vitality. Books and videos cannot replace the dynamic exchange and correction found in a living community."</p>
+          </div>
+        </div>
+        <div class="pillar-side">
+          <div class="pillar-points-card" style="border-top:3px solid var(--trishul);">
+            <div class="pillar-points-title" style="color:#7a5c20;">Key Points</div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--trishul);"></div><div class="pillar-point-text">Community provides reverb — your practice resonates and amplifies in others</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--trishul);"></div><div class="pillar-point-text">Without sanga, practices can become boring or burdensome</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--trishul);"></div><div class="pillar-point-text">Shared experience accelerates individual progress non-linearly</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--trishul);"></div><div class="pillar-point-text">Facilitators hold the space for authentic sharing and collective resonance</div></div>
+          </div>
+          <div class="pillar-challenge-card">
+            <div class="pillar-challenge-title">⚠ Common Pitfall</div>
+            <div class="pillar-challenge-text">Many get stuck in intellectualizing (Gyana Yoga) and then practice alone — missing the relational dimension of spiritual growth entirely. Solitary practice without sanga is like trying to hear music in a soundproof room.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 5: SEVA -->
+    <div class="pillar-panel" id="pp5">
+      <div class="pillar-panel-inner">
+        <div class="pillar-main-card" style="border-top-color:var(--rudra);">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+            <div class="pillar-number-badge" style="background:linear-gradient(135deg,var(--rudra),#8b1e12);">V</div>
+            <div>
+              <div class="pillar-name-en">Seva — Selfless Service</div>
+              <div class="pillar-name-sa">सेवा — Contribution of Life Energy</div>
+            </div>
+          </div>
+          <p class="pillar-desc">Seva means contributing life energy to others without expectations or bonds — transcending familial duty to reach a purer form of giving. True seva opens deeper energetic channels within the practitioner, creating a flow that enriches both giver and receiver.</p>
+          <p class="pillar-desc" style="margin-bottom:16px;">Family-related help is not considered seva due to existing bonds. Seva activates channels that cannot be opened through personal practice alone — it dissolves the boundary of self at an energetic level.</p>
+          <div class="pillar-insight-box">
+            <p>"Combining all five pillars enhances velocity and joy on the path. Seva activates deeper energetic channels within the practitioner, making the whole system complete."</p>
+          </div>
+        </div>
+        <div class="pillar-side">
+          <div class="pillar-points-card" style="border-top:3px solid var(--rudra);">
+            <div class="pillar-points-title" style="color:var(--rudra);">Key Points</div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--rudra);"></div><div class="pillar-point-text">Contributing life energy without expectation — not as transaction but as offering</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--rudra);"></div><div class="pillar-point-text">Family help is not seva due to existing emotional and karmic bonds</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--rudra);"></div><div class="pillar-point-text">Activates deeper energetic channels unavailable through personal practice</div></div>
+            <div class="pillar-point"><div class="pillar-point-dot" style="background:var(--rudra);"></div><div class="pillar-point-text">Velocity without joy or joy without velocity leads to stagnation — seva balances both</div></div>
+          </div>
+          <div class="pillar-challenge-card">
+            <div class="pillar-challenge-title">⚠ Common Pitfall</div>
+            <div class="pillar-challenge-text">Confusing service with obligation or networking. Seva that carries expectation — however subtle — loses its energetic potency. The key is action that arises from fullness, not from deficit or desire for recognition.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pillar-panels -->
+
+  <!-- SYNTHESIS SECTION -->
+  <div class="synthesis-grid">
+    <div class="synthesis-card">
+      <div class="synthesis-card-title">
+        <span>⚠</span> Common Challenges in Practice
+      </div>
+      <ul class="challenges-list">
+        <li><span class="warn-dot"></span><span>Practice becomes mechanical when not correctly explained or understood</span></li>
+        <li><span class="warn-dot"></span><span>Practice not suited to the individual's unique wiring causes friction</span></li>
+        <li><span class="warn-dot"></span><span>Lack of community reverb makes the journey isolating and dry</span></li>
+        <li><span class="warn-dot"></span><span>Getting stuck in Gyana Yoga — intellectualizing without embodying</span></li>
+        <li><span class="warn-dot"></span><span>A purely conceptual approach lacks the experiential depth necessary</span></li>
+      </ul>
+    </div>
+    <div class="synthesis-card">
+      <div class="synthesis-card-title">
+        <span>◈</span> Role of Community &amp; Support
+      </div>
+      <ul class="challenges-list">
+        <li><span class="warn-dot" style="background:var(--bilva);"></span><span>Spiritual practice is not a solo journey — it requires interaction and resonance</span></li>
+        <li><span class="warn-dot" style="background:var(--bilva);"></span><span>"Holding each other's hand and walking each other home" — the sanga principle</span></li>
+        <li><span class="warn-dot" style="background:var(--bilva);"></span><span>Books and videos cannot replace the dynamic exchange of a living teacher</span></li>
+        <li><span class="warn-dot" style="background:var(--bilva);"></span><span>Eastern traditions ground these pillars, but diverse forms are recognised</span></li>
+        <li><span class="warn-dot" style="background:var(--bilva);"></span><span>Chakra system deepens with all five pillars integrated simultaneously</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CLOSING MANTRA -->
+  <div class="closing-mantra">
+    <div class="closing-mantra-pills">
+      <span class="cm-pill" style="background:rgba(232,135,58,0.15);border-color:var(--saffron);color:var(--saffron);">Devata</span>
+      <span class="cm-pill" style="background:rgba(122,158,78,0.15);border-color:var(--bilva);color:var(--bilva);">Guru</span>
+      <span class="cm-pill" style="background:rgba(122,85,192,0.15);border-color:var(--shiva-soft);color:var(--shiva-mist);">Sadhana</span>
+      <span class="cm-pill" style="background:rgba(184,147,74,0.15);border-color:var(--trishul);color:var(--trishul);">Sanga</span>
+      <span class="cm-pill" style="background:rgba(192,57,43,0.15);border-color:var(--rudra);color:var(--rudra);">Seva</span>
+    </div>
+    <blockquote>Adhering to the five fundamental pillars creates a joyful, effective spiritual path marked by both velocity and joy. Without these, practice risks becoming a mechanical, lonely burden rather than a transformative experience.</blockquote>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(232,135,58,0.4),transparent);max-width:300px;margin:0 auto 14px;"></div>
+    <cite>— Fundamentals of the Spiritual Journey · Sri Anish</cite>
+  </div>
+
+</div><!-- /max-width wrapper -->
+
+<script>
+(function() {
+  const pillarColors = {
+    1: 'linear-gradient(135deg,var(--saffron),var(--saffron-dk))',
+    2: 'linear-gradient(135deg,var(--bilva),#4e7a2a)',
+    3: 'linear-gradient(135deg,var(--shiva-soft),var(--shiva-mid))',
+    4: 'linear-gradient(135deg,var(--trishul),#7a5c20)',
+    5: 'linear-gradient(135deg,var(--rudra),#8b1e12)'
+  };
+
+  window.showPillar = function(n) {
+    // Hide all panels
+    document.querySelectorAll('.pillar-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('pp' + n).classList.add('active');
+
+    // Update wheel buttons
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.getElementById('pw' + i);
+      if (i === n) {
+        btn.classList.add('active');
+        btn.style.background = pillarColors[n];
+        btn.style.color = '#fff';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'transparent';
+        btn.style.color = '';
+      }
+    }
+
+    // Update progress strip
+    document.querySelectorAll('.pps-item').forEach((el, idx) => {
+      el.classList.toggle('active-pps', idx + 1 === n);
+    });
+  };
+})();
+</script>
+</div>
+
 <!-- OVERVIEW -->
-<div class="section active" id="s-overview">
+<div class="section" id="s-overview">
   <div class="stats-grid" id="overview-stats"></div>
   <div class="two-col">
     <div class="card card-divine">
@@ -5787,6 +6608,10 @@ function showSection(id) {
   section.classList.add('active');
   const btns = document.querySelectorAll('.nav-btn');
   btns.forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + id + "'")) b.classList.add('active'); });
+  if (id === 'pillars')     { /* static content, no init needed */ }
+  // Hide program banner on pillars tab, show on all others
+  const progBanner = document.querySelector('.program-banner');
+  if (progBanner) progBanner.style.display = (id === 'pillars') ? 'none' : '';
   if (id === 'overview')    renderOverview();
   if (id === 'data-entry')  initDataEntry();
   if (id === 'groups')      initGroups();
@@ -12593,6 +13418,7 @@ initCloudSync();
 
 // Navigation items definition — mirrors the desktop nav-wrap exactly
 const MOBILE_NAV_ITEMS = [
+  { id: 'pillars',    icon: '🪔', label: '5 Pillars',        adminOnly: false, badge: null },
   { id: 'overview',   icon: '◈',  label: 'Overview',       adminOnly: false, badge: null },
   { id: 'data-entry', icon: '📝', label: 'Registrations',  adminOnly: false, badge: null, domId: 'registrations-nav-btn' },
   { id: 'groups',     icon: '◎',  label: 'Groups',          adminOnly: false, badge: null },
