@@ -4223,32 +4223,82 @@ body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
           <input type="text" id="m-name" placeholder="Full name" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Email Address</label>
-          <input type="text" id="m-email" placeholder="email@example.com" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Email Address *</label>
+          <input type="email" id="m-email" placeholder="email@example.com" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Mobile / WhatsApp</label>
-          <input type="text" id="m-mobile" placeholder="9876543210" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Mobile / WhatsApp *</label>
+          <input type="text" id="m-mobile" placeholder="e.g. +91 98765 43210" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role</label>
-          <input type="text" id="m-role" placeholder="Sadhak, Facilitator, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Role *</label>
+          <select id="m-role" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select Role —</option>
+            <option value="Sadhak">Sadhak</option>
+            <option value="Facilitator">Facilitator</option>
+          </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region</label>
-          <input type="text" id="m-region" placeholder="North India, South India, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Region *</label>
+          <select id="m-region" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select Region —</option>
+            <option value="India">India</option>
+            <option value="Non India">Non India</option>
+          </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language</label>
-          <input type="text" id="m-language" placeholder="Hindi, English, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Language *</label>
+          <select id="m-language" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select Language —</option>
+            <option value="Hindi">Hindi</option>
+            <option value="English">English</option>
+            <option value="Any">Any</option>
+          </select>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country</label>
-          <input type="text" id="m-country" placeholder="India, USA, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country *</label>
+          <select id="m-country" onchange="document.getElementById('m-country-other-wrap').style.display=this.value==='Other'?'block':'none'" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select Country —</option>
+            <option value="India">India</option>
+            <option value="USA">USA</option>
+            <option value="Canada">Canada</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="Australia">Australia</option>
+            <option value="UAE">UAE</option>
+            <option value="Germany">Germany</option>
+            <option value="Sweden">Sweden</option>
+            <option value="Switzerland">Switzerland</option>
+            <option value="Spain">Spain</option>
+            <option value="Argentina">Argentina</option>
+            <option value="Cambodia">Cambodia</option>
+            <option value="Japan">Japan</option>
+            <option value="Other">Other (specify below)</option>
+          </select>
+          <div id="m-country-other-wrap" style="display:none;margin-top:5px">
+            <input type="text" id="m-country-other" placeholder="Enter country name…" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          </div>
         </div>
         <div>
-          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country Code</label>
-          <input type="text" id="m-country-code" placeholder="+91, +1, +44, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Country Code *</label>
+          <select id="m-country-code" onchange="document.getElementById('m-country-code-other-wrap').style.display=this.value==='Other'?'block':'none'" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select Code —</option>
+            <option value="+91">+91 (India)</option>
+            <option value="+1">+1 (USA / Canada)</option>
+            <option value="+44">+44 (UK)</option>
+            <option value="+61">+61 (Australia)</option>
+            <option value="+971">+971 (UAE)</option>
+            <option value="+49">+49 (Germany)</option>
+            <option value="+46">+46 (Sweden)</option>
+            <option value="+41">+41 (Switzerland)</option>
+            <option value="+34">+34 (Spain)</option>
+            <option value="+54">+54 (Argentina)</option>
+            <option value="+855">+855 (Cambodia)</option>
+            <option value="+81">+81 (Japan)</option>
+            <option value="Other">Other (specify below)</option>
+          </select>
+          <div id="m-country-code-other-wrap" style="display:none;margin-top:5px">
+            <input type="text" id="m-country-code-other" placeholder="Enter country code e.g. +65" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          </div>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Facilitator(s)</label>
@@ -4264,15 +4314,30 @@ body.admin-mode .mobile-nav-item.admin-only-mob { display: flex; }
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">WhatsApp Group Status</label>
-          <input type="text" id="m-wa-status" placeholder="Yes, No, Pending, etc" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-wa-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select —</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Pending">Pending</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Initiation Status</label>
-          <input type="text" id="m-init-status" placeholder="Yes, No, Pending" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-init-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select —</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Pending">Pending</option>
+          </select>
         </div>
         <div>
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Culmination Status</label>
-          <input type="text" id="m-culm-status" placeholder="Yes, No, Pending" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;">
+          <select id="m-culm-status" style="width:100%;padding:8px;border:1px solid var(--border-med);border-radius:6px;font-size:12px;box-sizing:border-box;background:#fff;">
+            <option value="">— Select —</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Pending">Pending</option>
+          </select>
         </div>
         <div style="grid-column:1/-1">
           <label style="display:block;font-weight:600;font-size:12px;color:var(--text-main);margin-bottom:4px">Notes</label>
@@ -6164,66 +6229,73 @@ function saveMemberForm() {
     ['m-name', 'Name'],
     ['m-email', 'Email Address'],
     ['m-mobile', 'Mobile / WhatsApp'],
-    ['m-country-code', 'Country Code'],
-    ['m-country', 'Country'],
-    ['m-region', 'Region'],
-    ['m-city', 'City'],
     ['m-role', 'Role'],
+    ['m-region', 'Region'],
     ['m-language', 'Language'],
-    ['m-facilitators', 'Facilitator(s)'],
-    ['m-group', 'Group Name'],
-    ['m-reg-through', 'Registered Through'],
-    ['m-reg-by', 'Registered By'],
-    ['m-wa-status', 'WhatsApp Group Status'],
-    ['m-init-status', 'Initiation Status'],
-    ['m-culm-status', 'Culmination Status']
+    ['m-country', 'Country'],
+    ['m-country-code', 'Country Code'],
   ];
   const values = {};
   for (const [id, label] of requiredFields) {
     const value = document.getElementById(id)?.value?.trim() || '';
     if (!value) {
       alert(label + ' is required');
+      document.getElementById(id)?.focus();
       return;
     }
     values[id] = value;
   }
+
+  // Handle "Other" open-text for Country
+  if (values['m-country'] === 'Other') {
+    const other = document.getElementById('m-country-other')?.value.trim() || '';
+    if (!other) { alert('Please specify the country name'); return; }
+    values['m-country'] = other;
+  }
+
+  // Handle "Other" open-text for Country Code
+  if (values['m-country-code'] === 'Other') {
+    const other = document.getElementById('m-country-code-other')?.value.trim() || '';
+    if (!other) { alert('Please specify the country code'); return; }
+    values['m-country-code'] = other;
+  }
+
   const name = values['m-name'];
   const email = values['m-email'];
   if (!/^\S+@\S+\.\S+$/.test(email)) {
     alert('Please enter a valid Email Address');
     return;
   }
-  
+
   // ✅ DUPLICATE VALIDATION: Check Name + Email combination
-  const duplicate = members.find(m => 
-    m.name.toLowerCase() === name.toLowerCase() && 
+  const duplicate = members.find(m =>
+    m.name.toLowerCase() === name.toLowerCase() &&
     email && m.email.toLowerCase() === email.toLowerCase()
   );
-  
+
   if (duplicate) {
     alert(`⚠️ DUPLICATE ENTRY PREVENTED!\n\nName: ${duplicate.name}\nEmail: ${duplicate.email}\n\nA member with this name and email already exists.\n\nPlease check the existing member or use different details.`);
-    return;  // ✅ PREVENT DUPLICATE - DO NOT ADD
+    return;
   }
-  
+
   const newMember = {
     idx: members.length,
     name: name,
     email: email,
     mobile: values['m-mobile'],
     role: values['m-role'],
-    city: values['m-city'],
     region: getNormalizedMemberRegion(values['m-country'], values['m-region']),
     language: values['m-language'],
     country: values['m-country'],
     country_code: values['m-country-code'],
-    facilitators: values['m-facilitators'],
-    group: values['m-group'],
-    registered_through: values['m-reg-through'],
-    whatsapp_status: values['m-wa-status'],
-    init_status: values['m-init-status'],
-    culmination_status: values['m-culm-status'],
-    notes: document.getElementById('m-notes').value.trim(),
-    registered_by: values['m-reg-by'],
+    facilitators: document.getElementById('m-facilitators')?.value.trim() || '',
+    group: document.getElementById('m-group')?.value.trim() || '',
+    registered_through: document.getElementById('m-reg-through')?.value.trim() || '',
+    whatsapp_status: document.getElementById('m-wa-status')?.value || '',
+    init_status: document.getElementById('m-init-status')?.value || '',
+    culmination_status: document.getElementById('m-culm-status')?.value || '',
+    notes: document.getElementById('m-notes')?.value.trim() || '',
+    registered_by: document.getElementById('m-reg-by')?.value.trim() || '',
     att: new Array(DATES.length).fill(-1),
     created_at: new Date().toISOString()
   };
@@ -6315,13 +6387,18 @@ function saveFacilitatorForm() {
 }
 
 function clearMemberForm() {
-  ['m-name','m-email','m-mobile','m-role','m-city','m-region','m-language','m-country','m-country-code','m-facilitators','m-group','m-reg-through','m-wa-status','m-init-status','m-culm-status','m-notes','m-reg-by'].forEach(id => {
+  ['m-name','m-email','m-mobile','m-facilitators','m-group','m-reg-through','m-notes','m-reg-by','m-country-other','m-country-code-other'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-  document.getElementById('m-role').value = '';
-  document.getElementById('m-region').value = '';
-  document.getElementById('m-language').value = '';
+  ['m-role','m-region','m-language','m-country','m-country-code','m-wa-status','m-init-status','m-culm-status'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const cowrap = document.getElementById('m-country-other-wrap');
+  if (cowrap) cowrap.style.display = 'none';
+  const ccwrap = document.getElementById('m-country-code-other-wrap');
+  if (ccwrap) ccwrap.style.display = 'none';
   populateMemberRegistrationDropdowns();
   document.getElementById('member-status').innerHTML = '';
 }
@@ -7601,9 +7678,21 @@ function renderAdminUsersAccess() {
         </div>
       </div>
 
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
-        <button class="btn btn-saffron" onclick="saveAdminManagedUser()">${adminUsersState.newUserMode ? 'Create User' : 'Save Changes'}</button>
-        ${selected ? `<button class="btn btn-outline" onclick="runAdminUserAction('send_reset_link')">Send Reset Link</button><button class="btn btn-outline" onclick="runAdminUserAction('set_temporary_password')">Set Temp Password</button><button class="btn btn-outline" onclick="runAdminUserAction('${status.is_locked ? 'unlock' : 'lock'}')">${status.is_locked ? 'Unlock' : 'Lock'}</button><button class="btn btn-outline" onclick="runAdminUserAction('${status.is_active === false ? 'reactivate' : 'deactivate'}')">${status.is_active === false ? 'Reactivate' : 'Deactivate'}</button><button class="btn btn-outline" onclick="runAdminUserAction('${status.force_password_reset ? 'clear_force_password_reset' : 'force_password_reset'}')">${status.force_password_reset ? 'Clear Force Reset' : 'Force Reset Next Login'}</button><button class="btn btn-outline" style="border-color:var(--rudra);color:var(--rudra)" onclick="runAdminUserAction('delete_user')">🗑 Delete User</button>` : ''}
+      <div style="border-top:1px solid var(--border-light);margin-top:16px;padding-top:14px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn btn-saffron" onclick="saveAdminManagedUser()">${adminUsersState.newUserMode ? 'Create User' : 'Save Changes'}</button>
+          <button class="btn btn-outline" onclick="runAdminUserAction('send_reset_link')" ${!selected ? 'disabled title="Select a user first"' : ''} style="${!selected ? 'opacity:0.45;cursor:not-allowed' : ''}">Send Reset Link</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn btn-outline" onclick="runAdminUserAction('set_temporary_password')" ${!selected ? 'disabled title="Select a user first"' : ''} style="${!selected ? 'opacity:0.45;cursor:not-allowed' : ''}">Set Temp Password</button>
+          <button class="btn btn-outline" onclick="${selected ? `runAdminUserAction('${status.is_locked ? 'unlock' : 'lock'}')`  : ''}" ${!selected ? 'disabled title="Select a user first"' : ''} style="${!selected ? 'opacity:0.45;cursor:not-allowed' : ''}">${selected ? (status.is_locked ? 'Unlock' : 'Lock') : 'Lock'}</button>
+          <button class="btn btn-outline" onclick="${selected ? `runAdminUserAction('${status.is_active === false ? 'reactivate' : 'deactivate'}')`  : ''}" ${!selected ? 'disabled title="Select a user first"' : ''} style="${!selected ? 'opacity:0.45;cursor:not-allowed' : ''}">${selected ? (status.is_active === false ? 'Reactivate' : 'Deactivate') : 'Deactivate'}</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-outline" onclick="${selected ? `runAdminUserAction('${status.force_password_reset ? 'clear_force_password_reset' : 'force_password_reset'}')`  : ''}" ${!selected ? 'disabled title="Select a user first"' : ''} style="${!selected ? 'opacity:0.45;cursor:not-allowed' : ''}">${selected ? (status.force_password_reset ? 'Clear Force Reset' : 'Force Reset Next Login') : 'Force Reset Next Login'}</button>
+          <button class="btn btn-outline" onclick="runAdminUserAction('delete_user')" ${!selected ? 'disabled title="Select a user first"' : ''} style="border-color:var(--rudra);color:var(--rudra);${!selected ? 'opacity:0.45;cursor:not-allowed' : ''}">🗑 Delete User</button>
+        </div>
+        ${!selected && !adminUsersState.newUserMode ? '<div style="font-size:11px;color:var(--text-mute);margin-top:10px;font-style:italic">← Select a user from the list to enable action buttons</div>' : ''}
       </div>
     </div>`;
 
